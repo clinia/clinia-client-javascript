@@ -1,0 +1,8 @@
+dist/cliniasearch.js -diff
+dist/cliniasearch.min.js -diff
+dist/cliniasearch.angular.js -diff
+dist/cliniasearch.angular.min.js -diff
+dist/cliniasearch.jquery.js -diff
+dist/cliniasearch.jquery.min.js -diff
+dist/cliniasearchLite.js -diff
+dist/cliniasearchLite.min.js -diff
