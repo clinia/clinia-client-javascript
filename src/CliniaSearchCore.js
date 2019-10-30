@@ -2,8 +2,10 @@ module.exports = CliniaSearchCore;
 
 var errors = require('./errors');
 var exitPromise = require('./exitPromise.js');
+var isArray = require('isarray');
 var IndexCore = require('./IndexCore.js');
 var store = require('./store.js');
+var validationUtil = require('./validation.js')
 
 // We will always put the API KEY in the JSON body in case of too long API KEY,
 // to avoid query string being too long and failing in various conditions (our server limit, browser limit,
@@ -30,7 +32,6 @@ function CliniaSearchCore(applicationID, apiKey, opts) {
   var debug = require('debug')('cliniasearch');
 
   var clone = require('./clone.js');
-  var isArray = require('isarray');
   var map = require('./map.js');
 
   var usage = 'Usage: cliniasearch(applicationID, apiKey, opts)';
@@ -180,7 +181,6 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
   this._checkAppIdData();
 
   var requestDebug = require('debug')('cliniasearch:' + initialOpts.url);
-
   var body;
   var cacheID;
   var additionalUA = initialOpts.additionalUA || '';
@@ -560,22 +560,95 @@ CliniaSearchCore.prototype._getSearchParams = function(args, params) {
     return params;
   }
 
+  // Make sure we have the documentTypes before proceeding
+  var documentTypes = args.documentTypes
+  if (documentTypes === undefined || documentTypes === null || !isArray(documentTypes)) {
+    throw new errors.CliniaSearchError('Missing mandatory field from search params', {fields: 'documentTypes'})
+  }
+  delete args.documentTypes
+  
+  // Validate and return all the search params
+  return CliniaSearchCore.prototype._validateSearchParams(args, params)
+};
+
+CliniaSearchCore.prototype._validateSearchParams = function(args, params) {
+  if (args.filters !== undefined || args.filters !== null) {
+    params.filters = CliniaSearchCore.prototype._validateFilterSearchParam(args.filters)
+    delete args.filters
+  }
+
+  var possibleToLevelFields = [
+    {key:'filters', validation: CliniaSearchCore.prototype._validateFilterSearchParam},
+    {key:'queryType', validation: validationUtil.validateArrayType},
+    {key:'page', validation: validationUtil.validateNumberType},
+    {key:'perPage', validation: validationUtil.validateNumberType}
+  ];
+
   for (var key in args) {
+    var field = possibleToLevelFields.find(x => x.key === key)
+    if (field === undefined) {
+      throw new errors.CliniaSearchError('Unrecognized field in search params', {fields: key})
+    }
+    
+    // Validate top level key type + build lower level keys
+    var validation = field['validation']
+    args[key] = validation(key, args[key])
+    
     if (key !== null && args[key] !== undefined && args.hasOwnProperty(key)) {
-      params += params === '' ? '' : '&';
-      params +=
-        key +
-        '=' +
-        encodeURIComponent(
-          Object.prototype.toString.call(
-            args[key] === '[object Array]'
-              ? safeJSONStringify(args[key])
-              : args[key]
-          )
-        );
+      params[key] = args[key]
     }
   }
-};
+
+  return params
+}
+
+CliniaSearchCore.prototype._validateFilterSearchParam = function(args) {
+  debugger
+  var filters = {}
+  if (typeof args !== 'object') {
+    throw new errors.CliniaSearchError('Field is not of the right type. Should be `object`.', {fields: 'filters'})
+  }
+
+  if (args.types !== undefined && args.types !== null) {
+    var possibleValues = ['CLINIC', 'PHARMACY', 'CLSC', 'HELP_RESOURCE', 'OTHER', 'HOSPITAL']
+    if(!isArray(args.types) || !args.types.every(x => possibleValues.includes(x))) {
+      throw new errors.CliniaSearchError('Field should be an array with possible values: `CLINIC`, `PHARMACY`, `CLSC`, `HELP_RESOURCE`, `OTHER`, `HOSPITAL`.', {fields: 'filters.types'})
+    }
+    filters.types  = args.types
+  }
+  delete args.types
+
+  if (args.hours !== undefined && args.hours !== null) {
+    filters.hours = args.hours
+  }
+  delete args.hours
+
+  if (args.geo !== undefined && args.geo !== null) {
+    validation.validateStringType('geo', args.geo)
+    filters.geo = args.geo
+  }
+  delete args.geo
+
+  for(var key in args) {
+    if (key !== null && args[key] !== undefined && args.hasOwnProperty(key)) {
+      throw new errors.CliniaSearchError('Unrecognized key in field `filters`.', {fields: 'filters.'+key})
+    }
+  }
+
+  return filters
+}
+
+CliniaSearchCore.prototype._validateHoursFilterSearchParam = function(key, arg) {
+  return arg
+  // if (typeof arg !== 'Object')
+  //   throw new errors.CliniaSearchError('Field is not of the right type', {fields: 'filters'})
+
+  // var possibleToLevelFields = [
+  //   {key: 'types', validation: isArray},
+  //   {key: 'hours', validation: },
+  //   {key: 'geo', validation: function(arg){ return typeof arg === 'string'}},
+  // ]
+}
 
 /**
  * Compute the headers for a request
@@ -637,7 +710,6 @@ CliniaSearchCore.prototype._computeRequestHeaders = function(options) {
 CliniaSearchCore.prototype.search = function(queries, opts, callback) {
   var isArray = require('isarray');
   var map = require('./map.js');
-
   var usage = 'Usage: client.search(arrayOfQueries[, callback])';
 
   if (!isArray(queries)) {

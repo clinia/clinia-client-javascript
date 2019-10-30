@@ -36,10 +36,10 @@ function buildSearchMethod(queryParam, url) {
       query = '';
     }
 
-    var params = '';
+    var params = {};
 
     if (query !== undefined) {
-      params += queryParam + '=' + encodeURIComponent(query);
+      params.q = query;
     }
 
     var additionalUA;

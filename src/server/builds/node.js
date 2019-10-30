@@ -64,7 +64,7 @@ function cliniasearch(applicationID, apiKey, opts) {
     opts.protocol = 'https:';
   }
 
-  opts._ua = opts._ua || algoliasearch.ua;
+  opts._ua = opts._ua || cliniasearch.ua;
   opts._useCache = false;
 
   return new CliniaSearchNodeJS(applicationID, apiKey, opts);
@@ -80,7 +80,7 @@ cliniasearch.ua =
   process.versions.node +
   ')';
 
-cliniasearch.initPlaces = places(algoliasearch);
+cliniasearch.initPlaces = places(cliniasearch);
 
 function CliniaSearchNodeJS(applicationID, apiKey, opts) {
   var getAgent = require('./get-agent');

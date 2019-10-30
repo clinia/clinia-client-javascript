@@ -116,6 +116,8 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
               'content-type',
               'application/x-www-form-urlencoded'
             );
+
+            body = 'params='+body
           } else {
             req.setRequestHeader('content-type', 'application/json');
           }
