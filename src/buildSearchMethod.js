@@ -1,47 +1,22 @@
-module.exports = buildSearchMethod;
+module.exports = buildSearchMethod
 
-var errors = require('./errors.js');
+var isArray = require('isArray');
+var foreach = require('foreach')
 
 /**
  * Creates a search method to be used in clients
- * @param {string} queryParam the name of the attribute used for the query
- * @param {string} url the url
+ * @param {boolean} enableMutliIndexes if the search should be bundled as a bulk request
  * @return {function} the search method
  */
-function buildSearchMethod(queryParam, url) {
-  /**
-   * The search method. Prepares the data and send the query to Clinia.
-   * @param {string} query the string used for query search
-   * @param {object} args additional parameters to send with the search
-   * @param {function} [callback] the callback to be called with the client gets the answer
-   * @return {undefined|Promise} If the callback is not provided then this methods returns a Promise
-   */
-  return function search(query, args, callback) {
-    // Normalizing the function signature
-    if (arguments.length === 0 || typeof query === 'function') {
-      // Usage : .search(), .search(cb)
-      callback = query;
-      query = '';
-    } else if (arguments.length === 1 || typeof args === 'function') {
-      // Usage : .search(query/args), .search(query, cb)
-      callback = args;
-      args = undefined;
+function buildSearchMethod(enableMutliIndexes) {
+  // Method reused in both implementations
+  var buildParams = function(args, getSearchParams) {
+    var params = {}
+  
+    if (args.query !== undefined) {
+      params.q = args.query;
     }
-
-    if (typeof query === 'object' && query !== null) {
-      args = query;
-      query = undefined;
-    } else if (query === undefined || query === null) {
-      // .search(undefined/null)
-      query = '';
-    }
-
-    var params = '';
-
-    if (query !== undefined) {
-      params += queryParam + '=' + encodeURIComponent(query);
-    }
-
+  
     var additionalUA;
     if (args !== undefined) {
       if (args.additionalUA) {
@@ -49,9 +24,46 @@ function buildSearchMethod(queryParam, url) {
         delete args.additionalUA;
       }
       // `_getSearchParams` will augment params
-      params = this.as._getSearchParams(args, params);
+      params = getSearchParams(args, params)
     }
+  
+    return [params, additionalUA]
+  }
+  if (enableMutliIndexes) {
+    /**
+     * The search method. Prepares the data and send the merged queries to Clinia.
+     * @param {object} args search parameters to send
+     * @param {function} [callback] the callback to be called with the client gets the answer
+     * @return {undefined|Promise} If the callback is not provided then this methods returns a Promise
+     */
+    return function search(args, callback) {
+      if (!isArray(args)) {
+        args = [args]
+      }
+      
+      // Get the method from `this` before entering the foreach
+      var getSearchParams = this.as._getSearchParams
+      
+      queries = []
+      foreach(args, function(query) {
+        debugger
+        var values = buildParams(query, getSearchParams)
+        queries.push(values[0])
+        // TODO : What do we do with the additionalUA?
+      }) 
 
-    return this._search(params, url, callback, additionalUA);
-  };
+      return this._search(queries, undefined, callback);
+    };
+  } else {
+    /**
+     * The search method. Prepares the data and send the query to Clinia.
+     * @param {object} args search parameters to send
+     * @param {function} [callback] the callback to be called with the client gets the answer
+     * @return {undefined|Promise} If the callback is not provided then this methods returns a Promise
+     */
+    return function search(args, callback) {
+      var values = buildParams(args, this.as._getSearchParams)
+      return this._search(values[0], undefined, callback, values[1]);
+    };
+  }
 }

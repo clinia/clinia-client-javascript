@@ -4,6 +4,10 @@ var errors = require('./errors');
 var exitPromise = require('./exitPromise.js');
 var IndexCore = require('./IndexCore.js');
 var store = require('./store.js');
+var isArray = require('isarray');
+var argCheck = require('./argCheck.js')
+var logger = require('./logger.js')
+var buildSearchMethod = require('./buildSearchMethod.js');
 
 // We will always put the API KEY in the JSON body in case of too long API KEY,
 // to avoid query string being too long and failing in various conditions (our server limit, browser limit,
@@ -14,7 +18,7 @@ var RESET_APP_DATA_TIMER =
     parseInt(process.env.RESET_APP_DATA_TIMER, 10)) ||
   60 * 2 * 1000; // after 2 minutes reset to first host
 
-/*
+/**
  * Clinia Search library initialization
  * https://www.cliniahealth.com/
  *
@@ -30,7 +34,6 @@ function CliniaSearchCore(applicationID, apiKey, opts) {
   var debug = require('debug')('cliniasearch');
 
   var clone = require('./clone.js');
-  var isArray = require('isarray');
   var map = require('./map.js');
 
   var usage = 'Usage: cliniasearch(applicationID, apiKey, opts)';
@@ -47,6 +50,8 @@ function CliniaSearchCore(applicationID, apiKey, opts) {
 
   this.applicationID = applicationID;
   this.apiKey = apiKey;
+  /** This feels weird and is probably wrong but we need it to access our methods in the client like we do in the indexes. */
+  this.as = this
 
   this.hosts = {
     read: [],
@@ -549,7 +554,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
   });
 };
 
-/*
+/**
  * Transform search param object in query string
  * @param {object} args arguments to add to the current query string
  * @param {string} params current query string
@@ -560,21 +565,62 @@ CliniaSearchCore.prototype._getSearchParams = function(args, params) {
     return params;
   }
 
-  for (var key in args) {
-    if (key !== null && args[key] !== undefined && args.hasOwnProperty(key)) {
-      params += params === '' ? '' : '&';
-      params +=
-        key +
-        '=' +
-        encodeURIComponent(
-          Object.prototype.toString.call(
-            args[key] === '[object Array]'
-              ? safeJSONStringify(args[key])
-              : args[key]
-          )
-        );
+  if (argCheck.isNotNullOrUndefined(args.page) && typeof args.page !== 'number') {
+    logger.warn('Ignoring search query parameter `page`. Must be a number.')
+    delete args.page
+  }
+
+  if (argCheck.isNotNullOrUndefined(args.perPage) && typeof args.perPage !== 'number') {
+    logger.warn('Ignoring search query parameter `perPage`. Must be a number.')
+    delete args.perPage
+  }
+
+  if (argCheck.isNotNullOrUndefined(args.filters)) {
+    if ((typeof args.filters !== 'object' || isArray(args.filters))) {
+      logger.warn('Ignoring search query parameter `filters`. Must be an object.')
+      delete args.filters
+    } else {
+      if (argCheck.isNotNullOrUndefined(args.filters.types) && !isArray(args.filters.types)) {
+        logger.warn('Ignoring search query parameter `filters.types`. Must be an array.')
+        delete args.filters.types
+      }
+
+      if (argCheck.isNotNullOrUndefined(args.filters.hours)) {
+        if (typeof args.filters.hours !== 'object' || isArray(args.filters.hours)) {
+          logger.warn('Ignoring search query parameter `filters.hours`. Must be an object.')
+          delete args.filters.hours
+        } else {
+          if (argCheck.isNotNullOrUndefined(args.filters.hours.offset) && typeof args.filters.hours.offset !== 'number') {
+            logger.warn('Ignoring search query parameter `filters.hours.offset`. Must be a number.')
+            delete args.filters.hours.offset
+          }
+
+          if (argCheck.isNotNullOrUndefined(args.filters.hours.values) && !isArray(args.filters.hours.values)) {
+            logger.warn('Ignoring search query parameter `filters.hours.values`. Must be an array.')
+            delete args.filters.hours.values
+          }
+        }
+      }
+
+      if (argCheck.isNotNullOrUndefined(args.filters.geo) && typeof args.filters.geo !== 'string') {
+        logger.warn('Ignoring search query parameter `filters.geo`. Must be a string.')
+        delete args.filters.geo
+      }
     }
   }
+
+  if (argCheck.isNotNullOrUndefined(args.queryTypes) && !isArray(args.queryTypes)) {
+    logger.warn('Ignoring search query parameter `queryTypes`. Must be an array.')
+    delete args.queryTypes
+  }
+
+  for (var key in args) {
+    if (key !== null && args[key] !== undefined && args.hasOwnProperty(key)) {
+      params[key] = args[key]
+    }
+  }
+
+  return params
 };
 
 /**
@@ -634,43 +680,24 @@ CliniaSearchCore.prototype._computeRequestHeaders = function(options) {
  * @param  {Function} callback Callback to be called
  * @return {Promise|undefined} Returns a promise if no callback given
  */
-CliniaSearchCore.prototype.search = function(queries, opts, callback) {
-  var isArray = require('isarray');
-  var map = require('./map.js');
 
-  var usage = 'Usage: client.search(arrayOfQueries[, callback])';
+CliniaSearchCore.prototype.search = buildSearchMethod(true)
 
-  if (!isArray(queries)) {
-    throw new Error(usage);
-  }
-
-  if (typeof opts === 'function') {
-    callback = opts;
-    opts = {};
-  } else if (opts === undefined) {
-    opts = {};
-  }
-
-  var client = this;
-
-  var postObj = {};
-
-  var JSONPParams = '';
-
-  var url = '';
-
+CliniaSearchCore.prototype._search = function(params, url, callback, additionalUA) {
+  // TODO : This is a workaround to simulate the different index endpoint.
+  params.documentTypes = ['health_facility', 'professional']
+  var tempUrl = '/search/v1/search'
+  // var realUrl = '/search/v1/'+this.indexName
   return this._jsonRequest({
     cache: this.cache,
     method: 'POST',
-    url: url,
-    body: postObj,
+    url: url || tempUrl,
+    body: params,
     hostType: 'read',
     fallback: {
       method: 'GET',
-      url: '',
-      body: {
-        params: JSONPParams,
-      },
+      url: url || tempUrl,
+      body: params,
     },
     callback: callback,
   });
