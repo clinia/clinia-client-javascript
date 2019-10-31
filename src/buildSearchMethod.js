@@ -5,7 +5,7 @@ var foreach = require('foreach')
 
 /**
  * Creates a search method to be used in clients
- * @param {boolean} enableMutliIndexes if the search should be bundled as a bulk request
+ * @param {boolean} enableMutliIndexes if the search method should be bundled to handle multi indexes queries
  * @return {function} the search method
  */
 function buildSearchMethod(enableMutliIndexes) {
@@ -32,37 +32,37 @@ function buildSearchMethod(enableMutliIndexes) {
   if (enableMutliIndexes) {
     /**
      * The search method. Prepares the data and send the merged queries to Clinia.
-     * @param {object} args search parameters to send
+     * @param {object[]} queries search queries/parameters to send
      * @param {function} [callback] the callback to be called with the client gets the answer
      * @return {undefined|Promise} If the callback is not provided then this methods returns a Promise
      */
-    return function search(args, callback) {
-      if (!isArray(args)) {
-        args = [args]
+    return function search(queries, callback) {
+      if (!isArray(queries)) {
+        queries = [queries]
       }
       
       // Get the method from `this` before entering the foreach
       var getSearchParams = this.as._getSearchParams
       
-      queries = []
-      foreach(args, function(query) {
+      processedQueries = []
+      foreach(queries, function(query) {
         debugger
         var values = buildParams(query, getSearchParams)
-        queries.push(values[0])
+        processedQueries.push(values[0])
         // TODO : What do we do with the additionalUA?
       }) 
 
-      return this._search(queries, undefined, callback);
+      return this._search(processedQueries, undefined, callback);
     };
   } else {
     /**
      * The search method. Prepares the data and send the query to Clinia.
-     * @param {object} args search parameters to send
+     * @param {object} query search query/parameters to send
      * @param {function} [callback] the callback to be called with the client gets the answer
      * @return {undefined|Promise} If the callback is not provided then this methods returns a Promise
      */
-    return function search(args, callback) {
-      var values = buildParams(args, this.as._getSearchParams)
+    return function search(query, callback) {
+      var values = buildParams(query, this.as._getSearchParams)
       return this._search(values[0], undefined, callback, values[1]);
     };
   }

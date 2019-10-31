@@ -687,7 +687,7 @@ CliniaSearchCore.prototype._search = function(params, url, callback, additionalU
   // TODO : This is a workaround to simulate the different index endpoint.
   params.documentTypes = ['health_facility', 'professional']
   var tempUrl = '/search/v1/search'
-  // var realUrl = '/search/v1/'+this.indexName
+  // var realUrl = '/search/v1/*'
   return this._jsonRequest({
     cache: this.cache,
     method: 'POST',
