@@ -1,12 +1,22 @@
 var isArray = require('isarray');
+var errors = require('./errors.js')
 
-module.exports = {
-  validateNumberType: validateNumberType,
-  validatePositiveNumberType: validatePositiveNumberType,
-  validateArrayType: validateArrayType,
-  validateArrayTypePossibleValues: validateArrayTypePossibleValues,
-  validateStringType: validateStringType
-}
+var isNullOrUndefined = function(arg) {
+  return arg === undefined || arg === null
+};
+
+var isNotNullOrUndefined = function(arg) {
+  return !isNullOrUndefined(arg)
+};
+
+var isEmpty = function(arg) {
+  for(var key in arg) {
+    if (key !== null && arg[key] !== undefined && arg.hasOwnProperty(key)) {
+      return false
+    }
+  }
+  return true
+};
 
 var validateNumberType = function(key, arg) {
   if (isNaN(arg))
@@ -16,7 +26,7 @@ var validateNumberType = function(key, arg) {
 
 var validatePositiveNumberType = function(key, arg) {
   if (isNaN(arg) || arg < 0)
-    throw new errors.CliniaSearchError('Field should be a positive `number`', {fields: key})
+    throw new errors.CliniaSearchError('Field should be a positive `number`.', {fields: key})
   return arg
 };
 
@@ -26,25 +36,18 @@ var validateArrayType = function(key, arg) {
   return arg
 };
 
-/*
- * Transform search param object in query string
- * @param {string} key arguments to add to the current query string
- * @param {object} arg current query string
- * @param {any[]} possibleValues possible values of the array
- */
-var validateArrayTypePossibleValues = function(key, arg, possibleValues) {
-  debugger
-  validateArrayType(key, arg)
-  if (arg.filter(function(n) {
-    return possibleValues.indexOf(n) !== -1;
-  })) {
-    throw new errors.CliniaSearchError('Field contains invalid values.', {fields: key})
-  }
-  return arg
-};
-
 var validateStringType = function(key, arg) {
   if (typeof arg !== 'string')
     throw new errors.CliniaSearchError('Field should be a `string`.', {fields: key})
   return arg
 }
+
+module.exports = {
+  validateNumberType: validateNumberType,
+  validatePositiveNumberType: validatePositiveNumberType,
+  validateArrayType: validateArrayType,
+  validateStringType: validateStringType,
+  isNullOrUndefined: isNullOrUndefined,
+  isNotNullOrUndefined: isNotNullOrUndefined,
+  isEmpty: isEmpty
+};

@@ -549,7 +549,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
   });
 };
 
-/*
+/** 
  * Transform search param object in query string
  * @param {object} args arguments to add to the current query string
  * @param {string} params current query string
@@ -559,95 +559,122 @@ CliniaSearchCore.prototype._getSearchParams = function(args, params) {
   if (args === undefined || args === null) {
     return params;
   }
-
-  // Make sure we have the documentTypes before proceeding
-  var documentTypes = args.documentTypes
-  if (documentTypes === undefined || documentTypes === null || !isArray(documentTypes)) {
-    throw new errors.CliniaSearchError('Missing mandatory field from search params', {fields: 'documentTypes'})
-  }
-  delete args.documentTypes
   
   // Validate and return all the search params
-  return CliniaSearchCore.prototype._validateSearchParams(args, params)
+  return CliniaSearchCore.prototype._validateSearchParams(args, params);
 };
 
 CliniaSearchCore.prototype._validateSearchParams = function(args, params) {
-  if (args.filters !== undefined || args.filters !== null) {
-    params.filters = CliniaSearchCore.prototype._validateFilterSearchParam(args.filters)
-    delete args.filters
+  if (typeof args !== 'object') {
+    throw new errors.CliniaSearchError('Search parameters should be of type `object`.');
   }
 
-  var possibleToLevelFields = [
-    {key:'filters', validation: CliniaSearchCore.prototype._validateFilterSearchParam},
-    {key:'queryType', validation: validationUtil.validateArrayType},
-    {key:'page', validation: validationUtil.validateNumberType},
-    {key:'perPage', validation: validationUtil.validateNumberType}
-  ];
-
-  for (var key in args) {
-    var field = possibleToLevelFields.find(x => x.key === key)
-    if (field === undefined) {
-      throw new errors.CliniaSearchError('Unrecognized field in search params', {fields: key})
+  // Make sure we have the documentTypes before continuing
+  if (validationUtil.isNullOrUndefined(args.documentTypes)) {
+    throw new errors.CliniaSearchError('Missing mandatory field from search params.', {fields: 'documentTypes'});
+  } else {
+    if (!isArray(args.documentTypes) || args.documentTypes.length === 0 || !args.documentTypes.every(function(x) {
+      return x === 'health_facility' || x === 'professional';
+    })) {
+      throw new errors.CliniaSearchError('Field should be an `array` with possible values: `health_facility`, `professional`.', {fields: 'documentTypes'});
     }
-    
-    // Validate top level key type + build lower level keys
-    var validation = field['validation']
-    args[key] = validation(key, args[key])
-    
-    if (key !== null && args[key] !== undefined && args.hasOwnProperty(key)) {
-      params[key] = args[key]
+    params.documentTypes = args.documentTypes
+  }
+  delete args.documentTypes
+
+  // filters
+  if (validationUtil.isNotNullOrUndefined(args.filters)) {
+    var filters = CliniaSearchCore.prototype._validateFilterSearchParam(args.filters);
+    if (!validationUtil.isEmpty(filters)) {
+      params.filters = filters;
     }
   }
+  delete args.filters;
 
-  return params
+  // page
+  if (validationUtil.isNotNullOrUndefined(args.page)) {
+    validationUtil.validatePositiveNumberType('page', args.page);
+    params.page = args.page;
+  }
+  delete args.page;
+
+  // perPage
+  if (validationUtil.isNotNullOrUndefined(args.perPage)) {
+    validationUtil.validatePositiveNumberType('perPage', args.perPage);
+    params.perPage = args.perPage;
+  }
+  delete args.perPage;
+
+  return params;
 }
 
 CliniaSearchCore.prototype._validateFilterSearchParam = function(args) {
-  debugger
-  var filters = {}
+  var filters = {};
   if (typeof args !== 'object') {
-    throw new errors.CliniaSearchError('Field is not of the right type. Should be `object`.', {fields: 'filters'})
+    throw new errors.CliniaSearchError('Field is not of the right type. Should be `object`.', {fields: 'filters'});
   }
 
-  if (args.types !== undefined && args.types !== null) {
-    var possibleValues = ['CLINIC', 'PHARMACY', 'CLSC', 'HELP_RESOURCE', 'OTHER', 'HOSPITAL']
-    if(!isArray(args.types) || !args.types.every(x => possibleValues.includes(x))) {
-      throw new errors.CliniaSearchError('Field should be an array with possible values: `CLINIC`, `PHARMACY`, `CLSC`, `HELP_RESOURCE`, `OTHER`, `HOSPITAL`.', {fields: 'filters.types'})
+  // types
+  if (validationUtil.isNotNullOrUndefined(args.types)) {
+    var possibleValues = ['CLINIC', 'PHARMACY', 'CLSC', 'HELP_RESOURCE', 'OTHER', 'HOSPITAL'];
+    if(!isArray(args.types) || !args.types.every(function(x) {
+      return possibleValues.includes(x);
+    })) {
+      throw new errors.CliniaSearchError('Field should be an array with possible values: `CLINIC`, `PHARMACY`, `CLSC`, `HELP_RESOURCE`, `OTHER`, `HOSPITAL`.', {fields: 'filters.types'});
     }
-    filters.types  = args.types
+    filters.types  = args.types;
   }
-  delete args.types
+  delete args.types;
 
-  if (args.hours !== undefined && args.hours !== null) {
-    filters.hours = args.hours
+  // hours
+  if (validationUtil.isNotNullOrUndefined(args.hours)) {
+    var hours = {};
+    if (typeof args.hours !== 'object') {
+      throw new errors.CliniaSearchError('Field is not of the right type. Should be `object`.', {fields: 'filters.hours'});
+    }
+    
+    // hours.offset
+    if (validationUtil.isNotNullOrUndefined(args.hours.offset)) {
+      validationUtil.validatePositiveNumberType('filters.hours.offset', args.hours.offset);
+      hours.offset = args.hours.offset;
+      delete args.hours.offset;
+    }
+
+    // hours.values
+    if (validationUtil.isNotNullOrUndefined(args.hours.values)) {
+      if (!isArray(args.hours.values) || !args.hours.values.every(function(x) {
+        return x >= 0 && x < 4;
+      })) {
+        throw new errors.CliniaSearchError('Field should be an array with possible values: 0, 1, 2, 3.', {fields: 'filters.hours.values'});
+      }
+      hours.values = args.hours.values;
+      delete args.hours.values;
+    }
+
+    // Error if there are unrecognized fields
+    if (!validationUtil.isEmpty(args.hours)) {
+      throw new errors.CliniaSearchError('Unrecognized field inside search params field `filters.hours`');
+    }
+
+    if (!validationUtil.isEmpty(hours)) {
+      filters.hours = hours;
+    }
   }
-  delete args.hours
+  delete args.hours;
 
+  // geo
   if (args.geo !== undefined && args.geo !== null) {
-    validation.validateStringType('geo', args.geo)
-    filters.geo = args.geo
+    validationUtil.validateStringType('geo', args.geo);
+    filters.geo = args.geo;
   }
-  delete args.geo
+  delete args.geo;
 
-  for(var key in args) {
-    if (key !== null && args[key] !== undefined && args.hasOwnProperty(key)) {
-      throw new errors.CliniaSearchError('Unrecognized key in field `filters`.', {fields: 'filters.'+key})
-    }
+  // Error if there are unrecognized fields
+  if (!validationUtil.isEmpty(args)) {
+    throw new errors.CliniaSearchError('Unrecognized field inside search params field `filters`');
   }
 
-  return filters
-}
-
-CliniaSearchCore.prototype._validateHoursFilterSearchParam = function(key, arg) {
-  return arg
-  // if (typeof arg !== 'Object')
-  //   throw new errors.CliniaSearchError('Field is not of the right type', {fields: 'filters'})
-
-  // var possibleToLevelFields = [
-  //   {key: 'types', validation: isArray},
-  //   {key: 'hours', validation: },
-  //   {key: 'geo', validation: function(arg){ return typeof arg === 'string'}},
-  // ]
+  return filters;
 }
 
 /**

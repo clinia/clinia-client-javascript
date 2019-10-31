@@ -14,7 +14,7 @@
         },
       });
       var index = client.initIndex('health_facility');
-      index.search('Pharmacy', function(err, results) {
+      index.search('Clinic', { filters: {types:['CLINIC']}, documentTypes: ['health_facility']}, function(err, results) {
         if (err) {
           throw err;
         }
