@@ -618,7 +618,9 @@ CliniaSearchCore.prototype._validateFilterSearchParam = function(args) {
   if (validationUtil.isNotNullOrUndefined(args.types)) {
     var possibleValues = ['CLINIC', 'PHARMACY', 'CLSC', 'HELP_RESOURCE', 'OTHER', 'HOSPITAL'];
     if(!isArray(args.types) || !args.types.every(function(x) {
-      return possibleValues.includes(x);
+      return possibleValues.findIndex(function(possibleValue) {
+        return x === possibleValue
+      }) >= 0;
     })) {
       throw new errors.CliniaSearchError('Field should be an array with possible values: `CLINIC`, `PHARMACY`, `CLSC`, `HELP_RESOURCE`, `OTHER`, `HOSPITAL`.', {fields: 'filters.types'});
     }
