@@ -46,10 +46,9 @@ function buildSearchMethod(enableMutliIndexes) {
       
       processedQueries = []
       foreach(queries, function(query) {
-        debugger
         var values = buildParams(query, getSearchParams)
         processedQueries.push(values[0])
-        // TODO : What do we do with the additionalUA?
+        // TODO : What do we do with the additionalUA when we have mutiple queries?
       }) 
 
       return this._search(processedQueries, undefined, callback);
