@@ -407,7 +407,6 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
       //  In both cases:
       //    - uncaught exception occurs (TypeError)
       requestDebug('error: %s, stack: %s', err.message, err.stack);
-
       var endTime = new Date();
       debugData.push({
         currentHost: currentHost,

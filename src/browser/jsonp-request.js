@@ -54,8 +54,8 @@ function jsonpRequest(url, opts, cb) {
   url += '&callback=' + cbName;
 
   // add body params manually
-  if (opts.jsonBody && opts.jsonBody.params) {
-    url += '&' + opts.jsonBody.params;
+  if (opts.jsonBody) {
+    url += '&' + 'params='+JSON.stringify(opts.jsonBody);
   }
 
   var ontimeout = setTimeout(timeout, opts.timeouts.complete);

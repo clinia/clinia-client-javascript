@@ -15,6 +15,7 @@ function buildSearchMethod(enableMutliIndexes) {
   
     if (args.query !== undefined) {
       params.q = args.query;
+      delete args.query
     }
   
     var additionalUA;
