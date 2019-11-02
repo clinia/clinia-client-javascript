@@ -40,12 +40,12 @@ IndexCore.prototype._search = function(params, url, callback, additionalUA) {
   return this.as._jsonRequest({
     cache: this.cache,
     method: 'POST',
-    url: url || '/search/v1/search/',
+    url: url || 'search/v1/indexes/' + this.indexName + '/query',
     body: { params: params },
     hostType: 'read',
     fallback: {
       method: 'GET',
-      url: '/search/v1/search/',
+      url: 'search/v1/indexes/' + this.indexName,
       body: { params: params },
     },
     callback: callback,

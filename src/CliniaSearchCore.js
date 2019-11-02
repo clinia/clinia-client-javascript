@@ -567,14 +567,14 @@ CliniaSearchCore.prototype._getSearchParams = function(args, params) {
         key +
         '=' +
         encodeURIComponent(
-          Object.prototype.toString.call(
-            args[key] === '[object Array]'
-              ? safeJSONStringify(args[key])
-              : args[key]
-          )
+          Object.prototype.toString.call(args[key]) === '[object Array]'
+            ? safeJSONStringify(args[key])
+            : args[key]
         );
     }
   }
+
+  return params;
 };
 
 /**
@@ -653,11 +653,46 @@ CliniaSearchCore.prototype.search = function(queries, opts, callback) {
 
   var client = this;
 
-  var postObj = {};
+  var postObj = {
+    requests: map(queries, function prepareRequest(query) {
+      var params = '';
 
-  var JSONPParams = '';
+      // allow query.query
+      // so we are mimicing the index.search(query, params) method
+      // {indexName:, query:, params:}
+      if (query.query !== undefined) {
+        params += 'query=' + encodeURIComponent(query.query);
+      }
 
-  var url = '';
+      return {
+        indexName: query.indexName,
+        params: client._getSearchParams(query.params, params),
+      };
+    }),
+  };
+
+  var JSONPParams = map(postObj.requests, function prepareJSONPParams(
+    request,
+    requestId
+  ) {
+    return (
+      requestId +
+      '=' +
+      encodeURIComponent(
+        '/1/indexes/' +
+          encodeURIComponent(request.indexName) +
+          '?' +
+          request.params
+      )
+    );
+  }).join('&');
+
+  var url = '/search/v1/indexes/*/queries';
+
+  // Not used at the moment
+  if (opts.strategy !== undefined) {
+    postObj.strategy = opts.strategy;
+  }
 
   return this._jsonRequest({
     cache: this.cache,
@@ -667,7 +702,7 @@ CliniaSearchCore.prototype.search = function(queries, opts, callback) {
     hostType: 'read',
     fallback: {
       method: 'GET',
-      url: '',
+      url: 'search/v1/indexes/*',
       body: {
         params: JSONPParams,
       },

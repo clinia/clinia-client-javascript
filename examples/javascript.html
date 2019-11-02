@@ -13,14 +13,41 @@
           write: ['localhost:5000'],
         },
       });
-      var index = client.initIndex('health_facility');
-      index.search('Pharmacy', function(err, results) {
+
+      var queries = [
+        {
+          indexName: 'health_facility',
+          query: 'sons',
+          params: {
+            queryType: 'prefixLast',
+            searchFields: ['name'],
+          },
+        },
+        {
+          indexName: 'professional',
+          query: 'sons',
+          params: {
+            queryType: 'prefixLast',
+            searchFields: ['name'],
+          },
+        },
+      ];
+
+      client.search(queries, function(err, response) {
         if (err) {
           throw err;
         }
-        console.log('We got `' + results.nbHits + '` results');
-        console.log('Here is the first one: ', results.hits[0]);
+
+        console.log(response.results);
       });
+      // var index = client.initIndex('health_facility');
+      // index.search('Pharmacy', function(err, results) {
+      //   if (err) {
+      //     throw err;
+      //   }
+      //   console.log('We got `' + results.nbHits + '` results');
+      //   console.log('Here is the first one: ', results.hits[0]);
+      // });
     </script>
   </body>
 </html>
