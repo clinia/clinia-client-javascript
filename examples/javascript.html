@@ -40,14 +40,15 @@
 
         console.log(response.results);
       });
-      // var index = client.initIndex('health_facility');
-      // index.search('Pharmacy', function(err, results) {
-      //   if (err) {
-      //     throw err;
-      //   }
-      //   console.log('We got `' + results.nbHits + '` results');
-      //   console.log('Here is the first one: ', results.hits[0]);
-      // });
+
+      var index = client.initIndex('health_facility');
+      index.search('jo', { queryType: 'prefix_last' }, function(err, results) {
+        if (err) {
+          throw err;
+        }
+        console.log('We got `' + results.meta.total + '` results');
+        console.log('Here is the first one: ', results.records[0]);
+      });
     </script>
   </body>
 </html>
