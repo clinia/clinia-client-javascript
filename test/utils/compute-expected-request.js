@@ -59,7 +59,7 @@ function getRequestURL(credentials) {
     expectedQueryString = {
       'x-clinia-api-key': credentials.searchOnlyAPIKey,
       'x-clinia-application-id': credentials.applicationID,
-      'x-clinia-agent': algoliasearch.ua,
+      'x-clinia-agent': cliniasearch.ua,
     };
   } else {
     // serverside will send them in headers
@@ -68,7 +68,7 @@ function getRequestURL(credentials) {
 
   return {
     protocol: 'https:',
-    URL: {pathname: '/not-set'},
+    URL: { pathname: '/not-set' },
     query: expectedQueryString,
   };
 }

@@ -24,7 +24,7 @@ function cliniasearch(applicationID, apiKey, opts) {
 
   opts = cloneDeep(opts || {});
 
-  opts._ua = opts._ua || algoliasearch.ua;
+  opts._ua = opts._ua || cliniasearch.ua;
 
   return new CliniaSearchJQuery(applicationID, apiKey, opts);
 }

@@ -31,7 +31,7 @@ window.angular.module('cliniasearch', []).service('clinia', [
 
       opts = cloneDeep(opts || {});
 
-      opts._ua = opts._ua || algoliasearch.ua;
+      opts._ua = opts._ua || cliniasearch.ua;
 
       return new CliniaSearchAngular(applicationID, apiKey, opts);
     }
