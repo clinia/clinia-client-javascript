@@ -43,7 +43,6 @@ IndexCore.prototype._search = function(params, url, callback, additionalUA) {
       '/query?' +
       params
   )
-  console.log(JSONPParams)
   return this.as._jsonRequest({
     cache: this.cache,
     method: 'POST',

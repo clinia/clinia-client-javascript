@@ -25,7 +25,7 @@ function buildSearchMethod(queryParam, url) {
 
     var params = '';
 
-    params += queryParam + '=' + encodeURIComponent(args.query || '');
+    params += queryParam + '=' + encodeURIComponent(args.query) || '';
     delete args.query
 
     var additionalUA;
