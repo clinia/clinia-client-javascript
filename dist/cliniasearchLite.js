@@ -187,8 +187,8 @@ function localstorage() {
   } catch (e) {}
 }
 
-}).call(this,require(9))
-},{"2":2,"9":9}],2:[function(require,module,exports){
+}).call(this,require(10))
+},{"10":10,"2":2}],2:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -202,7 +202,7 @@ exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
-exports.humanize = require(8);
+exports.humanize = require(9);
 
 /**
  * The currently active debug mode names, and names to skip.
@@ -392,7 +392,7 @@ function coerce(val) {
   return val;
 }
 
-},{"8":8}],3:[function(require,module,exports){
+},{"9":9}],3:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -1569,8 +1569,8 @@ return Promise$1;
 
 
 
-}).call(this,require(9),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"9":9}],4:[function(require,module,exports){
+}).call(this,require(10),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"10":10}],4:[function(require,module,exports){
 
 var hasOwn = Object.prototype.hasOwnProperty;
 var toString = Object.prototype.toString;
@@ -1648,6 +1648,8 @@ module.exports = Array.isArray || function (arr) {
 };
 
 },{}],8:[function(require,module,exports){
+arguments[4][7][0].apply(exports,arguments)
+},{"7":7}],9:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -1801,7 +1803,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -1987,7 +1989,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2073,7 +2075,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2160,21 +2162,20 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
-exports.decode = exports.parse = require(10);
-exports.encode = exports.stringify = require(11);
+exports.decode = exports.parse = require(11);
+exports.encode = exports.stringify = require(12);
 
-},{"10":10,"11":11}],13:[function(require,module,exports){
+},{"11":11,"12":12}],14:[function(require,module,exports){
 (function (process){
 module.exports = CliniaSearchCore;
 
-var errors = require(22);
-var exitPromise = require(23);
-var IndexCore = require(14);
-var store = require(26);
-var argCheck = require(15)
+var errors = require(23);
+var exitPromise = require(24);
+var IndexCore = require(15);
+var store = require(29);
 
 // We will always put the API KEY in the JSON body in case of too long API KEY,
 // to avoid query string being too long and failing in various conditions (our server limit, browser limit,
@@ -2200,9 +2201,9 @@ var RESET_APP_DATA_TIMER =
 function CliniaSearchCore(applicationID, apiKey, opts) {
   var debug = require(1)('cliniasearch');
 
-  var clone = require(21);
-  var isArray = require(7);
-  var map = require(24);
+  var clone = require(22);
+  var isArray = require(8);
+  var map = require(26);
 
   var usage = 'Usage: cliniasearch(applicationID, apiKey, opts)';
 
@@ -2351,6 +2352,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
   this._checkAppIdData();
 
   var requestDebug = require(1)('cliniasearch:' + initialOpts.url);
+  var safeJSONStringify = require(28)
 
   var body;
   var cacheID;
@@ -2727,72 +2729,86 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
  * @return {string} the final query string
  */
 CliniaSearchCore.prototype._getSearchParams = function(args, params) {
+  var argCheck = require(16);
+  var isArray = require(7);
+  var logger = require(25);
+  var safeJSONStringify = require(28)
+  
   if (args === undefined || args === null) {
     return params;
   }
 
   if (argCheck.isNotNullOrUndefined(args.page) && typeof args.page !== 'number') {
-    logger.warn('Ignoring search query parameter `page`. Must be a number.')
-    delete args.page
+    logger.warn('Ignoring search query parameter `page`. Must be a number.');
+    delete args.page;
   }
 
   if (argCheck.isNotNullOrUndefined(args.perPage) && typeof args.perPage !== 'number') {
-    logger.warn('Ignoring search query parameter `perPage`. Must be a number.')
-    delete args.perPage
+    logger.warn('Ignoring search query parameter `perPage`. Must be a number.');
+    delete args.perPage;
   }
 
   if (argCheck.isNotNullOrUndefined(args.searchFields) && !isArray(args.searchFields)) {
-    logger.warn('Ignoring search query parameter `searchFields`. Must be an array.')
-    delete args.searchFields
+    logger.warn('Ignoring search query parameter `searchFields`. Must be an array.');
+    delete args.searchFields;
   }
 
   if (argCheck.isNotNullOrUndefined(args.queryTypes) && !isArray(args.queryTypes)) {
-    logger.warn('Ignoring search query parameter `queryTypes`. Must be an array.')
-    delete args.queryTypes
+    logger.warn('Ignoring search query parameter `queryTypes`. Must be an array.');
+    delete args.queryTypes;
   }
 
   if (argCheck.isNotNullOrUndefined(args.filters)) {
     if ((typeof args.filters !== 'object' || isArray(args.filters))) {
-      logger.warn('Ignoring search query parameter `filters`. Must be an object.')
-      delete args.filters
+      logger.warn('Ignoring search query parameter `filters`. Must be an object.');
+      delete args.filters;
     } else {
       if (argCheck.isNotNullOrUndefined(args.filters.types) && !isArray(args.filters.types)) {
-        logger.warn('Ignoring search query parameter `filters.types`. Must be an array.')
-        delete args.filters.types
+        logger.warn('Ignoring search query parameter `filters.types`. Must be an array.');
+        delete args.filters.types;
       }
 
       if (argCheck.isNotNullOrUndefined(args.filters.hours)) {
         if (typeof args.filters.hours !== 'object' || isArray(args.filters.hours)) {
-          logger.warn('Ignoring search query parameter `filters.hours`. Must be an object.')
-          delete args.filters.hours
+          logger.warn('Ignoring search query parameter `filters.hours`. Must be an object.');
+          delete args.filters.hours;
         } else {
           if (argCheck.isNotNullOrUndefined(args.filters.hours.offset) && typeof args.filters.hours.offset !== 'number') {
-            logger.warn('Ignoring search query parameter `filters.hours.offset`. Must be a number.')
-            delete args.filters.hours.offset
+            logger.warn('Ignoring search query parameter `filters.hours.offset`. Must be a number.');
+            delete args.filters.hours.offset;
           }
 
           if (argCheck.isNotNullOrUndefined(args.filters.hours.values) && !isArray(args.filters.hours.values)) {
-            logger.warn('Ignoring search query parameter `filters.hours.values`. Must be an array.')
-            delete args.filters.hours.values
+            logger.warn('Ignoring search query parameter `filters.hours.values`. Must be an array.');
+            delete args.filters.hours.values;
           }
+        }
+
+        if (argCheck.isEmpty(args.filters.hours)) {
+          delete args.filters.hours
         }
       }
 
-      if (argCheck.isNotNullOrUndefined(args.filters.geo) && typeof args.filters.geo !== 'string') {
-        logger.warn('Ignoring search query parameter `filters.geo`. Must be a string.')
-        delete args.filters.geo
+      if (argCheck.isNotNullOrUndefined(args.filters.location) && typeof args.filters.location !== 'string') {
+        logger.warn('Ignoring search query parameter `filters.location`. Must be a string.');
+        delete args.filters.location;
       }
+    }
+
+    if (argCheck.isEmpty(args.filters)) {
+      delete args.filters
     }
   }
 
   for (var key in args) {
     if (key !== null && args[key] !== undefined && args.hasOwnProperty(key)) {
       params += params === '' ? '' : '&';
+      const type = Object.prototype.toString.call(args[key])
       params +=
         key +
         '=' +
         encodeURIComponent(
-          Object.prototype.toString.call(args[key]) === '[object Array]'
+          type === '[object Array]' || type === '[object Object]'
             ? safeJSONStringify(args[key])
             : args[key]
         );
@@ -2860,8 +2876,8 @@ CliniaSearchCore.prototype._computeRequestHeaders = function(options) {
  * @return {Promise|undefined} Returns a promise if no callback given
  */
 CliniaSearchCore.prototype.search = function(queries, opts, callback) {
-  var isArray = require(7);
-  var map = require(24);
+  var isArray = require(8);
+  var map = require(26);
 
   var usage = 'Usage: client.search(arrayOfQueries[, callback])';
 
@@ -3051,7 +3067,7 @@ CliniaSearchCore.prototype._getHostIndexByType = function(hostType) {
 };
 
 CliniaSearchCore.prototype._setHostIndexByType = function(hostIndex, hostType) {
-  var clone = require(21);
+  var clone = require(22);
   var newHostIndexes = clone(this._hostIndexes);
   newHostIndexes[hostType] = hostIndex;
   this._partialAppIdDataUpdate({ hostIndexes: newHostIndexes });
@@ -3081,28 +3097,6 @@ function prepareHost(protocol) {
   return function prepare(host) {
     return protocol + '//' + host.toLowerCase();
   };
-}
-
-// Prototype.js < 1.7, a widely used library, defines a weird
-// Array.prototype.toJSON function that will fail to stringify our content
-// appropriately
-// refs:
-//   - https://groups.google.com/forum/#!topic/prototype-core/E-SAVvV_V9Q
-//   - https://github.com/sstephenson/prototype/commit/038a2985a70593c1a86c230fadbdfe2e4898a48c
-//   - http://stackoverflow.com/a/3148441/147079
-function safeJSONStringify(obj) {
-  /* eslint no-extend-native:0 */
-
-  if (Array.prototype.toJSON === undefined) {
-    return JSON.stringify(obj);
-  }
-
-  var toJSON = Array.prototype.toJSON;
-  delete Array.prototype.toJSON;
-  var out = JSON.stringify(obj);
-  Array.prototype.toJSON = toJSON;
-
-  return out;
 }
 
 function shuffle(array) {
@@ -3148,9 +3142,9 @@ function removeCredentials(headers) {
   return newHeaders;
 }
 
-}).call(this,require(9))
-},{"1":1,"14":14,"15":15,"21":21,"22":22,"23":23,"24":24,"26":26,"4":4,"7":7,"9":9}],14:[function(require,module,exports){
-var buildSearchMethod = require(20);
+}).call(this,require(10))
+},{"1":1,"10":10,"15":15,"16":16,"22":22,"23":23,"24":24,"25":25,"26":26,"28":28,"29":29,"4":4,"7":7,"8":8}],15:[function(require,module,exports){
+var buildSearchMethod = require(21);
 
 module.exports = IndexCore;
 
@@ -3189,6 +3183,12 @@ IndexCore.prototype.clearCache = function() {
 IndexCore.prototype.search = buildSearchMethod('query');
 
 IndexCore.prototype._search = function(params, url, callback, additionalUA) {
+  var JSONPParams = encodeURIComponent(
+    '/v1/indexes/' +
+      encodeURIComponent(this.indexName) +
+      '/query?' +
+      params
+  )
   return this.as._jsonRequest({
     cache: this.cache,
     method: 'POST',
@@ -3198,7 +3198,7 @@ IndexCore.prototype._search = function(params, url, callback, additionalUA) {
     fallback: {
       method: 'GET',
       url: '/search/v1/indexes/' + this.indexName,
-      body: { params: params },
+      body: { params: JSONPParams },
     },
     callback: callback,
     additionalUA: additionalUA,
@@ -3210,7 +3210,7 @@ IndexCore.prototype.indexName = null;
 IndexCore.prototype.typeAheadArgs = null;
 IndexCore.prototype.typeAheadValueOption = null;
 
-},{"20":20}],15:[function(require,module,exports){
+},{"21":21}],16:[function(require,module,exports){
 module.exports = {
   isNullOrUndefined: isNullOrUndefined,
   isNotNullOrUndefined: isNotNullOrUndefined,
@@ -3233,15 +3233,15 @@ function isEmpty(arg) {
   }
   return true
 }; 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
-var CliniaSearchCore = require(13);
-var createCliniasearch = require(17);
+var CliniaSearchCore = require(14);
+var createCliniasearch = require(18);
 
 module.exports = createCliniasearch(CliniaSearchCore, 'Browser (lite)');
 
-},{"13":13,"17":17}],17:[function(require,module,exports){
+},{"14":14,"18":18}],18:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -3253,10 +3253,10 @@ var Promise = global.Promise || require(3).Promise;
 // using XMLHttpRequest, XDomainRequest and JSONP as fallback
 module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
   var inherits = require(6);
-  var errors = require(22);
-  var inlineHeaders = require(18);
-  var jsonpRequest = require(19);
-  var places = require(25);
+  var errors = require(23);
+  var inlineHeaders = require(19);
+  var jsonpRequest = require(20);
+  var places = require(27);
   uaSuffix = uaSuffix || '';
 
   if (process.env.NODE_ENV === 'debug') {
@@ -3264,7 +3264,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
   }
 
   function cliniasearch(applicationID, apiKey, opts) {
-    var cloneDeep = require(21);
+    var cloneDeep = require(22);
 
     opts = cloneDeep(opts || {});
 
@@ -3273,7 +3273,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
     return new CliniaSearchBrowser(applicationID, apiKey, opts);
   }
 
-  cliniasearch.version = require(27);
+  cliniasearch.version = require(30);
 
   cliniasearch.ua =
     'Clinia for JavaScript (' + cliniasearch.version + '); ' + uaSuffix;
@@ -3487,13 +3487,13 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
   return cliniasearch;
 };
 
-}).call(this,require(9))
-},{"1":1,"18":18,"19":19,"21":21,"22":22,"25":25,"27":27,"3":3,"5":5,"6":6,"9":9}],18:[function(require,module,exports){
+}).call(this,require(10))
+},{"1":1,"10":10,"19":19,"20":20,"22":22,"23":23,"27":27,"3":3,"30":30,"5":5,"6":6}],19:[function(require,module,exports){
 'use strict';
 
 module.exports = inlineHeaders;
 
-var encode = require(11);
+var encode = require(12);
 
 function inlineHeaders(url, headers) {
   if (/\?/.test(url)) {
@@ -3505,12 +3505,12 @@ function inlineHeaders(url, headers) {
   return url + encode(headers);
 }
 
-},{"11":11}],19:[function(require,module,exports){
+},{"12":12}],20:[function(require,module,exports){
 'use strict';
 
 module.exports = jsonpRequest;
 
-var errors = require(22);
+var errors = require(23);
 
 var JSONPCounter = 0;
 
@@ -3639,10 +3639,8 @@ function jsonpRequest(url, opts, cb) {
   }
 }
 
-},{"22":22}],20:[function(require,module,exports){
+},{"23":23}],21:[function(require,module,exports){
 module.exports = buildSearchMethod;
-
-var errors = require(22);
 
 /**
  * Creates a search method to be used in clients
@@ -3664,15 +3662,18 @@ function buildSearchMethod(queryParam, url) {
       // Usage : .search(), .search(cb)
       callback = query;
       query = '';
-    } else if (arguments.length === 1 || typeof args === 'function') {
+    }
+    else if (arguments.length === 1 || typeof args === 'function') {
       // Usage : .search(query/args), .search(query, cb)
       callback = args;
       args = undefined;
     }
 
     if (typeof query === 'object' && query !== null) {
+      // .search(args)
       args = query;
-      query = undefined;
+      query = args.query || '';
+      delete args.query;
     } else if (query === undefined || query === null) {
       // .search(undefined/null)
       query = '';
@@ -3680,9 +3681,7 @@ function buildSearchMethod(queryParam, url) {
 
     var params = '';
 
-    if (query !== undefined) {
-      params += queryParam + '=' + encodeURIComponent(query);
-    }
+    params += queryParam + '=' + encodeURIComponent(query) || '';
 
     var additionalUA;
     if (args !== undefined) {
@@ -3690,20 +3689,21 @@ function buildSearchMethod(queryParam, url) {
         additionalUA = args.additionalUA;
         delete args.additionalUA;
       }
-      // `_getSearchParams` will augment params
-      params = this.as._getSearchParams(args, params);
     }
+    
+    // `_getSearchParams` will augment params
+    params = this.as._getSearchParams(args, params);
 
     return this._search(params, url, callback, additionalUA);
   };
 }
 
-},{"22":22}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 module.exports = function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 };
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 // This file hosts our error definitions
@@ -3786,7 +3786,7 @@ module.exports = {
   Unknown: createCustomError('Unknown', 'Unknown error occured'),
 };
 
-},{"4":4,"6":6}],23:[function(require,module,exports){
+},{"4":4,"6":6}],24:[function(require,module,exports){
 // Parse cloud does not supports setTimeout
 // We do not store a setTimeout reference in the client everytime
 // We only fallback to a fake setTimeout when not available
@@ -3795,7 +3795,30 @@ module.exports = function exitPromise(fn, _setTimeout) {
   _setTimeout(fn, 0);
 };
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
+module.exports = {
+  error: error,
+  warn: warn,
+  warn: info,
+  debug: debug
+}
+
+function error(message) {
+  console.error(message)
+}
+
+function warn(message) {
+  console.warn(message)
+}
+
+function info(message) {
+  console.info(message)
+}
+
+function debug(message) {
+  console.debug(message)
+} 
+},{}],26:[function(require,module,exports){
 var foreach = require(4);
 
 module.exports = function map(arr, fn) {
@@ -3806,16 +3829,40 @@ module.exports = function map(arr, fn) {
   return newArr;
 };
 
-},{"4":4}],25:[function(require,module,exports){
+},{"4":4}],27:[function(require,module,exports){
 module.exports = createPlacesClient;
 
-var qs3 = require(12);
-var buildSearchMethod = require(20);
+var qs3 = require(13);
+var buildSearchMethod = require(21);
 
 // TODO
 function createPlacesClient(cliniasearch) {}
 
-},{"12":12,"20":20}],26:[function(require,module,exports){
+},{"13":13,"21":21}],28:[function(require,module,exports){
+module.exports = safeJSONStringify;
+
+// Prototype.js < 1.7, a widely used library, defines a weird
+// Array.prototype.toJSON function that will fail to stringify our content
+// appropriately
+// refs:
+//   - https://groups.google.com/forum/#!topic/prototype-core/E-SAVvV_V9Q
+//   - https://github.com/sstephenson/prototype/commit/038a2985a70593c1a86c230fadbdfe2e4898a48c
+//   - http://stackoverflow.com/a/3148441/147079
+function safeJSONStringify(obj) {
+  /* eslint no-extend-native:0 */
+
+  if (Array.prototype.toJSON === undefined) {
+    return JSON.stringify(obj);
+  }
+
+  var toJSON = Array.prototype.toJSON;
+  delete Array.prototype.toJSON;
+  var out = JSON.stringify(obj);
+  Array.prototype.toJSON = toJSON;
+
+  return out;
+}
+},{}],29:[function(require,module,exports){
 (function (global){
 var debug = require(1)('cliniasearch:src/hostIndexState.js');
 var localStorageNamespace = 'cliniasearch-client-js';
@@ -3906,10 +3953,10 @@ function cleanup() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"1":1}],27:[function(require,module,exports){
+},{"1":1}],30:[function(require,module,exports){
 'use strict';
 
-module.exports = '1.0.0-beta.1';
+module.exports = '1.0.0-beta.4';
 
-},{}]},{},[16])(16)
+},{}]},{},[17])(17)
 });

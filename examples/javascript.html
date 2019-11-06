@@ -42,7 +42,27 @@
       });
 
       var index = client.initIndex('health_facility');
-      index.search('sons', { queryType: 'prefix_last'}, function(err, results) {
+
+      index.search('sons', function(err, results) {
+        if (err) {
+          throw err;
+        }
+        console.log('We got `' + results.meta.total + '` results');
+        console.log('Here is the first one: ', results.records[0]);
+      });
+
+      index.search('jo', { queryType: 'prefix_last' }, function(err, results) {
+        if (err) {
+          throw err;
+        }
+        console.log('We got `' + results.meta.total + '` results');
+        console.log('Here is the first one: ', results.records[0]);
+      });
+
+      index.search({ query: 'jo', queryType: 'prefix_last' }, function(
+        err,
+        results
+      ) {
         if (err) {
           throw err;
         }
