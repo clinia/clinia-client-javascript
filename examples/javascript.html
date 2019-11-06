@@ -69,6 +69,29 @@
         console.log('We got `' + results.meta.total + '` results');
         console.log('Here is the first one: ', results.records[0]);
       });
+      
+      client.suggest('sons', { highlightPreTag: "<strong>", highlightPostTag: "</strong>" }, function(err, suggestions) {
+        if (err) {
+          throw err;
+        }
+        console.log('We got `' + suggestions.length + '` suggestions');
+        console.log('Here is the first one: ', suggestions[0]);
+      })
+      client.suggest('sons', function(err, suggestions) {
+        if (err) {
+          throw err;
+        }
+        console.log('We got `' + suggestions.length + '` suggestions');
+        console.log('Here is the first one: ', suggestions[0]);
+      })
+      client.suggest({ query: 'sons', highlightPreTag: "<strong>", highlightPostTag: "</strong>" }, function(err, suggestions) {
+        if (err) {
+          throw err;
+        }
+        console.log('We got `' + suggestions.length + '` suggestions');
+        console.log('Here is the first one: ', suggestions[0]);
+      })
+
     </script>
     <div id="div">:)</div>
   </body>

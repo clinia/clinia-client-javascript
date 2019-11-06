@@ -550,7 +550,39 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
   });
 };
 
-/*
+/**
+ * Transform suggest param object in query string
+ * @param {object} args arguments to add to the current query params
+ * @param {object} params current query params
+ * @return {object} the final query params
+ */
+CliniaSearchCore.prototype._getSuggestParams = function(args, params) {
+  var argCheck = require('./argCheck.js');
+  var logger = require('./logger.js');
+
+  if (args === undefined || args === null) {
+    return params;
+  }
+
+  if (argCheck.isNotNullOrUndefined(args.size) && typeof args.size !== 'number') {
+    logger.warn('Ignoring suggest query parameter `size`. Must be a number.')
+    delete args.size
+  }
+
+  if (argCheck.isNotNullOrUndefined(args.highlightPreTag) && typeof args.highlightPreTag !== 'string') {
+    logger.warn('Ignoring suggest query parameter `highlightPreTag`. Must be a string.')
+    delete args.highlightPreTag
+  }
+
+  if (argCheck.isNotNullOrUndefined(args.highlightPostTag) && typeof args.highlightPostTag !== 'string') {
+    logger.warn('Ignoring suggest query parameter `highlightPostTag`. Must be a string.')
+    delete args.highlightPostTag
+  }
+  
+  return buildQueryParams(args, params);
+}
+
+/**
  * Transform search param object in query string
  * @param {object} args arguments to add to the current query string
  * @param {string} params current query string
@@ -560,7 +592,6 @@ CliniaSearchCore.prototype._getSearchParams = function(args, params) {
   var argCheck = require('./argCheck.js');
   var isArray = require('isArray');
   var logger = require('./logger.js');
-  var safeJSONStringify = require('./safeJSONStringify.js')
   
   if (args === undefined || args === null) {
     return params;
@@ -628,22 +659,7 @@ CliniaSearchCore.prototype._getSearchParams = function(args, params) {
     }
   }
 
-  for (var key in args) {
-    if (key !== null && args[key] !== undefined && args.hasOwnProperty(key)) {
-      params += params === '' ? '' : '&';
-      const type = Object.prototype.toString.call(args[key])
-      params +=
-        key +
-        '=' +
-        encodeURIComponent(
-          type === '[object Array]' || type === '[object Object]'
-            ? safeJSONStringify(args[key])
-            : args[key]
-        );
-    }
-  }
-
-  return params;
+  return buildQueryParams(args, params);
 };
 
 /**
@@ -693,6 +709,60 @@ CliniaSearchCore.prototype._computeRequestHeaders = function(options) {
 
   return requestHeaders;
 };
+
+/**
+ * Get suggestions based on a query
+ * @param  {Object} args  The query parmeters.
+ * @param {string} query The query to get suggestions for
+ * @param {string[]} args.size Max number of suggestions to receive
+ * @param {string} args.highlightPreTag The pre tag used to highlight matched query parts
+ * @param {string} args.highlightPostTag The post tag used to highlight matched query parts
+ * @param  {Function} callback Callback to be called
+ * @return {Promise|undefined} Returns a promise if no callback given
+ */
+CliniaSearchCore.prototype.suggest = function(query, args, callback) {
+  var normalizeParams = require('./normalizeMethodParameters')
+  
+  // Normalizing the function signature
+  var normalizedParameters = normalizeParams(query, args, callback)
+  query = normalizedParameters[0]
+  args = normalizedParameters[1]
+  callback = normalizedParameters[2]
+
+  var params = '';
+
+  params += 'query=' + encodeURIComponent(query) || '';
+
+  var additionalUA;
+  if (args !== undefined) {
+    if (args.additionalUA) {
+      additionalUA = args.additionalUA;
+      delete args.additionalUA;
+    }
+  }
+
+  // `_getSuggestParams` will augment params
+  params = this._getSuggestParams(args, params);
+
+  return this._suggest({ params: params }, callback, additionalUA);
+}
+
+CliniaSearchCore.prototype._suggest = function(params, callback, additionalUA) {
+  return this._jsonRequest({
+    cache: this.cache,
+    method: 'POST',
+    url: '/search/v1/indexes/suggestions/query',
+    body: params,
+    hostType: 'read',
+    fallback: {
+      method: 'GET',
+      url: '/search/v1/indexes/suggestions/query',
+      body: params,
+    },
+    additionalUA: additionalUA,
+    callback: callback,
+  });
+}
 
 /**
  * Search through multiple indices at the same time
@@ -920,6 +990,25 @@ CliniaSearchCore.prototype._getTimeoutsForRequest = function(hostType) {
     complete: this._timeouts[hostType] * this._timeoutMultiplier,
   };
 };
+
+function buildQueryParams(args, params) {
+  var safeJSONStringify = require('./safeJSONStringify.js')
+  for (var key in args) {
+    if (key !== null && args[key] !== undefined && args.hasOwnProperty(key)) {
+      params += params === '' ? '' : '&';
+      const type = Object.prototype.toString.call(args[key])
+      params +=
+        key +
+        '=' +
+        encodeURIComponent(
+          type === '[object Array]' || type === '[object Object]'
+            ? safeJSONStringify(args[key])
+            : args[key]
+        );
+    }
+  }
+  return params
+}
 
 function prepareHost(protocol) {
   return function prepare(host) {

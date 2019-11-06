@@ -15,27 +15,13 @@ function buildSearchMethod(queryParam, url) {
    * @return {undefined|Promise} If the callback is not provided then this methods returns a Promise
    */
   return function search(query, args, callback) {
+    var normalizeParams = require('./normalizeMethodParameters')
+    
     // Normalizing the function signature
-    if (arguments.length === 0 || typeof query === 'function') {
-      // Usage : .search(), .search(cb)
-      callback = query;
-      query = '';
-    }
-    else if (arguments.length === 1 || typeof args === 'function') {
-      // Usage : .search(query/args), .search(query, cb)
-      callback = args;
-      args = undefined;
-    }
-
-    if (typeof query === 'object' && query !== null) {
-      // .search(args)
-      args = query;
-      query = args.query || '';
-      delete args.query;
-    } else if (query === undefined || query === null) {
-      // .search(undefined/null)
-      query = '';
-    }
+    var normalizedParameters = normalizeParams(query, args, callback)
+    query = normalizedParameters[0]
+    args = normalizedParameters[1]
+    callback = normalizedParameters[2]
 
     var params = '';
 
