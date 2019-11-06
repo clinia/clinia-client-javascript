@@ -42,7 +42,7 @@
       });
 
       var index = client.initIndex('health_facility');
-      index.search({ query: 'jo', params: {queryType: 'prefix_last' }}, function(err, results) {
+      index.search('sons', { queryType: 'prefix_last'}, function(err, results) {
         if (err) {
           throw err;
         }

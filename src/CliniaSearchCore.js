@@ -748,9 +748,9 @@ CliniaSearchCore.prototype.search = function(queries, opts, callback) {
       requestId +
       '=' +
       encodeURIComponent(
-        '/v1/indexes/' +
+        '/1/indexes/' +
           encodeURIComponent(request.indexName) +
-          'query?' +
+          '?' +
           request.params
       )
     );
