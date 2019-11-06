@@ -180,6 +180,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
   this._checkAppIdData();
 
   var requestDebug = require('debug')('cliniasearch:' + initialOpts.url);
+  var safeJSONStringify = require('./safeJSONStringify.js')
 
   var body;
   var cacheID;
@@ -556,18 +557,86 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
  * @return {string} the final query string
  */
 CliniaSearchCore.prototype._getSearchParams = function(args, params) {
+  var argCheck = require('./argCheck.js');
+  var isArray = require('isArray');
+  var logger = require('./logger.js');
+  var safeJSONStringify = require('./safeJSONStringify.js')
+  
   if (args === undefined || args === null) {
     return params;
+  }
+
+  if (argCheck.isNotNullOrUndefined(args.page) && typeof args.page !== 'number') {
+    logger.warn('Ignoring search query parameter `page`. Must be a number.');
+    delete args.page;
+  }
+
+  if (argCheck.isNotNullOrUndefined(args.perPage) && typeof args.perPage !== 'number') {
+    logger.warn('Ignoring search query parameter `perPage`. Must be a number.');
+    delete args.perPage;
+  }
+
+  if (argCheck.isNotNullOrUndefined(args.searchFields) && !isArray(args.searchFields)) {
+    logger.warn('Ignoring search query parameter `searchFields`. Must be an array.');
+    delete args.searchFields;
+  }
+
+  if (argCheck.isNotNullOrUndefined(args.queryTypes) && !isArray(args.queryTypes)) {
+    logger.warn('Ignoring search query parameter `queryTypes`. Must be an array.');
+    delete args.queryTypes;
+  }
+
+  if (argCheck.isNotNullOrUndefined(args.filters)) {
+    if ((typeof args.filters !== 'object' || isArray(args.filters))) {
+      logger.warn('Ignoring search query parameter `filters`. Must be an object.');
+      delete args.filters;
+    } else {
+      if (argCheck.isNotNullOrUndefined(args.filters.types) && !isArray(args.filters.types)) {
+        logger.warn('Ignoring search query parameter `filters.types`. Must be an array.');
+        delete args.filters.types;
+      }
+
+      if (argCheck.isNotNullOrUndefined(args.filters.hours)) {
+        if (typeof args.filters.hours !== 'object' || isArray(args.filters.hours)) {
+          logger.warn('Ignoring search query parameter `filters.hours`. Must be an object.');
+          delete args.filters.hours;
+        } else {
+          if (argCheck.isNotNullOrUndefined(args.filters.hours.offset) && typeof args.filters.hours.offset !== 'number') {
+            logger.warn('Ignoring search query parameter `filters.hours.offset`. Must be a number.');
+            delete args.filters.hours.offset;
+          }
+
+          if (argCheck.isNotNullOrUndefined(args.filters.hours.values) && !isArray(args.filters.hours.values)) {
+            logger.warn('Ignoring search query parameter `filters.hours.values`. Must be an array.');
+            delete args.filters.hours.values;
+          }
+        }
+
+        if (argCheck.isEmpty(args.filters.hours)) {
+          delete args.filters.hours
+        }
+      }
+
+      if (argCheck.isNotNullOrUndefined(args.filters.location) && typeof args.filters.location !== 'string') {
+        logger.warn('Ignoring search query parameter `filters.location`. Must be a string.');
+        delete args.filters.location;
+      }
+    }
+
+    if (argCheck.isEmpty(args.filters)) {
+      delete args.filters
+    }
   }
 
   for (var key in args) {
     if (key !== null && args[key] !== undefined && args.hasOwnProperty(key)) {
       params += params === '' ? '' : '&';
+      const type = Object.prototype.toString.call(args[key])
       params +=
         key +
         '=' +
         encodeURIComponent(
-          Object.prototype.toString.call(args[key]) === '[object Array]'
+          type === '[object Array]' || type === '[object Object]'
             ? safeJSONStringify(args[key])
             : args[key]
         );
@@ -856,28 +925,6 @@ function prepareHost(protocol) {
   return function prepare(host) {
     return protocol + '//' + host.toLowerCase();
   };
-}
-
-// Prototype.js < 1.7, a widely used library, defines a weird
-// Array.prototype.toJSON function that will fail to stringify our content
-// appropriately
-// refs:
-//   - https://groups.google.com/forum/#!topic/prototype-core/E-SAVvV_V9Q
-//   - https://github.com/sstephenson/prototype/commit/038a2985a70593c1a86c230fadbdfe2e4898a48c
-//   - http://stackoverflow.com/a/3148441/147079
-function safeJSONStringify(obj) {
-  /* eslint no-extend-native:0 */
-
-  if (Array.prototype.toJSON === undefined) {
-    return JSON.stringify(obj);
-  }
-
-  var toJSON = Array.prototype.toJSON;
-  delete Array.prototype.toJSON;
-  var out = JSON.stringify(obj);
-  Array.prototype.toJSON = toJSON;
-
-  return out;
 }
 
 function shuffle(array) {

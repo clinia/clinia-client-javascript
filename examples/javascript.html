@@ -42,7 +42,7 @@
       });
 
       var index = client.initIndex('health_facility');
-      index.search('jo', { queryType: 'prefix_last' }, function(err, results) {
+      index.search('sons', { queryType: 'prefix_last'}, function(err, results) {
         if (err) {
           throw err;
         }
@@ -50,5 +50,6 @@
         console.log('Here is the first one: ', results.records[0]);
       });
     </script>
+    <div id="div">:)</div>
   </body>
 </html>

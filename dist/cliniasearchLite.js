@@ -2170,10 +2170,11 @@ exports.encode = exports.stringify = require(11);
 (function (process){
 module.exports = CliniaSearchCore;
 
-var errors = require(21);
-var exitPromise = require(22);
+var errors = require(22);
+var exitPromise = require(23);
 var IndexCore = require(14);
-var store = require(25);
+var store = require(26);
+var argCheck = require(15)
 
 // We will always put the API KEY in the JSON body in case of too long API KEY,
 // to avoid query string being too long and failing in various conditions (our server limit, browser limit,
@@ -2199,9 +2200,9 @@ var RESET_APP_DATA_TIMER =
 function CliniaSearchCore(applicationID, apiKey, opts) {
   var debug = require(1)('cliniasearch');
 
-  var clone = require(20);
+  var clone = require(21);
   var isArray = require(7);
-  var map = require(23);
+  var map = require(24);
 
   var usage = 'Usage: cliniasearch(applicationID, apiKey, opts)';
 
@@ -2730,6 +2731,60 @@ CliniaSearchCore.prototype._getSearchParams = function(args, params) {
     return params;
   }
 
+  if (argCheck.isNotNullOrUndefined(args.page) && typeof args.page !== 'number') {
+    logger.warn('Ignoring search query parameter `page`. Must be a number.')
+    delete args.page
+  }
+
+  if (argCheck.isNotNullOrUndefined(args.perPage) && typeof args.perPage !== 'number') {
+    logger.warn('Ignoring search query parameter `perPage`. Must be a number.')
+    delete args.perPage
+  }
+
+  if (argCheck.isNotNullOrUndefined(args.searchFields) && !isArray(args.searchFields)) {
+    logger.warn('Ignoring search query parameter `searchFields`. Must be an array.')
+    delete args.searchFields
+  }
+
+  if (argCheck.isNotNullOrUndefined(args.queryTypes) && !isArray(args.queryTypes)) {
+    logger.warn('Ignoring search query parameter `queryTypes`. Must be an array.')
+    delete args.queryTypes
+  }
+
+  if (argCheck.isNotNullOrUndefined(args.filters)) {
+    if ((typeof args.filters !== 'object' || isArray(args.filters))) {
+      logger.warn('Ignoring search query parameter `filters`. Must be an object.')
+      delete args.filters
+    } else {
+      if (argCheck.isNotNullOrUndefined(args.filters.types) && !isArray(args.filters.types)) {
+        logger.warn('Ignoring search query parameter `filters.types`. Must be an array.')
+        delete args.filters.types
+      }
+
+      if (argCheck.isNotNullOrUndefined(args.filters.hours)) {
+        if (typeof args.filters.hours !== 'object' || isArray(args.filters.hours)) {
+          logger.warn('Ignoring search query parameter `filters.hours`. Must be an object.')
+          delete args.filters.hours
+        } else {
+          if (argCheck.isNotNullOrUndefined(args.filters.hours.offset) && typeof args.filters.hours.offset !== 'number') {
+            logger.warn('Ignoring search query parameter `filters.hours.offset`. Must be a number.')
+            delete args.filters.hours.offset
+          }
+
+          if (argCheck.isNotNullOrUndefined(args.filters.hours.values) && !isArray(args.filters.hours.values)) {
+            logger.warn('Ignoring search query parameter `filters.hours.values`. Must be an array.')
+            delete args.filters.hours.values
+          }
+        }
+      }
+
+      if (argCheck.isNotNullOrUndefined(args.filters.geo) && typeof args.filters.geo !== 'string') {
+        logger.warn('Ignoring search query parameter `filters.geo`. Must be a string.')
+        delete args.filters.geo
+      }
+    }
+  }
+
   for (var key in args) {
     if (key !== null && args[key] !== undefined && args.hasOwnProperty(key)) {
       params += params === '' ? '' : '&';
@@ -2806,7 +2861,7 @@ CliniaSearchCore.prototype._computeRequestHeaders = function(options) {
  */
 CliniaSearchCore.prototype.search = function(queries, opts, callback) {
   var isArray = require(7);
-  var map = require(23);
+  var map = require(24);
 
   var usage = 'Usage: client.search(arrayOfQueries[, callback])';
 
@@ -2996,7 +3051,7 @@ CliniaSearchCore.prototype._getHostIndexByType = function(hostType) {
 };
 
 CliniaSearchCore.prototype._setHostIndexByType = function(hostIndex, hostType) {
-  var clone = require(20);
+  var clone = require(21);
   var newHostIndexes = clone(this._hostIndexes);
   newHostIndexes[hostType] = hostIndex;
   this._partialAppIdDataUpdate({ hostIndexes: newHostIndexes });
@@ -3094,8 +3149,8 @@ function removeCredentials(headers) {
 }
 
 }).call(this,require(9))
-},{"1":1,"14":14,"20":20,"21":21,"22":22,"23":23,"25":25,"4":4,"7":7,"9":9}],14:[function(require,module,exports){
-var buildSearchMethod = require(19);
+},{"1":1,"14":14,"15":15,"21":21,"22":22,"23":23,"24":24,"26":26,"4":4,"7":7,"9":9}],14:[function(require,module,exports){
+var buildSearchMethod = require(20);
 
 module.exports = IndexCore;
 
@@ -3155,15 +3210,38 @@ IndexCore.prototype.indexName = null;
 IndexCore.prototype.typeAheadArgs = null;
 IndexCore.prototype.typeAheadValueOption = null;
 
-},{"19":19}],15:[function(require,module,exports){
+},{"20":20}],15:[function(require,module,exports){
+module.exports = {
+  isNullOrUndefined: isNullOrUndefined,
+  isNotNullOrUndefined: isNotNullOrUndefined,
+  isEmpty: isEmpty
+};
+
+function isNullOrUndefined(arg) {
+  return arg === undefined || arg === null
+};
+
+function isNotNullOrUndefined(arg) {
+  return !isNullOrUndefined(arg)
+};
+
+function isEmpty(arg) {
+  for(var key in arg) {
+    if (key !== null && arg[key] !== undefined && arg.hasOwnProperty(key)) {
+      return false
+    }
+  }
+  return true
+}; 
+},{}],16:[function(require,module,exports){
 'use strict';
 
 var CliniaSearchCore = require(13);
-var createCliniasearch = require(16);
+var createCliniasearch = require(17);
 
 module.exports = createCliniasearch(CliniaSearchCore, 'Browser (lite)');
 
-},{"13":13,"16":16}],16:[function(require,module,exports){
+},{"13":13,"17":17}],17:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -3175,10 +3253,10 @@ var Promise = global.Promise || require(3).Promise;
 // using XMLHttpRequest, XDomainRequest and JSONP as fallback
 module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
   var inherits = require(6);
-  var errors = require(21);
-  var inlineHeaders = require(17);
-  var jsonpRequest = require(18);
-  var places = require(24);
+  var errors = require(22);
+  var inlineHeaders = require(18);
+  var jsonpRequest = require(19);
+  var places = require(25);
   uaSuffix = uaSuffix || '';
 
   if (process.env.NODE_ENV === 'debug') {
@@ -3186,7 +3264,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
   }
 
   function cliniasearch(applicationID, apiKey, opts) {
-    var cloneDeep = require(20);
+    var cloneDeep = require(21);
 
     opts = cloneDeep(opts || {});
 
@@ -3195,7 +3273,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
     return new CliniaSearchBrowser(applicationID, apiKey, opts);
   }
 
-  cliniasearch.version = require(26);
+  cliniasearch.version = require(27);
 
   cliniasearch.ua =
     'Clinia for JavaScript (' + cliniasearch.version + '); ' + uaSuffix;
@@ -3410,7 +3488,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
 };
 
 }).call(this,require(9))
-},{"1":1,"17":17,"18":18,"20":20,"21":21,"24":24,"26":26,"3":3,"5":5,"6":6,"9":9}],17:[function(require,module,exports){
+},{"1":1,"18":18,"19":19,"21":21,"22":22,"25":25,"27":27,"3":3,"5":5,"6":6,"9":9}],18:[function(require,module,exports){
 'use strict';
 
 module.exports = inlineHeaders;
@@ -3427,12 +3505,12 @@ function inlineHeaders(url, headers) {
   return url + encode(headers);
 }
 
-},{"11":11}],18:[function(require,module,exports){
+},{"11":11}],19:[function(require,module,exports){
 'use strict';
 
 module.exports = jsonpRequest;
 
-var errors = require(21);
+var errors = require(22);
 
 var JSONPCounter = 0;
 
@@ -3561,10 +3639,10 @@ function jsonpRequest(url, opts, cb) {
   }
 }
 
-},{"21":21}],19:[function(require,module,exports){
+},{"22":22}],20:[function(require,module,exports){
 module.exports = buildSearchMethod;
 
-var errors = require(21);
+var errors = require(22);
 
 /**
  * Creates a search method to be used in clients
@@ -3620,12 +3698,12 @@ function buildSearchMethod(queryParam, url) {
   };
 }
 
-},{"21":21}],20:[function(require,module,exports){
+},{"22":22}],21:[function(require,module,exports){
 module.exports = function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 };
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 // This file hosts our error definitions
@@ -3708,7 +3786,7 @@ module.exports = {
   Unknown: createCustomError('Unknown', 'Unknown error occured'),
 };
 
-},{"4":4,"6":6}],22:[function(require,module,exports){
+},{"4":4,"6":6}],23:[function(require,module,exports){
 // Parse cloud does not supports setTimeout
 // We do not store a setTimeout reference in the client everytime
 // We only fallback to a fake setTimeout when not available
@@ -3717,7 +3795,7 @@ module.exports = function exitPromise(fn, _setTimeout) {
   _setTimeout(fn, 0);
 };
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var foreach = require(4);
 
 module.exports = function map(arr, fn) {
@@ -3728,16 +3806,16 @@ module.exports = function map(arr, fn) {
   return newArr;
 };
 
-},{"4":4}],24:[function(require,module,exports){
+},{"4":4}],25:[function(require,module,exports){
 module.exports = createPlacesClient;
 
 var qs3 = require(12);
-var buildSearchMethod = require(19);
+var buildSearchMethod = require(20);
 
 // TODO
 function createPlacesClient(cliniasearch) {}
 
-},{"12":12,"19":19}],25:[function(require,module,exports){
+},{"12":12,"20":20}],26:[function(require,module,exports){
 (function (global){
 var debug = require(1)('cliniasearch:src/hostIndexState.js');
 var localStorageNamespace = 'cliniasearch-client-js';
@@ -3828,10 +3906,10 @@ function cleanup() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"1":1}],26:[function(require,module,exports){
+},{"1":1}],27:[function(require,module,exports){
 'use strict';
 
 module.exports = '1.0.0-beta.1';
 
-},{}]},{},[15])(15)
+},{}]},{},[16])(16)
 });

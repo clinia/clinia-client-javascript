@@ -1,7 +1,5 @@
 module.exports = buildSearchMethod;
 
-var errors = require('./errors.js');
-
 /**
  * Creates a search method to be used in clients
  * @param {string} queryParam the name of the attribute used for the query
@@ -22,15 +20,18 @@ function buildSearchMethod(queryParam, url) {
       // Usage : .search(), .search(cb)
       callback = query;
       query = '';
-    } else if (arguments.length === 1 || typeof args === 'function') {
+    }
+    else if (arguments.length === 1 || typeof args === 'function') {
       // Usage : .search(query/args), .search(query, cb)
       callback = args;
       args = undefined;
     }
 
     if (typeof query === 'object' && query !== null) {
+      // .search(args)
       args = query;
-      query = undefined;
+      query = args.query || '';
+      delete args.query;
     } else if (query === undefined || query === null) {
       // .search(undefined/null)
       query = '';
@@ -38,9 +39,7 @@ function buildSearchMethod(queryParam, url) {
 
     var params = '';
 
-    if (query !== undefined) {
-      params += queryParam + '=' + encodeURIComponent(query);
-    }
+    params += queryParam + '=' + encodeURIComponent(query) || '';
 
     var additionalUA;
     if (args !== undefined) {
@@ -48,9 +47,10 @@ function buildSearchMethod(queryParam, url) {
         additionalUA = args.additionalUA;
         delete args.additionalUA;
       }
-      // `_getSearchParams` will augment params
-      params = this.as._getSearchParams(args, params);
     }
+    
+    // `_getSearchParams` will augment params
+    params = this.as._getSearchParams(args, params);
 
     return this._search(params, url, callback, additionalUA);
   };
