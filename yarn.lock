@@ -2534,11 +2534,6 @@ eslint-config-airbnb@^0.1.0:
   resolved "https://registry.yarnpkg.com/eslint-config-airbnb/-/eslint-config-airbnb-0.1.1.tgz#05731461210efe985acc3aa5be0a821952deb8e7"
   integrity sha1-BXMUYSEO/phazDqlvgqCGVLeuOc=
 
-eslint-config-algolia@4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-algolia/-/eslint-config-algolia-4.2.0.tgz#8001ff007049183a9ab9560bcfc8aa1b13a2f0e3"
-  integrity sha1-gAH/AHBJGDqauVYLz8iqGxOi8OM=
-
 eslint-plugin-react@^3.6.3:
   version "3.16.1"
   resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-3.16.1.tgz#262d96b77d7c4a42af809a73c0e527a58612293c"
