@@ -92,6 +92,29 @@
         console.log('Here is the first one: ', suggestions[0]);
       })
 
+      var places = client.initPlaces();
+      places.suggest('2241 rue asselin', function(err, results) {
+        if (err) {
+          throw err;
+        }
+        console.log('We got `' + results.length + '` places');
+        console.log('Here is the first one: ', results[0]);
+      })
+      places.suggest('2241 rue asselin', {limit:2}, function(err, results) {
+        if (err) {
+          throw err;
+        }
+        console.log('We got `' + results.length + '` places');
+        console.log('Here is the first one: ', results[0]);
+      })
+      places.suggest({query: '2241 rue asselin', limit:2}, function(err, results) {
+        if (err) {
+          throw err;
+        }
+        console.log('We got `' + results.length + '` places');
+        console.log('Here is the first one: ', results[0]);
+      })
+
     </script>
     <div id="div">:)</div>
   </body>

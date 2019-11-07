@@ -4,6 +4,7 @@ var errors = require('./errors');
 var exitPromise = require('./exitPromise.js');
 var IndexCore = require('./IndexCore.js');
 var store = require('./store.js');
+var PlacesCore = require('./PlacesCore.js');
 
 // We will always put the API KEY in the JSON body in case of too long API KEY,
 // to avoid query string being too long and failing in various conditions (our server limit, browser limit,
@@ -121,7 +122,7 @@ function CliniaSearchCore(applicationID, apiKey, opts) {
   debug('init done, %j', this);
 }
 
-/*
+/**
  * Get the index object initialized
  *
  * @param indexName the name of index
@@ -129,6 +130,15 @@ function CliniaSearchCore(applicationID, apiKey, opts) {
  */
 CliniaSearchCore.prototype.initIndex = function(indexName) {
   return new IndexCore(this, indexName);
+};
+
+/**
+ * Get the places object initialized
+ *
+ * @param callback the result callback with one argument (the Places instance)
+ */
+CliniaSearchCore.prototype.initPlaces = function() {
+  return new PlacesCore(this);
 };
 
 /**
@@ -549,6 +559,36 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
     return content.body;
   });
 };
+
+/** Transform places param object in query string
+ * @param {object} args arguments to add to the current query string
+ * @param {object} params current query string
+ * @return {object} the final query string
+ */
+CliniaSearchCore.prototype._getPlacesParams = function(args, params) {
+  var argCheck = require('./argCheck.js');
+  var logger = require('./logger.js');
+  
+  params += '&types=place&types=postcode&types=neighborhood'
+  if (args === undefined || args === null) {
+    return params;
+  }
+
+  if (argCheck.isNotNullOrUndefined(args.limit) && typeof args.limit !== 'number') {
+    logger.warn('Ignoring places query parameter `limit`. Must be a number.')
+    delete args.limit
+  }
+
+  if (argCheck.isNotNullOrUndefined(args.country) && typeof args.country !== 'string') {
+    logger.warn('Ignoring places query parameter `country`. Must be a string.')
+    delete args.country
+  }
+
+  // Delete the `types` attributes so the users don't override our types params 
+  delete args.types
+
+  return buildQueryParams(args, params)
+}
 
 /**
  * Transform suggest param object in query string

@@ -11,7 +11,6 @@ var Promise = window.Promise || require('es6-promise').Promise;
 var CliniaSearch = require('../../CliniaSearch');
 var errors = require('../../errors');
 var inlineHeaders = require('../../browser/inline-headers');
-var places = require('../../places.js');
 
 function cliniasearch(applicationID, apiKey, opts) {
   var cloneDeep = require('../../clone.js');
@@ -37,8 +36,6 @@ cliniasearch.version = require('../../version.js');
 
 cliniasearch.ua =
   'Clinia for JavaScript (' + cliniasearch.version + '); React Native';
-
-cliniasearch.initPlaces = places(cliniasearch);
 
 // we expose into window no matter how we are used, this will allow
 // us to easily debug any website running clinia
