@@ -11,7 +11,6 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
   var errors = require('../errors');
   var inlineHeaders = require('./inline-headers');
   var jsonpRequest = require('./jsonp-request');
-  var places = require('../places.js');
   uaSuffix = uaSuffix || '';
 
   if (process.env.NODE_ENV === 'debug') {
@@ -32,8 +31,6 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
 
   cliniasearch.ua =
     'Clinia for JavaScript (' + cliniasearch.version + '); ' + uaSuffix;
-
-  cliniasearch.initPlaces = places(cliniasearch);
 
   // we expose into window no matter how we are used, this will allow
   // us to easily debug any website running clinia

@@ -12,7 +12,6 @@ var CliniaSearch = require('../../CliniaSearch');
 var errors = require('../../errors');
 var inlineHeaders = require('../inline-headers');
 var jsonpRequest = require('../jsonp-request');
-var places = require('../../places.js');
 
 // expose original cliniasearch fn in window
 window.cliniasearch = require('./cliniasearch');
@@ -45,8 +44,6 @@ window.angular.module('cliniasearch', []).service('clinia', [
       'AngularJS (' +
       window.angular.version.full +
       ')';
-
-    cliniasearch.initPlaces = places(cliniasearch);
 
     // we expose into window no matter how we are used, this will allow
     // us to easily debug any website running clinia

@@ -12,7 +12,6 @@ var Promise = global.Promise || require('es6-promise').Promise;
 var semver = require('semver');
 var isNotSupported = semver.satisfies(process.version, '<0.10');
 var isNode010 = semver.satisfies(process.version, '=0.10');
-var places = require('../../places.js');
 
 var CliniaSearchServer = require('./CliniaSearchServer');
 var errors = require('../../errors');
@@ -79,8 +78,6 @@ cliniasearch.ua =
   'Node.js (' +
   process.versions.node +
   ')';
-
-cliniasearch.initPlaces = places(cliniasearch);
 
 function CliniaSearchNodeJS(applicationID, apiKey, opts) {
   var getAgent = require('./get-agent');

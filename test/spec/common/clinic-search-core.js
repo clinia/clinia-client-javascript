@@ -194,3 +194,151 @@ test('cliniaSearchCore._getSearchParams(validParams, {})', function(t) {
     'Valid search params type populates search params');
   t.end();
 });
+
+// SUGGEST PARAMS
+test('cliniaSearchCore._getSuggestParams({})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getSuggestParams({}, ''),
+    '',
+    'Empty suggest params return existing params'
+  )
+  t.end();
+});
+
+test('cliniaSearchCore._getSuggestParams(undefined)', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getSuggestParams(undefined, ''),
+    '',
+    'Undefined suggest params return existing params'
+  )
+  t.end();
+});
+
+// SUGGEST SIZE PARAMS
+test('cliniaSearchCore._getSuggestParams({size:``})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getSuggestParams({size:''}, ''),
+    '',
+    'Invalid `types` suggest param return empty params.'
+  )
+  t.end();
+});
+
+test('cliniaSearchCore._getSuggestParams({size:8})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getSuggestParams({size:8}, ''),
+    'size=8',
+    'Valid `types` suggest param pupolates params.'
+  )
+  t.end();
+});
+
+// SUGGEST HIGHLIGHTPRETAG PARAMS
+test('cliniaSearchCore._getSuggestParams({highlightPreTag:8})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getSuggestParams({highlightPreTag:8}, ''),
+    '',
+    'Invalid `highlightPreTag` suggest param return empty params.'
+  )
+  t.end();
+});
+
+test('cliniaSearchCore._getSuggestParams({highlightPreTag:<strong>})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getSuggestParams({highlightPreTag:'<strong>'}, ''),
+    'highlightPreTag=%3Cstrong%3E',
+    'Valid `highlightPreTag` suggest param pupolates params.'
+  )
+  t.end();
+});
+
+// SUGGEST HIGHLIGHTPOSTTAG PARAMS
+test('cliniaSearchCore._getSuggestParams({highlightPostTag:8})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getSuggestParams({highlightPostTag:8}, ''),
+    '',
+    'Invalid `highlightPostTag` suggest param return empty params.'
+  )
+  t.end();
+});
+
+test('cliniaSearchCore._getSuggestParams({highlightPostTag:</strong>})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getSuggestParams({highlightPostTag:'</strong>'}, ''),
+    'highlightPostTag=%3C%2Fstrong%3E',
+    'Valid `types` suggest param pupolates params.'
+  )
+  t.end();
+});
+
+test('cliniaSearchCore._getSuggestParams(validParams, {})', function(t) {
+  var params = {
+    size: 5,
+    highlightPreTag: '<strong>',
+    highlightPostTag: '</strong>',
+    customField: 'custom'
+  };
+  t.equal(
+    CliniaSearchCore.prototype._getSearchParams(params, 'query=query'),
+    'query=query&size=5&highlightPreTag=%3Cstrong%3E&highlightPostTag=%3C%2Fstrong%3E&customField=custom', 
+    'Valid search params type populates search params');
+  t.end();
+});
+
+// PLACES PARAMS
+test('cliniaSearchCore._getPlacesParams({})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getPlacesParams({}, 'input=input'),
+    'input=input&types=place&types=postcode&types=neighborhood',
+    'Empty places param return empty params.'
+  )
+  t.end();
+});
+
+test('cliniaSearchCore._getPlacesParams(undefined)', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getPlacesParams(undefined, 'input=input'),
+    'input=input&types=place&types=postcode&types=neighborhood',
+    'Undefined places suggest param populates params.'
+  )
+  t.end();
+});
+
+// PLACES COUNTRY PARAMS
+test('cliniaSearchCore._getPlacesParams({country:8})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getPlacesParams({country:8}, ''),
+    '&types=place&types=postcode&types=neighborhood',
+    'Invalid `country` places param return empty params.'
+  )
+  t.end();
+});
+
+test('cliniaSearchCore._getPlacesParams({country:`CA`})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getPlacesParams({country: 'CA'}, ''),
+    '&types=place&types=postcode&types=neighborhood&country=CA',
+    'Valid `country` places suggest param populates params.'
+  )
+  t.end();
+});
+
+// PLACES LIMIT PARAMS
+test('cliniaSearchCore._getPlacesParams({limit:``})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getPlacesParams({limit:'CA'}, ''),
+    '&types=place&types=postcode&types=neighborhood',
+    'Invalid `limimt` places param return empty params.'
+  )
+  t.end();
+});
+
+test('cliniaSearchCore._getPlacesParams({limit:1})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getPlacesParams({limit:1}, ''),
+    '&types=place&types=postcode&types=neighborhood&limit=1',
+    'Valid `limit` places suggest param populates params.'
+  )
+  t.end();
+});
+
