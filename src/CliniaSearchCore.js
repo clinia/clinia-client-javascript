@@ -630,7 +630,7 @@ CliniaSearchCore.prototype._getSuggestParams = function(args, params) {
  */
 CliniaSearchCore.prototype._getSearchParams = function(args, params) {
   var argCheck = require('./argCheck.js');
-  var isArray = require('isArray');
+  var isArray = require('isarray');
   var logger = require('./logger.js');
 
   if (args === undefined || args === null) {
