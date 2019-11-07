@@ -22,16 +22,16 @@ PlacesCore.prototype.clearCache = function() {
  * @return {undefined|Promise} If the callback is not provided then this methods returns a Promise
  */
 PlacesCore.prototype.suggest = function(query, args, callback) {
-  var normalizeParams = require('./normalizeMethodParameters')
-    
-  // Normalizing the function signature
-  var normalizedParameters = normalizeParams(query, args, callback)
-  query = normalizedParameters[0]
-  args = normalizedParameters[1]
-  callback = normalizedParameters[2]
+  var normalizeParams = require('./normalizeMethodParameters');
 
-  var params = ''
-  
+  // Normalizing the function signature
+  var normalizedParameters = normalizeParams(query, args, callback);
+  query = normalizedParameters[0];
+  args = normalizedParameters[1];
+  callback = normalizedParameters[2];
+
+  var params = '';
+
   if (query !== undefined) {
     params = 'input=' + query;
     if (args !== undefined) {
@@ -46,11 +46,11 @@ PlacesCore.prototype.suggest = function(query, args, callback) {
       delete args.additionalUA;
     }
     // `_getPlacesParams` will augment params
-    params = this.as._getPlacesParams(args, params)
+    params = this.as._getPlacesParams(args, params);
   }
 
   return this._suggest(params, undefined, callback, additionalUA);
-}
+};
 
 PlacesCore.prototype._suggest = function(params, url, callback, additionalUA) {
   return this.as._jsonRequest({
@@ -60,10 +60,10 @@ PlacesCore.prototype._suggest = function(params, url, callback, additionalUA) {
     hostType: 'read',
     fallback: {
       method: 'GET',
-      url: (url || '/location/v1/autocomplete?') + params,
+      url: (url || '/location/v1/autocomplete?') + params
     },
     callback: callback,
-    additionalUA: additionalUA,
+    additionalUA: additionalUA
   });
 };
 

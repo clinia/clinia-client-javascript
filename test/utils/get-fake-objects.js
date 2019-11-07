@@ -18,7 +18,7 @@ function getFakeObjects(numRecords) {
 
 function getOneRecord() {
   return {
-    id: chance.word({ length: 10 }),
-    name: chance.paragraph({ sentences: random(1, 3) }),
+    id: chance.word({length: 10}),
+    name: chance.paragraph({sentences: random(1, 3)})
   };
 }

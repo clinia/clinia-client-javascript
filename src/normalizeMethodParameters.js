@@ -1,4 +1,4 @@
-module.exports = normalizeParameters
+module.exports = normalizeParameters;
 
 /**
  * Normalize Search and Suggest method parameters
@@ -13,8 +13,7 @@ function normalizeParameters(query, args, callback) {
     // Usage : .search(), .search(cb)
     callback = query;
     query = '';
-  }
-  else if (arguments.length === 1 || typeof args === 'function') {
+  } else if (arguments.length === 1 || typeof args === 'function') {
     // Usage : .search(query/args), .search(query, cb)
     callback = args;
     args = undefined;
@@ -30,5 +29,5 @@ function normalizeParameters(query, args, callback) {
     query = '';
   }
 
-  return [query, args, callback]
+  return [query, args, callback];
 }

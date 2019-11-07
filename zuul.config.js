@@ -1,11 +1,12 @@
 'use strict';
 
-
 module.exports = {
   ui: 'tape',
-  browserify: [{
-    transform: 'bulkify'
-  }],
+  browserify: [
+    {
+      transform: 'bulkify'
+    }
+  ],
   scripts: [
     '/node_modules/jquery/dist/jquery.min.js',
     '/node_modules/jquery-ajax-transport-xdomainrequest/jquery.xdomainrequest.min.js',
@@ -26,26 +27,32 @@ module.exports = {
   // we want to be notified something is wrong asap, so low retry
   browser_retries: 2,
   tunnel: false,
-  browsers: [{
-    name: 'chrome',
-    version: '-1..latest',
-    platform: 'Windows 10'
-  },
-  {
-    name: 'firefox',
-    version: '-1..latest',
-    platform: 'Windows 10'
-  }, {
-    name: 'internet explorer',
-    version: ['10', '11']
-  }, {
-    name: 'safari',
-    version: ['9', '10', '11']
-  }, {
-    name: 'iphone',
-    version: ['9', '10', '11']
-  }, {
-    name: 'microsoftedge',
-    version: '-1..latest'
-  }]
+  browsers: [
+    {
+      name: 'chrome',
+      version: '-1..latest',
+      platform: 'Windows 10'
+    },
+    {
+      name: 'firefox',
+      version: '-1..latest',
+      platform: 'Windows 10'
+    },
+    {
+      name: 'internet explorer',
+      version: ['10', '11']
+    },
+    {
+      name: 'safari',
+      version: ['9', '10', '11']
+    },
+    {
+      name: 'iphone',
+      version: ['9', '10', '11']
+    },
+    {
+      name: 'microsoftedge',
+      version: '-1..latest'
+    }
+  ]
 };

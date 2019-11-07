@@ -21,7 +21,7 @@ var testCases = flatten([
       bulkRequire(__dirname + '/client/test-cases', '**/*.js')
     ),
     addProperty('object', 'client')
-  ),
+  )
 ]);
 
 // now run them all

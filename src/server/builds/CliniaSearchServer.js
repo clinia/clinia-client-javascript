@@ -34,7 +34,7 @@ CliniaSearchServer.prototype.enableRateLimitForward = function(
   this._forward = {
     adminAPIKey: adminAPIKey,
     endUserIP: endUserIP,
-    rateLimitAPIKey: rateLimitAPIKey,
+    rateLimitAPIKey: rateLimitAPIKey
   };
 };
 
@@ -56,7 +56,7 @@ CliniaSearchServer.prototype.useSecuredAPIKey = function(
   this._secure = {
     apiKey: securedAPIKey,
     securityTags: securityTags,
-    userToken: userToken,
+    userToken: userToken
   };
 };
 

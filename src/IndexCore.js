@@ -41,15 +41,15 @@ IndexCore.prototype._search = function(params, url, callback, additionalUA) {
     cache: this.cache,
     method: 'POST',
     url: url || '/search/v1/indexes/' + this.indexName + '/query',
-    body: { params: params },
+    body: {params: params},
     hostType: 'read',
     fallback: {
       method: 'GET',
       url: '/search/v1/indexes/' + this.indexName,
-      body: { params: params },
+      body: {params: params}
     },
     callback: callback,
-    additionalUA: additionalUA,
+    additionalUA: additionalUA
   });
 };
 

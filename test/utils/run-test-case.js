@@ -35,7 +35,7 @@ function runTestCase(testCase) {
       prefix: testCase.method,
       indexName: testCase.indexName,
       applicationID: testCase.applicationID,
-      searchOnlyAPIKey: testCase.searchOnlyAPIKey,
+      searchOnlyAPIKey: testCase.searchOnlyAPIKey
     });
 
     testCase.expectedRequest = computeExpectedRequest(
@@ -55,7 +55,7 @@ function runTestCase(testCase) {
       applicationID: credentials.applicationID,
       searchOnlyAPIKey: credentials.searchOnlyAPIKey,
       indexName: credentials.indexName,
-      assert: t,
+      assert: t
     });
   });
 }

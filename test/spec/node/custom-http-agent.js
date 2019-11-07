@@ -33,7 +33,7 @@ test('using a custom httpAgent', function(t) {
 
     var proxy = httpProxy.createProxyServer({
       target:
-        'http://' + server.address().address + ':' + server.address().port,
+        'http://' + server.address().address + ':' + server.address().port
     });
 
     var createFixture = require('../../utils/create-fixture');
@@ -41,13 +41,13 @@ test('using a custom httpAgent', function(t) {
       clientOptions: {
         hosts: [server.address().address + ':' + server.address().port],
         protocol: 'http:',
-        httpAgent: proxyAgent(proxyLocation),
-      },
+        httpAgent: proxyAgent(proxyLocation)
+      }
     });
     var index = fixture.index;
     index.search('YES!', function(err, content) {
       t.error(err, 'No error while receiving proxied response');
-      t.deepEqual(content, { yeswe: 'proxy' }, 'Content matches');
+      t.deepEqual(content, {yeswe: 'proxy'}, 'Content matches');
       proxyServer.destroy();
       server.destroy();
       // no client.destroy because no destroy on the proxy-agent module

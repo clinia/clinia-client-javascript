@@ -23,8 +23,8 @@ function testProtocol(testedProtocol) {
       var fixture = createFixture({
         clientOptions: {
           hosts: ['127.0.0.1:' + port],
-          protocol: testedProtocol + ':',
-        },
+          protocol: testedProtocol + ':'
+        }
       });
       var index = fixture.index;
 

@@ -77,5 +77,5 @@ module.exports = {
     '<script> unable to load due to an `error` event on it'
   ),
   ObjectNotFound: createCustomError('ObjectNotFound', 'Object not found'),
-  Unknown: createCustomError('Unknown', 'Unknown error occured'),
+  Unknown: createCustomError('Unknown', 'Unknown error occured')
 };

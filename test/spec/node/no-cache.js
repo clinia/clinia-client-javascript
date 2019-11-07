@@ -7,7 +7,7 @@ test('no cache between two requests', function(t) {
 
   var fauxJax = require('faux-jax');
 
-  fauxJax.install({ gzip: true });
+  fauxJax.install({gzip: true});
 
   var createFixture = require('../../utils/create-fixture');
   var fixture = createFixture();
@@ -19,7 +19,7 @@ test('no cache between two requests', function(t) {
       t.deepEqual(
         content,
         {
-          hai: 1,
+          hai: 1
         },
         'Content matches for first response'
       );
@@ -38,7 +38,7 @@ test('no cache between two requests', function(t) {
     index.search('HAI', function(err, content) {
       t.error(err, 'No error for first search');
       t.deepEqual(content, {
-        hai: 2,
+        hai: 2
       });
 
       fauxJax.restore();

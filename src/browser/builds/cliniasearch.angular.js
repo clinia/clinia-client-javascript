@@ -49,7 +49,7 @@ window.angular.module('cliniasearch', []).service('clinia', [
     // us to easily debug any website running clinia
     window.__clinia = {
       debug: require('debug'),
-      cliniasearch: cliniasearch,
+      cliniasearch: cliniasearch
     };
 
     function CliniaSearchAngular() {
@@ -114,7 +114,7 @@ window.angular.module('cliniasearch', []).service('clinia', [
         transformResponse: transformResponse,
         // if client uses $httpProvider.defaults.withCredentials = true,
         // we revert it to false to avoid CORS failure
-        withCredentials: false,
+        withCredentials: false
       }).then(success, error);
 
       function success(response) {
@@ -122,7 +122,7 @@ window.angular.module('cliniasearch', []).service('clinia', [
           statusCode: response.status,
           headers: response.headers,
           body: JSON.parse(response.data),
-          responseText: response.data,
+          responseText: response.data
         });
       }
 
@@ -141,7 +141,7 @@ window.angular.module('cliniasearch', []).service('clinia', [
         if (response.status === 0) {
           reject(
             new errors.Network({
-              more: response,
+              more: response
             })
           );
           return;
@@ -149,7 +149,7 @@ window.angular.module('cliniasearch', []).service('clinia', [
 
         resolve({
           body: JSON.parse(response.data),
-          statusCode: response.status,
+          statusCode: response.status
         });
       }
 
@@ -198,7 +198,7 @@ window.angular.module('cliniasearch', []).service('clinia', [
       },
       all: function(promises) {
         return $q.all(promises);
-      },
+      }
     };
 
     return {
@@ -206,7 +206,7 @@ window.angular.module('cliniasearch', []).service('clinia', [
         return cliniasearch(applicationID, apiKey, options);
       },
       ua: cliniasearch.ua,
-      version: cliniasearch.version,
+      version: cliniasearch.version
     };
-  },
+  }
 ]);

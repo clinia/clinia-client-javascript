@@ -1,5 +1,7 @@
 'use strict';
 
+/* eslint new-cap: 0 */
+
 var test = require('tape');
 
 test('jQuery module success case', function(t) {
@@ -17,7 +19,7 @@ test('jQuery module success case', function(t) {
 
   t.ok(window.$.clinia, 'we exported an `clinia` property on jQuery');
 
-  var client = window.$.algolia.Client(
+  var client = window.$.clinia.Client(
     'jquery-success-applicationID',
     'jquery-success-apiKey'
   );
@@ -38,7 +40,7 @@ test('jQuery module success case', function(t) {
         firstRequest.requestHeaders,
         {
           'Content-Type': 'application/x-www-form-urlencoded',
-          Accept: 'application/json',
+          Accept: 'application/json'
         },
         'requestHeaders matches'
       );
@@ -61,7 +63,7 @@ test('jQuery module success case', function(t) {
       {
         'x-clinia-api-key': 'jquery-success-apiKey',
         'x-clinia-application-id': 'jquery-success-applicationID',
-        'x-clinia-agent': window.$.clinia.ua,
+        'x-clinia-agent': window.$.clinia.ua
       },
       'requestURL query matches'
     );
@@ -70,7 +72,7 @@ test('jQuery module success case', function(t) {
       200,
       {},
       JSON.stringify({
-        YAW: 'jquery-promise',
+        YAW: 'jquery-promise'
       })
     );
 
@@ -78,7 +80,7 @@ test('jQuery module success case', function(t) {
       200,
       {},
       JSON.stringify({
-        YAW: 'jquery-cb',
+        YAW: 'jquery-cb'
       })
     );
 
@@ -87,14 +89,14 @@ test('jQuery module success case', function(t) {
 
   index.search('jquery-success-promise').done(function searchDone(content) {
     t.deepEqual(content, {
-      YAW: 'jquery-promise',
+      YAW: 'jquery-promise'
     });
   });
 
   index.search('jquery-success-callback', function searchDone(err, content) {
     t.error(err, 'No error while using the jQuery module');
     t.deepEqual(content, {
-      YAW: 'jquery-cb',
+      YAW: 'jquery-cb'
     });
   });
 });

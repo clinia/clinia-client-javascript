@@ -2,7 +2,7 @@
 
 module.exports = {
   http: createHttpServer,
-  https: createHttpsServer,
+  https: createHttpsServer
 };
 
 function createHttpsServer() {
@@ -18,12 +18,12 @@ function createHttpsServer() {
     city: 'Montreal',
     state: 'QC',
     organization: 'Test',
-    unit: 'Test',
+    unit: 'Test'
   });
 
   var server = https.createServer({
     key: pems.private,
-    cert: pems.cert,
+    cert: pems.cert
   });
 
   server.listen(0, '127.0.0.1');

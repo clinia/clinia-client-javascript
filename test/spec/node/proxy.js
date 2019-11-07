@@ -38,14 +38,14 @@ test('when using a proxy', function(t) {
     var fixture = createFixture({
       clientOptions: {
         hosts: [server.address().address + ':' + server.address().port],
-        protocol: 'http:',
-      },
+        protocol: 'http:'
+      }
     });
     var client = fixture.client;
     var index = fixture.index;
     index.search('YES!', function(err, content) {
       t.error(err, 'No error while receiving proxied response');
-      t.deepEqual(content, { yeswe: 'proxy' }, 'Content matches');
+      t.deepEqual(content, {yeswe: 'proxy'}, 'Content matches');
       proxyServer.destroy();
       server.destroy();
       client.destroy();

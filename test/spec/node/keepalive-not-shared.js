@@ -19,8 +19,8 @@ test('keepalive agent is not shared between clients', function(t) {
     var opts = {
       clientOptions: {
         hosts: ['127.0.0.1:' + port],
-        protocol: 'http:',
-      },
+        protocol: 'http:'
+      }
     };
     var socket;
 

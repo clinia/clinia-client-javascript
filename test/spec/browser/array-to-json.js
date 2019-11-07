@@ -34,7 +34,7 @@ test('JSON.stringify works well even when using Prototype.js < 1.7', function(t)
 
   index.search(
     {
-      facets: ['firstIndex'],
+      facets: ['firstIndex']
     },
     function() {
       delete Array.prototype.toJSON;

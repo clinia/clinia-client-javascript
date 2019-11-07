@@ -18,8 +18,8 @@ test('client.destroy()', function(t) {
     var fixture = createFixture({
       clientOptions: {
         hosts: ['127.0.0.1:' + port],
-        protocol: 'http:',
-      },
+        protocol: 'http:'
+      }
     });
 
     var index = fixture.index;

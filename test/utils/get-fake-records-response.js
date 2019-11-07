@@ -12,7 +12,7 @@ function getFakeRecordsResponse() {
   return {
     statusCode: 200,
     headers: {
-      'Content-Type': 'application/json; charset=UTF-8',
+      'Content-Type': 'application/json; charset=UTF-8'
     },
     body: {
       records: getFakeObjects(nbHits),
@@ -20,8 +20,8 @@ function getFakeRecordsResponse() {
         numHits: nbHits,
         page: 0,
         perPage: 20,
-        processingTimeMS: 1,
-      },
-    },
+        processingTimeMS: 1
+      }
+    }
   };
 }

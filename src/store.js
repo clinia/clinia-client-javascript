@@ -10,7 +10,7 @@ var moduleStore = {
   },
   get: function(key) {
     return this.state[key] || null;
-  },
+  }
 };
 
 var localStorageStore = {
@@ -34,7 +34,7 @@ var localStorageStore = {
     } catch (e) {
       return localStorageFailure(key, e);
     }
-  },
+  }
 };
 
 function localStorageFailure(key, e) {
@@ -49,7 +49,7 @@ store = supportsLocalStorage() ? localStorageStore : moduleStore;
 module.exports = {
   get: getOrSet,
   set: getOrSet,
-  supportsLocalStorage: supportsLocalStorage,
+  supportsLocalStorage: supportsLocalStorage
 };
 
 function getOrSet(key, data) {

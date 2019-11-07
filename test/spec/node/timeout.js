@@ -9,12 +9,12 @@ test('Request timeout is used', function(t) {
   var createFixture = require('../../utils/create-fixture');
   var fixture = createFixture({
     clientOptions: {
-      timeout: 500,
-    },
+      timeout: 500
+    }
   });
   var index = fixture.index;
 
-  fauxJax.install({ gzip: true });
+  fauxJax.install({gzip: true});
 
   var start = Date.now();
   fauxJax.waitFor(2, function(err, requests) {
@@ -36,7 +36,7 @@ test('Request timeout is used', function(t) {
       t.deepEqual(
         content,
         {
-          timeout: 'ok',
+          timeout: 'ok'
         },
         'content matches'
       );
