@@ -187,8 +187,8 @@ function localstorage() {
   } catch (e) {}
 }
 
-}).call(this,require(10))
-},{"10":10,"2":2}],2:[function(require,module,exports){
+}).call(this,require(9))
+},{"2":2,"9":9}],2:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -202,7 +202,7 @@ exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
-exports.humanize = require(9);
+exports.humanize = require(8);
 
 /**
  * The currently active debug mode names, and names to skip.
@@ -392,7 +392,7 @@ function coerce(val) {
   return val;
 }
 
-},{"9":9}],3:[function(require,module,exports){
+},{"8":8}],3:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -1569,8 +1569,8 @@ return Promise$1;
 
 
 
-}).call(this,require(10),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"10":10}],4:[function(require,module,exports){
+}).call(this,require(9),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"9":9}],4:[function(require,module,exports){
 
 var hasOwn = Object.prototype.hasOwnProperty;
 var toString = Object.prototype.toString;
@@ -1648,8 +1648,6 @@ module.exports = Array.isArray || function (arr) {
 };
 
 },{}],8:[function(require,module,exports){
-arguments[4][7][0].apply(exports,arguments)
-},{"7":7}],9:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -1803,7 +1801,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -1989,7 +1987,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2076,15 +2074,15 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 (function (process){
 module.exports = CliniaSearchCore;
 
-var errors = require(22);
-var exitPromise = require(23);
-var IndexCore = require(13);
-var store = require(28);
-var PlacesCore = require(14);
+var errors = require(21);
+var exitPromise = require(22);
+var IndexCore = require(12);
+var store = require(27);
+var PlacesCore = require(13);
 
 // We will always put the API KEY in the JSON body in case of too long API KEY,
 // to avoid query string being too long and failing in various conditions (our server limit, browser limit,
@@ -2110,9 +2108,9 @@ var RESET_APP_DATA_TIMER =
 function CliniaSearchCore(applicationID, apiKey, opts) {
   var debug = require(1)('cliniasearch');
 
-  var clone = require(21);
-  var isArray = require(8);
-  var map = require(25);
+  var clone = require(20);
+  var isArray = require(7);
+  var map = require(24);
 
   var usage = 'Usage: cliniasearch(applicationID, apiKey, opts)';
 
@@ -2270,7 +2268,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
   this._checkAppIdData();
 
   var requestDebug = require(1)('cliniasearch:' + initialOpts.url);
-  var safeJSONStringify = require(27);
+  var safeJSONStringify = require(26);
 
   var body;
   var cacheID;
@@ -2646,8 +2644,8 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
  * @return {object} the final query string
  */
 CliniaSearchCore.prototype._getPlacesParams = function(args, params) {
-  var argCheck = require(15);
-  var logger = require(24);
+  var argCheck = require(14);
+  var logger = require(23);
 
   params += '&types=place&types=postcode&types=neighborhood';
   if (args === undefined || args === null) {
@@ -2677,8 +2675,8 @@ CliniaSearchCore.prototype._getPlacesParams = function(args, params) {
  * @return {object} the final query params
  */
 CliniaSearchCore.prototype._getSuggestParams = function(args, params) {
-  var argCheck = require(15);
-  var logger = require(24);
+  var argCheck = require(14);
+  var logger = require(23);
 
   if (args === undefined || args === null) {
     return params;
@@ -2709,9 +2707,9 @@ CliniaSearchCore.prototype._getSuggestParams = function(args, params) {
  * @return {string} the final query string
  */
 CliniaSearchCore.prototype._getSearchParams = function(args, params) {
-  var argCheck = require(15);
+  var argCheck = require(14);
   var isArray = require(7);
-  var logger = require(24);
+  var logger = require(23);
 
   if (args === undefined || args === null) {
     return params;
@@ -2841,7 +2839,7 @@ CliniaSearchCore.prototype._computeRequestHeaders = function(options) {
  * @return {Promise|undefined} Returns a promise if no callback given
  */
 CliniaSearchCore.prototype.suggest = function(query, args, callback) {
-  var normalizeParams = require(26);
+  var normalizeParams = require(25);
 
   // Normalizing the function signature
   var normalizedParameters = normalizeParams(query, args, callback);
@@ -2894,8 +2892,8 @@ CliniaSearchCore.prototype._suggest = function(params, callback, additionalUA) {
  * @return {Promise|undefined} Returns a promise if no callback given
  */
 CliniaSearchCore.prototype.search = function(queries, opts, callback) {
-  var isArray = require(8);
-  var map = require(25);
+  var isArray = require(7);
+  var map = require(24);
 
   var usage = 'Usage: client.search(arrayOfQueries[, callback])';
 
@@ -3085,7 +3083,7 @@ CliniaSearchCore.prototype._getHostIndexByType = function(hostType) {
 };
 
 CliniaSearchCore.prototype._setHostIndexByType = function(hostIndex, hostType) {
-  var clone = require(21);
+  var clone = require(20);
   var newHostIndexes = clone(this._hostIndexes);
   newHostIndexes[hostType] = hostIndex;
   this._partialAppIdDataUpdate({hostIndexes: newHostIndexes});
@@ -3112,7 +3110,7 @@ CliniaSearchCore.prototype._getTimeoutsForRequest = function(hostType) {
 };
 
 function buildQueryParams(args, params) {
-  var safeJSONStringify = require(27);
+  var safeJSONStringify = require(26);
   for (var key in args) {
     if (key !== null && args[key] !== undefined && args.hasOwnProperty(key)) {
       params += params === '' ? '' : '&';
@@ -3179,9 +3177,9 @@ function removeCredentials(headers) {
   return newHeaders;
 }
 
-}).call(this,require(10))
-},{"1":1,"10":10,"13":13,"14":14,"15":15,"21":21,"22":22,"23":23,"24":24,"25":25,"26":26,"27":27,"28":28,"4":4,"7":7,"8":8}],13:[function(require,module,exports){
-var buildSearchMethod = require(20);
+}).call(this,require(9))
+},{"1":1,"12":12,"13":13,"14":14,"20":20,"21":21,"22":22,"23":23,"24":24,"25":25,"26":26,"27":27,"4":4,"7":7,"9":9}],12:[function(require,module,exports){
+var buildSearchMethod = require(19);
 
 module.exports = IndexCore;
 
@@ -3241,7 +3239,7 @@ IndexCore.prototype.indexName = null;
 IndexCore.prototype.typeAheadArgs = null;
 IndexCore.prototype.typeAheadValueOption = null;
 
-},{"20":20}],14:[function(require,module,exports){
+},{"19":19}],13:[function(require,module,exports){
 module.exports = PlacesCore;
 
 function PlacesCore(cliniasearch) {
@@ -3266,7 +3264,7 @@ PlacesCore.prototype.clearCache = function() {
  * @return {undefined|Promise} If the callback is not provided then this methods returns a Promise
  */
 PlacesCore.prototype.suggest = function(query, args, callback) {
-  var normalizeParams = require(26);
+  var normalizeParams = require(25);
 
   // Normalizing the function signature
   var normalizedParameters = normalizeParams(query, args, callback);
@@ -3313,7 +3311,7 @@ PlacesCore.prototype._suggest = function(params, url, callback, additionalUA) {
 
 PlacesCore.prototype.as = null;
 
-},{"26":26}],15:[function(require,module,exports){
+},{"25":25}],14:[function(require,module,exports){
 module.exports = {
   isNullOrUndefined: isNullOrUndefined,
   isNotNullOrUndefined: isNotNullOrUndefined,
@@ -3337,15 +3335,16 @@ function isEmpty(arg) {
   return true;
 }
 
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
-var CliniaSearchCore = require(12);
-var createCliniasearch = require(17);
+var CliniaSearchCore = require(11);
+var createCliniasearch = require(16);
 
 module.exports = createCliniasearch(CliniaSearchCore, 'Browser (lite)');
 
-},{"12":12,"17":17}],17:[function(require,module,exports){
+},{"11":11,"16":16}],16:[function(require,module,exports){
+(function (process){
 'use strict';
 
 var global = require(5);
@@ -3356,17 +3355,17 @@ var Promise = global.Promise || require(3).Promise;
 // using XMLHttpRequest, XDomainRequest and JSONP as fallback
 module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
   var inherits = require(6);
-  var errors = require(22);
-  var inlineHeaders = require(18);
-  var jsonpRequest = require(19);
+  var errors = require(21);
+  var inlineHeaders = require(17);
+  var jsonpRequest = require(18);
   uaSuffix = uaSuffix || '';
 
-  if ("production" === 'debug') {
+  if (process.env.NODE_ENV === 'debug') {
     require(1).enable('cliniasearch*');
   }
 
   function cliniasearch(applicationID, apiKey, opts) {
-    var cloneDeep = require(21);
+    var cloneDeep = require(20);
 
     opts = cloneDeep(opts || {});
 
@@ -3375,7 +3374,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
     return new CliniaSearchBrowser(applicationID, apiKey, opts);
   }
 
-  cliniasearch.version = require(29);
+  cliniasearch.version = require(28);
 
   cliniasearch.ua =
     'Clinia for JavaScript (' + cliniasearch.version + '); ' + uaSuffix;
@@ -3588,12 +3587,13 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
   return cliniasearch;
 };
 
-},{"1":1,"18":18,"19":19,"21":21,"22":22,"29":29,"3":3,"5":5,"6":6}],18:[function(require,module,exports){
+}).call(this,require(9))
+},{"1":1,"17":17,"18":18,"20":20,"21":21,"28":28,"3":3,"5":5,"6":6,"9":9}],17:[function(require,module,exports){
 'use strict';
 
 module.exports = inlineHeaders;
 
-var encode = require(11);
+var encode = require(10);
 
 function inlineHeaders(url, headers) {
   if (/\?/.test(url)) {
@@ -3605,12 +3605,12 @@ function inlineHeaders(url, headers) {
   return url + encode(headers);
 }
 
-},{"11":11}],19:[function(require,module,exports){
+},{"10":10}],18:[function(require,module,exports){
 'use strict';
 
 module.exports = jsonpRequest;
 
-var errors = require(22);
+var errors = require(21);
 
 var JSONPCounter = 0;
 
@@ -3739,7 +3739,7 @@ function jsonpRequest(url, opts, cb) {
   }
 }
 
-},{"22":22}],20:[function(require,module,exports){
+},{"21":21}],19:[function(require,module,exports){
 module.exports = buildSearchMethod;
 
 /**
@@ -3757,7 +3757,7 @@ function buildSearchMethod(queryParam, url) {
    * @return {undefined|Promise} If the callback is not provided then this methods returns a Promise
    */
   return function search(query, args, callback) {
-    var normalizeParams = require(26);
+    var normalizeParams = require(25);
 
     // Normalizing the function signature
     var normalizedParameters = normalizeParams(query, args, callback);
@@ -3784,12 +3784,12 @@ function buildSearchMethod(queryParam, url) {
   };
 }
 
-},{"26":26}],21:[function(require,module,exports){
+},{"25":25}],20:[function(require,module,exports){
 module.exports = function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 };
 
-},{}],22:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 // This file hosts our error definitions
@@ -3872,7 +3872,7 @@ module.exports = {
   Unknown: createCustomError('Unknown', 'Unknown error occured')
 };
 
-},{"4":4,"6":6}],23:[function(require,module,exports){
+},{"4":4,"6":6}],22:[function(require,module,exports){
 // Parse cloud does not supports setTimeout
 // We do not store a setTimeout reference in the client everytime
 // We only fallback to a fake setTimeout when not available
@@ -3881,7 +3881,7 @@ module.exports = function exitPromise(fn, _setTimeout) {
   _setTimeout(fn, 0);
 };
 
-},{}],24:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 module.exports = {
   error: error,
   warn: warn,
@@ -3905,7 +3905,7 @@ function debug(message) {
   console.debug(message);
 }
 
-},{}],25:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var foreach = require(4);
 
 module.exports = function map(arr, fn) {
@@ -3916,7 +3916,7 @@ module.exports = function map(arr, fn) {
   return newArr;
 };
 
-},{"4":4}],26:[function(require,module,exports){
+},{"4":4}],25:[function(require,module,exports){
 module.exports = normalizeParameters;
 
 /**
@@ -3951,7 +3951,7 @@ function normalizeParameters(query, args, callback) {
   return [query, args, callback];
 }
 
-},{}],27:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 module.exports = safeJSONStringify;
 
 // Prototype.js < 1.7, a widely used library, defines a weird
@@ -3976,7 +3976,7 @@ function safeJSONStringify(obj) {
   return out;
 }
 
-},{}],28:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 (function (global){
 var debug = require(1)('cliniasearch:src/hostIndexState.js');
 var localStorageNamespace = 'cliniasearch-client-js';
@@ -4067,10 +4067,10 @@ function cleanup() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"1":1}],29:[function(require,module,exports){
+},{"1":1}],28:[function(require,module,exports){
 'use strict';
 
-module.exports = '1.0.0-beta.5';
+module.exports = '1.0.0-beta.8';
 
-},{}]},{},[16])(16)
+},{}]},{},[15])(15)
 });
