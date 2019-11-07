@@ -36,9 +36,9 @@ var chance = new Chance();
 var apiKey = process.env.INTEGRATION_TEST_API_KEY;
 var appId = process.env.INTEGRATION_TEST_APPID;
 var indexName =
-  '_travis-cliniasearch-client-js' +
+  'health_facility' +
   (process.env.TRAVIS_BUILD_NUMBER || 'DEV') +
-  chance.word({length: 12});
+  chance.word({ length: 12 });
 
 var client = cliniasearch(appId, apiKey, {
   protocol: 'https:',
@@ -51,42 +51,6 @@ var objects = getFakeObjects(50);
 // avoid having to type index.waitTask.bind(index)
 _.bindAll(index);
 
-test('index.clearIndex', clearIndex);
-if (canPUT) {
-  test('index.setSettings', setSettings);
-  test('index.getSettings', getSettings);
-}
-test('index.saveObjects', saveObjects);
-if (canPUT) {
-  test('index.searchForFacetValues', indexSearchForFacetValues);
-  test('searchForFacetValues', searchForFacetValues);
-}
-test('index.browse', browse);
-test('index.getObject', getObject);
-test('index.browseFrom', browseFrom);
-test('index.browseAll', browseAll);
-
-if (canPUT) {
-  test('synonyms API', synonyms);
-  test('query rules', queryRules);
-}
-
-test('empty objectID for query rule', emptyObjectIDQueryRule);
-
-if (canPUT) {
-  test('export synonyms', exportSynonyms);
-  test('export query rules', exportRules);
-}
-
-if (!isABrowser) {
-  test('client.generateSecuredApiKey', generateSecuredApiKey);
-}
-
-if (canPUT) {
-  // saveObject is a PUT, only supported by Node.js or CORS, not XDomainRequest
-  test('index.saveObject', saveObject);
-}
-
 test('fallback strategy success', dnsFailThenSuccess);
 test(
   'fallback strategy success, not a search method',
@@ -96,12 +60,6 @@ test('fallback strategy all servers fail', dnsFailed);
 
 if (!process.browser) {
   test('using a http proxy to https', proxyHttpToHttps);
-}
-
-if (canDELETE) {
-  test('client.deleteIndex', deleteIndex);
-} else {
-  test('index.clearIndex', clearIndex);
 }
 
 test(
@@ -128,7 +86,7 @@ function initPlaces(placesAppId, placesApiKey) {
       }
     );
 
-    places.reverse({aroundLatLng: '48.880397, 2.326991'}).then(
+    places.reverse({ aroundLatLng: '48.880397, 2.326991' }).then(
       function(res) {
         t.ok(
           res.nbHits > 0,
@@ -176,7 +134,7 @@ function setSettings(t) {
   t.plan(1);
 
   index
-    .setSettings({attributesForFaceting: ['searchable(category)']})
+    .setSettings({ attributesForFaceting: ['searchable(category)'] })
     .then(get('taskID'))
     .then(index.waitTask)
     .then(get('status'))
@@ -188,9 +146,9 @@ function getSettings(t) {
   t.plan(2);
 
   index
-    .setSettings({attributesForFaceting: ['searchable(category)']})
+    .setSettings({ attributesForFaceting: ['searchable(category)'] })
     .then(function() {
-      return index.getSettings({advanced: 1});
+      return index.getSettings({ advanced: 1 });
     })
     .then(get('attributesForFaceting'))
     .then(
@@ -214,7 +172,7 @@ function indexSearchForFacetValues(t) {
   t.plan(1);
 
   index
-    .searchForFacetValues({facetName: 'category', facetQuery: 'a'})
+    .searchForFacetValues({ facetName: 'category', facetQuery: 'a' })
     .then(get('facetHits'))
     .then(function(facetHits) {
       t.ok(facetHits.length, 'We got some facet hits');
@@ -229,7 +187,7 @@ function searchForFacetValues(t) {
     .searchForFacetValues([
       {
         indexName: indexName,
-        params: {facetName: 'category', facetQuery: 'a', maxFacetHits: 5},
+        params: { facetName: 'category', facetQuery: 'a', maxFacetHits: 5 },
       },
     ])
     .then(function(results) {
@@ -244,11 +202,11 @@ function searchForFacetValues(t) {
     .searchForFacetValues([
       {
         indexName: indexName,
-        params: {facetName: 'category', facetQuery: 'a', maxFacetHits: 5},
+        params: { facetName: 'category', facetQuery: 'a', maxFacetHits: 5 },
       },
       {
         indexName: indexName,
-        params: {facetName: 'category', facetQuery: 'a', maxFacetHits: 7},
+        params: { facetName: 'category', facetQuery: 'a', maxFacetHits: 7 },
       },
     ])
     .then(function(results) {
@@ -279,7 +237,7 @@ function saveObjects(t) {
 function generateSecuredApiKey(t) {
   t.plan(4);
 
-  client.addApiKey(['search'], {validity: 360}, function(err, keyResult) {
+  client.addApiKey(['search'], { validity: 360 }, function(err, keyResult) {
     t.error(err, 'No error adding a key');
     t.ok(keyResult.key, 'We got the added key');
 
@@ -295,7 +253,7 @@ function generateSecuredApiKey(t) {
 
     var securedClient = cliniasearch(appId, securedKey);
     var securedIndex = securedClient.initIndex(indexName);
-    securedIndex.search({hitsPerPage: 100}, function(err, res) {
+    securedIndex.search({ hitsPerPage: 100 }, function(err, res) {
       if (!isABrowser) {
         securedClient.destroy();
       }
@@ -337,7 +295,7 @@ function getObject(t) {
 function saveObject(t) {
   t.plan(2);
 
-  var modifiedObject = _.assign({}, objects[0], {isModified: 'yes'});
+  var modifiedObject = _.assign({}, objects[0], { isModified: 'yes' });
 
   index
     .saveObject(modifiedObject)
@@ -358,7 +316,7 @@ function browseFrom(t) {
   var firstHits;
 
   index
-    .browse({hitsPerPage: 2})
+    .browse({ hitsPerPage: 2 })
     .then(function(content) {
       t.equal(content.hits.length, 2, 'We received two hits');
 
@@ -487,7 +445,7 @@ function synonyms(t) {
     .then(get('taskID'))
     .then(index.waitTask)
     .then(_.bind(t.pass, t, 'we batch added synonyms'))
-    .then(_.partial(index.searchSynonyms, {query: ''}))
+    .then(_.partial(index.searchSynonyms, { query: '' }))
     .then(function(res) {
       t.equal(res.hits.length, 2);
     })
@@ -504,7 +462,7 @@ function synonyms(t) {
     .then(get('taskID'))
     .then(index.waitTask)
     .then(function() {
-      return index.searchSynonyms({query: '', type: 'altCorrection1'});
+      return index.searchSynonyms({ query: '', type: 'altCorrection1' });
     })
     .then(function(res) {
       t.equal(1, res.hits.length);
@@ -530,7 +488,7 @@ function synonyms(t) {
 function queryRules(t) {
   index
     // we add an object with a specific name
-    .saveObject({objectID: 'query-rule', name: 'query-rule-integration-test'})
+    .saveObject({ objectID: 'query-rule', name: 'query-rule-integration-test' })
     .then(get('taskID'))
     .then(index.waitTask)
     // we clear all rules
@@ -540,7 +498,7 @@ function queryRules(t) {
     .then(get('taskID'))
     .then(index.waitTask)
     // we try and fail to find an object with a weird query
-    .then(_.partial(index.search, {query: 'hellomyfriendhowareyou???'}))
+    .then(_.partial(index.search, { query: 'hellomyfriendhowareyou???' }))
     .then(function(res) {
       t.equal(res.hits.length, 0);
     })
@@ -549,8 +507,8 @@ function queryRules(t) {
       return index.batchRules([
         {
           objectID: 'to-integration-test',
-          condition: {pattern: 'hellomyfriendhowareyou???', anchoring: 'is'},
-          consequence: {params: {query: 'query-rule-integration-test'}},
+          condition: { pattern: 'hellomyfriendhowareyou???', anchoring: 'is' },
+          consequence: { params: { query: 'query-rule-integration-test' } },
         },
       ]);
     })
@@ -558,7 +516,7 @@ function queryRules(t) {
     .then(index.waitTask)
     .then(_.bind(t.pass, t, 'we batch added rules'))
     // we search and try to hit the query rule pattern
-    .then(_.partial(index.search, {query: 'hellomyfriendhowareyou???'}))
+    .then(_.partial(index.search, { query: 'hellomyfriendhowareyou???' }))
     .then(function(res) {
       t.equal(res.hits.length, 1);
       t.equal(res.hits[0].name, 'query-rule-integration-test');
@@ -568,22 +526,22 @@ function queryRules(t) {
     .then(function(rule) {
       t.deepEqual(rule, {
         objectID: 'to-integration-test',
-        condition: {pattern: 'hellomyfriendhowareyou???', anchoring: 'is'},
-        consequence: {params: {query: 'query-rule-integration-test'}},
+        condition: { pattern: 'hellomyfriendhowareyou???', anchoring: 'is' },
+        consequence: { params: { query: 'query-rule-integration-test' } },
       });
     })
     .then(_.partial(index.deleteRule, 'to-integration-test'))
     .then(get('taskID'))
     .then(index.waitTask)
-    .then(_.partial(index.search, {query: 'hellomyfriendhowareyou???'}))
+    .then(_.partial(index.search, { query: 'hellomyfriendhowareyou???' }))
     .then(function(res) {
       t.equal(res.hits.length, 0);
     })
     .then(
       _.partial(index.saveRule, {
         objectID: 'to-integration-test2',
-        condition: {pattern: 'hellomyfriendhowareyou???', anchoring: 'is'},
-        consequence: {params: {query: 'query-rule-integration-test'}},
+        condition: { pattern: 'hellomyfriendhowareyou???', anchoring: 'is' },
+        consequence: { params: { query: 'query-rule-integration-test' } },
       })
     )
     .then(get('taskID'))
@@ -592,8 +550,8 @@ function queryRules(t) {
     .then(function(rule) {
       t.deepEqual(rule, {
         objectID: 'to-integration-test2',
-        condition: {pattern: 'hellomyfriendhowareyou???', anchoring: 'is'},
-        consequence: {params: {query: 'query-rule-integration-test'}},
+        condition: { pattern: 'hellomyfriendhowareyou???', anchoring: 'is' },
+        consequence: { params: { query: 'query-rule-integration-test' } },
       });
     })
     .then(function() {
@@ -605,8 +563,8 @@ function queryRules(t) {
 function emptyObjectIDQueryRule(t) {
   try {
     index.saveRule({
-      condition: {pattern: 'pattern', anchoring: 'is'},
-      consequence: {params: {query: 'something'}},
+      condition: { pattern: 'pattern', anchoring: 'is' },
+      consequence: { params: { query: 'something' } },
     });
   } catch (err) {
     t.equal(
@@ -620,14 +578,14 @@ function emptyObjectIDQueryRule(t) {
 }
 
 function exportRules(t) {
-  var rulesBatch = arrayFrom({length: 300}, function(v, num) {
+  var rulesBatch = arrayFrom({ length: 300 }, function(v, num) {
     return {
       objectID: 'some-qr-rule-' + num,
       condition: {
         pattern: 'hellomyfriendhowareyou??? ' + num,
         anchoring: 'is',
       },
-      consequence: {params: {query: 'query-rule-integration-test'}},
+      consequence: { params: { query: 'query-rule-integration-test' } },
     };
   }).sort(sortByObjectID);
 
@@ -663,7 +621,7 @@ function sortByObjectID(a, b) {
 }
 
 function exportSynonyms(t) {
-  var synonymBatch = arrayFrom({length: 300}, function(v, num) {
+  var synonymBatch = arrayFrom({ length: 300 }, function(v, num) {
     return {
       objectID: 'some-synonym-' + num,
       type: 'placeholder',
