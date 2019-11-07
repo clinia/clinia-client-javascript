@@ -6,11 +6,10 @@
   </head>
   <body>
     <script>
-      var client = cliniasearch('TODO', 'test', {
-        protocol: 'http',
+      var client = cliniasearch('TODO', 'ClM5vDTmS4GWEL0aS7osJaRkowV8McuP', {
         hosts: {
-          read: ['localhost:5000'],
-          write: ['localhost:5000'],
+          write: ['api.partner.staging.clinia.ca'],
+          read: ['api.partner.staging.clinia.ca'],
         },
       });
 
@@ -69,28 +68,39 @@
         console.log('We got `' + results.meta.total + '` results');
         console.log('Here is the first one: ', results.records[0]);
       });
-      
-      client.suggest('sons', { highlightPreTag: "<strong>", highlightPostTag: "</strong>" }, function(err, suggestions) {
-        if (err) {
-          throw err;
+
+      client.suggest(
+        'sons',
+        { highlightPreTag: '<strong>', highlightPostTag: '</strong>' },
+        function(err, suggestions) {
+          if (err) {
+            throw err;
+          }
+          console.log('We got `' + suggestions.length + '` suggestions');
+          console.log('Here is the first one: ', suggestions[0]);
         }
-        console.log('We got `' + suggestions.length + '` suggestions');
-        console.log('Here is the first one: ', suggestions[0]);
-      })
+      );
       client.suggest('sons', function(err, suggestions) {
         if (err) {
           throw err;
         }
         console.log('We got `' + suggestions.length + '` suggestions');
         console.log('Here is the first one: ', suggestions[0]);
-      })
-      client.suggest({ query: 'sons', highlightPreTag: "<strong>", highlightPostTag: "</strong>" }, function(err, suggestions) {
-        if (err) {
-          throw err;
+      });
+      client.suggest(
+        {
+          query: 'sons',
+          highlightPreTag: '<strong>',
+          highlightPostTag: '</strong>',
+        },
+        function(err, suggestions) {
+          if (err) {
+            throw err;
+          }
+          console.log('We got `' + suggestions.length + '` suggestions');
+          console.log('Here is the first one: ', suggestions[0]);
         }
-        console.log('We got `' + suggestions.length + '` suggestions');
-        console.log('Here is the first one: ', suggestions[0]);
-      })
+      );
 
       var places = client.initPlaces();
       places.suggest('2241 rue asselin', function(err, results) {
@@ -99,22 +109,24 @@
         }
         console.log('We got `' + results.length + '` places');
         console.log('Here is the first one: ', results[0]);
-      })
-      places.suggest('2241 rue asselin', {limit:2}, function(err, results) {
+      });
+      places.suggest('2241 rue asselin', { limit: 2 }, function(err, results) {
         if (err) {
           throw err;
         }
         console.log('We got `' + results.length + '` places');
         console.log('Here is the first one: ', results[0]);
-      })
-      places.suggest({query: '2241 rue asselin', limit:2}, function(err, results) {
+      });
+      places.suggest({ query: '2241 rue asselin', limit: 2 }, function(
+        err,
+        results
+      ) {
         if (err) {
           throw err;
         }
         console.log('We got `' + results.length + '` places');
         console.log('Here is the first one: ', results[0]);
-      })
-
+      });
     </script>
     <div id="div">:)</div>
   </body>

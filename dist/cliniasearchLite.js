@@ -3220,12 +3220,6 @@ IndexCore.prototype.clearCache = function() {
 IndexCore.prototype.search = buildSearchMethod('query');
 
 IndexCore.prototype._search = function(params, url, callback, additionalUA) {
-  var JSONPParams = encodeURIComponent(
-    '/v1/indexes/' +
-      encodeURIComponent(this.indexName) +
-      '/query?' +
-      params
-  )
   return this.as._jsonRequest({
     cache: this.cache,
     method: 'POST',
@@ -3235,7 +3229,7 @@ IndexCore.prototype._search = function(params, url, callback, additionalUA) {
     fallback: {
       method: 'GET',
       url: '/search/v1/indexes/' + this.indexName,
-      body: { params: JSONPParams },
+      body: { params: params },
     },
     callback: callback,
     additionalUA: additionalUA,
@@ -3350,7 +3344,6 @@ var createCliniasearch = require(17);
 module.exports = createCliniasearch(CliniaSearchCore, 'Browser (lite)');
 
 },{"12":12,"17":17}],17:[function(require,module,exports){
-(function (process){
 'use strict';
 
 var global = require(5);
@@ -3366,7 +3359,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
   var jsonpRequest = require(19);
   uaSuffix = uaSuffix || '';
 
-  if (process.env.NODE_ENV === 'debug') {
+  if ("production" === 'debug') {
     require(1).enable('cliniasearch*');
   }
 
@@ -3592,8 +3585,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
   return cliniasearch;
 };
 
-}).call(this,require(10))
-},{"1":1,"10":10,"18":18,"19":19,"21":21,"22":22,"29":29,"3":3,"5":5,"6":6}],18:[function(require,module,exports){
+},{"1":1,"18":18,"19":19,"21":21,"22":22,"29":29,"3":3,"5":5,"6":6}],18:[function(require,module,exports){
 'use strict';
 
 module.exports = inlineHeaders;
@@ -3762,26 +3754,26 @@ function buildSearchMethod(queryParam, url) {
    * @return {undefined|Promise} If the callback is not provided then this methods returns a Promise
    */
   return function search(query, args, callback) {
-    var normalizeParams = require(26)
-    
+    var normalizeParams = require(26);
+
     // Normalizing the function signature
-    var normalizedParameters = normalizeParams(query, args, callback)
-    query = normalizedParameters[0]
-    args = normalizedParameters[1]
-    callback = normalizedParameters[2]
+    var normalizedParameters = normalizeParams(query, args, callback);
+    query = normalizedParameters[0];
+    args = normalizedParameters[1];
+    callback = normalizedParameters[2];
 
     var params = '';
 
     params += queryParam + '=' + encodeURIComponent(query) || '';
 
     var additionalUA;
-    if (args !== undefined) {
+    if (typeof args !== 'undefined') {
       if (args.additionalUA) {
         additionalUA = args.additionalUA;
         delete args.additionalUA;
       }
     }
-    
+
     // `_getSearchParams` will augment params
     params = this.as._getSearchParams(args, params);
 
