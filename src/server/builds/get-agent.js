@@ -49,22 +49,22 @@ function getKeepaliveAgent(protocol) {
   if (semver.satisfies(process.version, '<0.11.4')) {
     if (protocol === 'http:') {
       keepAliveAgent = new HttpAgent({
-        maxSockets: Infinity,
+        maxSockets: Infinity
       });
     } else if (protocol === 'https:') {
       keepAliveAgent = new HttpsAgent({
-        maxSockets: Infinity,
+        maxSockets: Infinity
       });
     }
   } else if (protocol === 'http:') {
     keepAliveAgent = new http.Agent({
       keepAlive: true,
-      maxSockets: Infinity,
+      maxSockets: Infinity
     });
   } else if (protocol === 'https:') {
     keepAliveAgent = new https.Agent({
       keepAlive: true,
-      maxSockets: Infinity,
+      maxSockets: Infinity
     });
   }
 
@@ -79,8 +79,8 @@ function getProxyingAgent(protocol, parsedProxy) {
     proxy: {
       host: parsedProxy.hostname,
       port: parseInt(parsedProxy.port, 10),
-      proxyAuth: parsedProxy.auth,
-    },
+      proxyAuth: parsedProxy.auth
+    }
   };
 
   // httpOverHttps

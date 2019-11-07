@@ -9,7 +9,7 @@ var test = require('tape');
 var computeExpectedRequest = require('./compute-expected-request');
 var findMethodCallback = require('./find-method-callback');
 var getCredentials = require('./get-credentials');
-var getFakeHitsResponse = require('./get-fake-hits-response');
+var getFakeRecordsResponse = require('./get-fake-records-response');
 var testMethodCall = require('./test-method-call');
 
 function runTestCase(testCase) {
@@ -35,7 +35,7 @@ function runTestCase(testCase) {
       prefix: testCase.method,
       indexName: testCase.indexName,
       applicationID: testCase.applicationID,
-      searchOnlyAPIKey: testCase.searchOnlyAPIKey,
+      searchOnlyAPIKey: testCase.searchOnlyAPIKey
     });
 
     testCase.expectedRequest = computeExpectedRequest(
@@ -44,7 +44,7 @@ function runTestCase(testCase) {
     );
 
     testCase.fakeResponse = merge(
-      getFakeHitsResponse(),
+      getFakeRecordsResponse(),
       testCase.fakeResponse || {}
     );
 
@@ -55,7 +55,7 @@ function runTestCase(testCase) {
       applicationID: credentials.applicationID,
       searchOnlyAPIKey: credentials.searchOnlyAPIKey,
       indexName: credentials.indexName,
-      assert: t,
+      assert: t
     });
   });
 }

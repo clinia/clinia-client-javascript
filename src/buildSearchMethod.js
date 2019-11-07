@@ -15,26 +15,26 @@ function buildSearchMethod(queryParam, url) {
    * @return {undefined|Promise} If the callback is not provided then this methods returns a Promise
    */
   return function search(query, args, callback) {
-    var normalizeParams = require('./normalizeMethodParameters')
-    
+    var normalizeParams = require('./normalizeMethodParameters');
+
     // Normalizing the function signature
-    var normalizedParameters = normalizeParams(query, args, callback)
-    query = normalizedParameters[0]
-    args = normalizedParameters[1]
-    callback = normalizedParameters[2]
+    var normalizedParameters = normalizeParams(query, args, callback);
+    query = normalizedParameters[0];
+    args = normalizedParameters[1];
+    callback = normalizedParameters[2];
 
     var params = '';
 
     params += queryParam + '=' + encodeURIComponent(query) || '';
 
     var additionalUA;
-    if (args !== undefined) {
+    if (typeof args !== 'undefined') {
       if (args.additionalUA) {
         additionalUA = args.additionalUA;
         delete args.additionalUA;
       }
     }
-    
+
     // `_getSearchParams` will augment params
     params = this.as._getSearchParams(args, params);
 

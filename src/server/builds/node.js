@@ -56,7 +56,7 @@ function cliniasearch(applicationID, apiKey, opts) {
   opts.timeouts = opts.timeouts || {
     connect: 2 * 1000,
     read: 5 * 1000,
-    write: 30 * 1000,
+    write: 30 * 1000
   };
 
   if (opts.protocol === undefined) {
@@ -113,7 +113,7 @@ CliniaSearchNodeJS.prototype._request = function request(rawUrl, opts) {
       port: parsedUrl.port,
       method: opts.method,
       path: parsedUrl.path,
-      agent: client._Agent,
+      agent: client._Agent
     };
 
     var timedOut = false;
@@ -207,11 +207,11 @@ CliniaSearchNodeJS.prototype._request = function request(rawUrl, opts) {
             body: JSON.parse(data),
             responseText: data,
             statusCode: statusCode,
-            headers: headers,
+            headers: headers
           };
         } catch (e) {
           out = new errors.UnparsableJSON({
-            more: data,
+            more: data
           });
         }
 
@@ -275,7 +275,7 @@ CliniaSearchNodeJS.prototype._promise = {
   },
   all: function all(promises) {
     return Promise.all(promises);
-  },
+  }
 };
 
 CliniaSearchNodeJS.prototype.destroy = function destroy() {
@@ -302,7 +302,7 @@ CliniaSearchNodeJS.prototype.generateSecuredApiKey = function generateSecuredApi
     // generateSecuredApiKey(apiKey, ['user_42'], userToken);
 
     searchParams = {
-      tagFilters: queryParametersOrTagFilters,
+      tagFilters: queryParametersOrTagFilters
     };
 
     if (userToken) {

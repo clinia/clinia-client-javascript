@@ -37,25 +37,19 @@ IndexCore.prototype.clearCache = function() {
 IndexCore.prototype.search = buildSearchMethod('query');
 
 IndexCore.prototype._search = function(params, url, callback, additionalUA) {
-  var JSONPParams = encodeURIComponent(
-    '/v1/indexes/' +
-      encodeURIComponent(this.indexName) +
-      '/query?' +
-      params
-  )
   return this.as._jsonRequest({
     cache: this.cache,
     method: 'POST',
     url: url || '/search/v1/indexes/' + this.indexName + '/query',
-    body: { params: params },
+    body: {params: params},
     hostType: 'read',
     fallback: {
       method: 'GET',
       url: '/search/v1/indexes/' + this.indexName,
-      body: { params: JSONPParams },
+      body: {params: params}
     },
     callback: callback,
-    additionalUA: additionalUA,
+    additionalUA: additionalUA
   });
 };
 

@@ -21,6 +21,6 @@ function createFixture(opts) {
     client: client,
     index: index,
     credentials: credentials,
-    cliniasearch: cliniasearch,
+    cliniasearch: cliniasearch
   };
 }

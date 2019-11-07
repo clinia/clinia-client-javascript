@@ -14,7 +14,7 @@ function run() {
   setTimeout(function() {
     require('bulk-require')(__dirname, [
       'spec/common/**/*.js',
-      'spec/browser/**/*.js',
+      'spec/browser/**/*.js'
     ]);
   }, 1000);
 }

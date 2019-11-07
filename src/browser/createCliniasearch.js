@@ -36,12 +36,12 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
   // us to easily debug any website running clinia
   global.__clinia = {
     debug: require('debug'),
-    cliniasearch: cliniasearch,
+    cliniasearch: cliniasearch
   };
 
   var support = {
     hasXMLHttpRequest: 'XMLHttpRequest' in global,
-    hasXDomainRequest: 'XDomainRequest' in global,
+    hasXDomainRequest: 'XDomainRequest' in global
   };
 
   if (support.hasXMLHttpRequest) {
@@ -78,8 +78,9 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
       // refs:
       //  - https://social.msdn.microsoft.com/Forums/ie/en-US/30ef3add-767c-4436-b8a9-f1ca19b4812e/ie9-rtm-xdomainrequest-issued-requests-may-abort-if-all-event-handlers-not-specified?forum=iewebdevelopment
       req.onprogress = onProgress;
-      if ('onreadystatechange' in req)
+      if ('onreadystatechange' in req) {
         req.onreadystatechange = onReadyStateChange;
+      }
       req.onload = onLoad;
       req.onerror = onError;
 
@@ -146,11 +147,11 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
             statusCode: req.status,
             // XDomainRequest does not have any response headers
             headers:
-              (req.getAllResponseHeaders && req.getAllResponseHeaders()) || {},
+              (req.getAllResponseHeaders && req.getAllResponseHeaders()) || {}
           };
         } catch (e) {
           out = new errors.UnparsableJSON({
-            more: req.responseText,
+            more: req.responseText
           });
         }
 
@@ -173,7 +174,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
         //   - unallowed cross domain request
         reject(
           new errors.Network({
-            more: event,
+            more: event
           })
         );
       }
@@ -233,7 +234,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
     },
     all: function all(promises) {
       return Promise.all(promises);
-    },
+    }
   };
 
   return cliniasearch;

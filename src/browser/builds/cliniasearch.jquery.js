@@ -42,7 +42,7 @@ cliniasearch.ua =
 // us to easily debug any website running clinia
 window.__clinia = {
   debug: require('debug'),
-  cliniasearch: cliniasearch,
+  cliniasearch: cliniasearch
 };
 
 var $ = window.jQuery;
@@ -50,7 +50,7 @@ var $ = window.jQuery;
 $.clinia = {
   Client: cliniasearch,
   ua: cliniasearch.ua,
-  version: cliniasearch.version,
+  version: cliniasearch.version
 };
 
 function CliniaSearchJQuery() {
@@ -67,7 +67,7 @@ CliniaSearchJQuery.prototype._request = function request(url, opts) {
     url = inlineHeaders(url, opts.headers);
 
     var requestHeaders = {
-      accept: 'application/json',
+      accept: 'application/json'
     };
 
     if (body) {
@@ -94,7 +94,7 @@ CliniaSearchJQuery.prototype._request = function request(url, opts) {
         if (jqXHR.status === 0) {
           deferred.reject(
             new errors.Network({
-              more: jqXHR,
+              more: jqXHR
             })
           );
           return;
@@ -104,9 +104,9 @@ CliniaSearchJQuery.prototype._request = function request(url, opts) {
           statusCode: jqXHR.status,
           body: jqXHR.responseJSON,
           responseText: jqXHR.responseText,
-          headers: jqXHR.getAllResponseHeaders(),
+          headers: jqXHR.getAllResponseHeaders()
         });
-      },
+      }
     });
   }).promise();
 };
@@ -151,5 +151,5 @@ CliniaSearchJQuery.prototype._promise = {
   },
   all: function all(promises) {
     return $.when.apply(null, promises);
-  },
+  }
 };

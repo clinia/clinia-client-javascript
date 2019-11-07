@@ -26,7 +26,7 @@ function cliniasearch(applicationID, apiKey, opts) {
   opts.timeouts = opts.timeouts || {
     connect: 2 * 1000,
     read: 3 * 1000,
-    write: 30 * 1000,
+    write: 30 * 1000
   };
 
   return new CliniaSearchReactNative(applicationID, apiKey, opts);
@@ -41,11 +41,11 @@ cliniasearch.ua =
 // us to easily debug any website running clinia
 window.__clinia = {
   debug: require('debug'),
-  cliniasearch: cliniasearch,
+  cliniasearch: cliniasearch
 };
 
 var support = {
-  timeout: 'timeout' in new XMLHttpRequest(),
+  timeout: 'timeout' in new XMLHttpRequest()
 };
 
 function CliniaSearchReactNative() {
@@ -113,11 +113,11 @@ CliniaSearchReactNative.prototype._request = function request(url, opts) {
           statusCode: req.status,
           // XDomainRequest does not have any response headers
           headers:
-            (req.getAllResponseHeaders && req.getAllResponseHeaders()) || {},
+            (req.getAllResponseHeaders && req.getAllResponseHeaders()) || {}
         };
       } catch (e) {
         out = new errors.UnparsableJSON({
-          more: req.responseText,
+          more: req.responseText
         });
       }
 
@@ -142,7 +142,7 @@ CliniaSearchReactNative.prototype._request = function request(url, opts) {
       //   - unallowed cross domain request
       reject(
         new errors.Network({
-          more: event,
+          more: event
         })
       );
     }
@@ -172,5 +172,5 @@ CliniaSearchReactNative.prototype._promise = {
   },
   all: function all(promises) {
     return Promise.all(promises);
-  },
+  }
 };
