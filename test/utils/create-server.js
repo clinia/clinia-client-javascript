@@ -15,8 +15,8 @@ function createHttpsServer() {
   var generate = require('self-signed');
   var pems = generate({
     name: 'localhost',
-    city: 'Paris',
-    state: 'IDF',
+    city: 'Montreal',
+    state: 'QC',
     organization: 'Test',
     unit: 'Test',
   });

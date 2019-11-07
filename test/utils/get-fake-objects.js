@@ -8,19 +8,17 @@ var times = require('lodash-compat/utility/times');
 
 var chance = new Chance();
 
-function getFakeObjects(nbHits) {
-  if (nbHits === undefined) {
-    nbHits = 10;
+function getFakeObjects(numRecords) {
+  if (numRecords === undefined) {
+    numRecords = 10;
   }
 
-  return times(nbHits, getOneHit);
+  return times(numRecords, getOneRecord);
 }
 
-function getOneHit() {
+function getOneRecord() {
   return {
-    objectID: chance.word({length: 10}),
-    description: chance.paragraph({sentences: random(1, 3)}),
-    category: 'a' + chance.word({length: 20}),
-    popularity: random(1, 100),
+    id: chance.word({ length: 10 }),
+    name: chance.paragraph({ sentences: random(1, 3) }),
   };
 }

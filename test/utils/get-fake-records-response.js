@@ -1,12 +1,12 @@
 'use strict';
 
-module.exports = getFakeHitsResponse;
+module.exports = getFakeRecordsResponse;
 
 var random = require('lodash-compat/number/random');
 
 var getFakeObjects = require('./get-fake-objects');
 
-function getFakeHitsResponse() {
+function getFakeRecordsResponse() {
   var nbHits = random(1, 10);
 
   return {
@@ -15,11 +15,13 @@ function getFakeHitsResponse() {
       'Content-Type': 'application/json; charset=UTF-8',
     },
     body: {
-      hits: getFakeObjects(nbHits),
-      nbHits: nbHits,
-      page: 0,
-      hitsPerPage: 20,
-      processingTimeMS: 1,
+      records: getFakeObjects(nbHits),
+      meta: {
+        numHits: nbHits,
+        page: 0,
+        perPage: 20,
+        processingTimeMS: 1,
+      },
     },
   };
 }

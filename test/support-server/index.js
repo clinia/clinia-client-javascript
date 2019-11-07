@@ -28,7 +28,7 @@ app.use(function noCache(req, res, next) {
 var middlewares = bulkRequire(path.join(__dirname, 'middlewares'), '*.js');
 
 forEach(middlewares, function useIt(middleware, mountPoint) {
-  app.use('/1/indexes/' + mountPoint, middleware());
+  app.use('/search/v1/indexes/' + mountPoint, middleware());
 });
 
 var server = http.createServer(app);
