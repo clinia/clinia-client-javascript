@@ -12,6 +12,10 @@ First, install Clinia JavaScript API Client via the [npm](https://www.npmjs.com/
 ```bash
 npm install --save cliniasearch
 ```
+OR
+```bash
+yarn add cliniasearch
+```
 
 ## Quickstart
 
@@ -38,7 +42,7 @@ index
 The client allows to use the following Clinia APIs:
 - Single index search
 - Multiple indexes search
-- Search suggestions (Autocomplete)
+- Query suggestions (Autocomplete)
 - Location suggestions (Autocomplete)
 
 ## Single index search
@@ -52,9 +56,9 @@ For use cases where one wants to search through a single index, the client provi
 
 For use cases where one wants to search through all indexes, the client provides methods to search directly, without using the `Index` interface. 
 
-## Search suggestions (Autocomplete)
+## Query suggestions (Autocomplete)
 
-For use cases where one wants to get search suggestions based on a user input, the client provides methods to autocomplete queries based on the content of one's database. Typical use cases usually follow search suggestions with an actual search using the provided suggestion as search query.
+For use cases where one wants to get query suggestions based on a user input, the client provides methods to autocomplete queries based on the content of one's database. Typical use cases usually follow query suggestions with an actual search using the provided suggestion as search query.
 
 ## Place suggestions (Autocomplete)
 
@@ -108,15 +112,8 @@ Remove an extra field from the HTTP request.
 - **name (_string_)** -- The header field name. 
 
 ---
-### `client.addCliniaAgent(cliniaAgent)`
-Augment sent x-clinia-agent with more data, each agent part is automatically separated from the others by a semicolon
-
-#### **Arguments**
-- **cliniaAgent (_string_)** -- The agent to add. 
-
----
 ### `client.suggest(query, args, callback)`
-Get search suggestions based on a query.
+Get query suggestions based on a query.
 
 #### **Arguments**
 - **query (_string_)** -- The query to get suggestions for.
