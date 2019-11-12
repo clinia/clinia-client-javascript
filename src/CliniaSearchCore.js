@@ -754,7 +754,7 @@ CliniaSearchCore.prototype._computeRequestHeaders = function(options) {
  * Get suggestions based on a query
  * @param  {Object} args  The query parmeters.
  * @param {string} query The query to get suggestions for
- * @param {string[]} args.size Max number of suggestions to receive
+ * @param {string} args.size Max number of suggestions to receive
  * @param {string} args.highlightPreTag The pre tag used to highlight matched query parts
  * @param {string} args.highlightPostTag The post tag used to highlight matched query parts
  * @param  {Function} callback Callback to be called
