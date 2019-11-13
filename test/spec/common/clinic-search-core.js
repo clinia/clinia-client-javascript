@@ -59,100 +59,6 @@ test('cliniaSearchCore._getSearchParams({perPage:1})', function(t) {
   t.end();
 });
 
-// FILTERS SEARCH PARAMS
-test('cliniaSearchCore._getSearchParams({filters:[]})', function(t) {
-  t.equal(
-    CliniaSearchCore.prototype._getSearchParams({filters: []}, ''),
-    '',
-    'Invalid `filters` search params return empty params.'
-  );
-  t.end();
-});
-
-// FILTERS location SEARCH PARAMS
-test('cliniaSearchCore._getSearchParams({filters:{location:1}})', function(t) {
-  t.equal(
-    CliniaSearchCore.prototype._getSearchParams({filters: {location: 1}}, ''),
-    '',
-    'Invalid `filters.location` search params return empty params.'
-  );
-  t.end();
-});
-
-test('cliniaSearchCore._getSearchParams({filters:{location:`yes`}})', function(t) {
-  t.equal(
-    CliniaSearchCore.prototype._getSearchParams({filters: {location: 'yes'}}, ''),
-    `filters=${encodeURIComponent(JSON.stringify({location: 'yes'}))}`,
-    'Valid `filters.location` search param pupolates params.'
-  );
-  t.end();
-});
-
-// FILTERS TYPES SEARCH PARAMS
-test('cliniaSearchCore._getSearchParams({filters:{types:{}}})', function(t) {
-  t.equal(
-    CliniaSearchCore.prototype._getSearchParams({filters: {types: {}}}, ''),
-    '',
-    'Invalid `filters.types` search params return empty params.'
-  );
-  t.end();
-});
-
-test('cliniaSearchCore._getSearchParams({filters:{types:[`CLINIC`]})', function(t) {
-  t.equal(
-    CliniaSearchCore.prototype._getSearchParams({filters: {types: ['CLINIC']}}, ''),
-    `filters=${encodeURIComponent(JSON.stringify({types: ['CLINIC']}))}`,
-    'Valid `filters.types` search param populates params.'
-  );
-  t.end();
-});
-
-// FILTERS HOURS SEARCH PARAMS
-test('cliniaSearchCore._getSearchParams({filters:{hours:[]})', function(t) {
-  t.equal(
-    CliniaSearchCore.prototype._getSearchParams({filters: {hours: []}}, ''),
-    '',
-    'Invalid `filters.hours` search param return empty params.'
-  );
-  t.end();
-});
-
-test('cliniaSearchCore._getSearchParams({filters:{hours:{offset:[]}})', function(t) {
-  t.equal(
-    CliniaSearchCore.prototype._getSearchParams({filters: {hours: {offset: []}}}, ''),
-    '',
-    'Invalid `filters.hours.offset` search param return empty params.'
-  );
-  t.end();
-});
-
-test('cliniaSearchCore._getSearchParams({filters:{hours:{offset:240}})', function(t) {
-  t.equal(
-    CliniaSearchCore.prototype._getSearchParams({filters: {hours: {offset: 240}}}, ''),
-    `filters=${encodeURIComponent(JSON.stringify({hours: {offset: 240}}))}`,
-    'Valid `filters.hours.offset` search param populates params.'
-  );
-  t.end();
-});
-
-test('cliniaSearchCore._getSearchParams({filters:{hours:{values:{}}})', function(t) {
-  t.equal(
-    CliniaSearchCore.prototype._getSearchParams({filters: {hours: {values: {}}}}, ''),
-    '',
-    'Invalid `filters.hours.values` search param return empty params.'
-  );
-  t.end();
-});
-
-test('cliniaSearchCore._getSearchParams({filters:{hours:{values:[0]})', function(t) {
-  t.equal(
-    CliniaSearchCore.prototype._getSearchParams({filters: {hours: {values: [0]}}}, ''),
-    `filters=${encodeURIComponent(JSON.stringify({hours: {values: [0]}}))}`,
-    'Valid `filters.hours.values` search param populates params.'
-  );
-  t.end();
-});
-
 // QUERYTYPES SEARCH PARAMS
 test('cliniaSearchCore._getSearchParams({queryTypes:{}})', function(t) {
   t.equal(
@@ -172,18 +78,89 @@ test('cliniaSearchCore._getSearchParams({queryTypes:[`prefix`]})', function(t) {
   t.end();
 });
 
+// SEARCHFIELDS SEARCH PARAMS
+test('cliniaSearchCore._getSearchParams({searchFields:{}})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getSearchParams({searchFields: {}}, ''),
+    '',
+    'Invalid `searchFields` search param return empty params.'
+  );
+  t.end();
+});
+
+test('cliniaSearchCore._getSearchParams({searchFields:[`name`]})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getSearchParams({queryTypes: ['name']}, ''),
+    `queryTypes=${encodeURIComponent(safeJSONStringify(['name']))}`,
+    'Valid `searchFields` search param return empty params.'
+  );
+  t.end();
+});
+
+// LOCATION SEARCH PARAMS
+test('cliniaSearchCore._getSearchParams({location:{}})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getSearchParams({location: {}}, ''),
+    '',
+    'Invalid `location` search param return empty params.'
+  );
+  t.end();
+});
+
+test('cliniaSearchCore._getSearchParams({location:`montreal`})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getSearchParams({location: 'montreal'}, ''),
+    'location=montreal',
+    'Valid `searchFields` search param return empty params.'
+  );
+  t.end();
+});
+
+// AROUNDLATLNG SEARCH PARAMS
+test('cliniaSearchCore._getSearchParams({aroundLatLng:{}})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getSearchParams({aroundLatLng: {}}, ''),
+    '',
+    'Invalid `aroundLatLng` search param return empty params.'
+  );
+  t.end();
+});
+
+test('cliniaSearchCore._getSearchParams({aroundLatLng:`montreal`})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getSearchParams({aroundLatLng: 'montreal'}, ''),
+    'aroundLatLng=montreal',
+    'Valid `searchFields` search param return empty params.'
+  );
+  t.end();
+});
+
+// INSIDEBOUNDINGBOX SEARCH PARAMS
+test('cliniaSearchCore._getSearchParams({insideBoundingBox:{}})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getSearchParams({insideBoundingBox: {}}, ''),
+    '',
+    'Invalid `insideBoundingBox` search param return empty params.'
+  );
+  t.end();
+});
+
+test('cliniaSearchCore._getSearchParams({insideBoundingBox:`montreal`})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getSearchParams({insideBoundingBox: 'montreal'}, ''),
+    'insideBoundingBox=montreal',
+    'Valid `searchFields` search param return empty params.'
+  );
+  t.end();
+});
+
 test('cliniaSearchCore._getSearchParams(validParams, {})', function(t) {
   var params = {
     documentTypes: ['health_facility'],
     queryTypes: ['prefix'],
-    filters: {
-      types: ['CLINIC', 'HOSPITAL'],
-      hours: {
-        offset: 180,
-        values: [1, 3]
-      },
-      location: '3578 rue Dorion, Montreal'
-    },
+    location: '3578 rue Dorion, Montreal',
+    aroundLatLng: '45.98123123,-73.1231432',
+    insideBoundingBox: '45.98123123,-73.1231432,12.38353485,-23.23232323',
     page: 0,
     perPage: 50,
     customField: 'custom'

@@ -657,46 +657,19 @@ CliniaSearchCore.prototype._getSearchParams = function(args, params) {
     delete args.queryTypes;
   }
 
-  if (argCheck.isNotNullOrUndefined(args.filters)) {
-    if ((typeof args.filters !== 'object' || isArray(args.filters))) {
-      logger.warn('Ignoring search query parameter `filters`. Must be an object.');
-      delete args.filters;
-    } else {
-      if (argCheck.isNotNullOrUndefined(args.filters.types) && !isArray(args.filters.types)) {
-        logger.warn('Ignoring search query parameter `filters.types`. Must be an array.');
-        delete args.filters.types;
-      }
+  if (argCheck.isNotNullOrUndefined(args.location) && typeof args.location !== 'string') {
+    logger.warn('Ignoring search query parameter `location`. Must be a string.');
+    delete args.location;
+  }
 
-      if (argCheck.isNotNullOrUndefined(args.filters.hours)) {
-        if (typeof args.filters.hours !== 'object' || isArray(args.filters.hours)) {
-          logger.warn('Ignoring search query parameter `filters.hours`. Must be an object.');
-          delete args.filters.hours;
-        } else {
-          if (argCheck.isNotNullOrUndefined(args.filters.hours.offset) && typeof args.filters.hours.offset !== 'number') {
-            logger.warn('Ignoring search query parameter `filters.hours.offset`. Must be a number.');
-            delete args.filters.hours.offset;
-          }
+  if (argCheck.isNotNullOrUndefined(args.aroundLatLng) && typeof args.aroundLatLng !== 'string') {
+    logger.warn('Ignoring search query parameter `aroundLatLng`. Must be a string.');
+    delete args.aroundLatLng;
+  }
 
-          if (argCheck.isNotNullOrUndefined(args.filters.hours.values) && !isArray(args.filters.hours.values)) {
-            logger.warn('Ignoring search query parameter `filters.hours.values`. Must be an array.');
-            delete args.filters.hours.values;
-          }
-        }
-
-        if (argCheck.isEmpty(args.filters.hours)) {
-          delete args.filters.hours;
-        }
-      }
-
-      if (argCheck.isNotNullOrUndefined(args.filters.location) && typeof args.filters.location !== 'string') {
-        logger.warn('Ignoring search query parameter `filters.location`. Must be a string.');
-        delete args.filters.location;
-      }
-    }
-
-    if (argCheck.isEmpty(args.filters)) {
-      delete args.filters;
-    }
+  if (argCheck.isNotNullOrUndefined(args.insideBoundingBox) && typeof args.insideBoundingBox !== 'string') {
+    logger.warn('Ignoring search query parameter `insideBoundingBox`. Must be a string.');
+    delete args.insideBoundingBox;
   }
 
   return buildQueryParams(args, params);
