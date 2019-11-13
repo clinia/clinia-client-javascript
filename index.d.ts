@@ -234,6 +234,7 @@ declare namespace cliniasearch {
 
 interface CliniasearchInstance {
   (
+    appId: string,
     apiKey: string,
     options?: cliniasearch.ClientOptions,
   ): cliniasearch.Client;
