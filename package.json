@@ -3,6 +3,7 @@
   "version": "1.0.0-beta.8",
   "description": "CliniaSearch API Javascript client",
   "main": "index.js",
+  "types": "index.d.ts",
   "jsdelivr": "./dist/cliniasearch.min.js",
   "browser": {
     "./index.js": "./src/browser/builds/cliniasearch.js",
@@ -54,8 +55,8 @@
   "homepage": "",
   "bugs": "https://github.com/clinia/cliniasearch-client-javascript/issues",
   "author": {
-    "name": "Clinia Health",
-    "url": "https://www.cliniahealth.com"
+    "name": "Clinia",
+    "url": "https://www.clinia.ca"
   },
   "files": [
     "src",

@@ -4,7 +4,7 @@ set -e # exit when error
 # Use this with `npm run build` so that `./node_modules/.bin` are injected into
 # the PATH
 
-license="/*! cliniasearch ${VERSION:-UNRELEASED} | © 2014, 2015 Clinia Health | github.com/clinia/cliniasearch-client-javascript */"
+license="/*! cliniasearch ${VERSION:-UNRELEASED} | © 2019 Clinia | github.com/clinia/cliniasearch-client-javascript */"
 
 echo 'Building cliniasearch-client-js'
 

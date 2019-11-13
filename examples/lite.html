@@ -12,6 +12,7 @@
           read: ['api.partner.staging.clinia.ca'],
         },
       });
+
       var index = client.initIndex('health_facility');
       index.search('sons', function(err, results) {
         if (err) {
