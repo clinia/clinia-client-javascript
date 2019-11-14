@@ -138,7 +138,7 @@ client.suggest('Foo', { highlightPreTag: "<strong>", highlightPostTag: "</strong
 })
 ```
 ---
-### `client.search(queries, args, callback)`
+### `client.search(queries, callback)`
 Search through multiple indices at the same time.
 
 #### Arguments
@@ -148,9 +148,9 @@ Search through multiple indices at the same time.
   - **params (_Object_)** -- Search params.
     - **page (_string_)** -- Page offset.
     - **perPage (_string_)** -- Page size.
-    - **queryTypes (_string[]_)** -- Types of the query.
+    - **queryType (_string_)** -- Strategy for the query. <br/> Possible values are `prefix_last` or `prefix_none`.<br/>`prefix_last` will return partial word match.<br/>`prefix_none` will return exact word match.
+    - **searchFields (_string[]_)** -- Fields in which to search.
     - **location (_string_)** -- A postal code, the name of a city or a region.
-- **args (_Object_)** -- The query parameters.
 - **callback (_Function_)** -- Callback to be called.
 
 #### Returns
@@ -205,7 +205,8 @@ Search through a single index.
 - **args (_Object_)** -- The query parameters.
   - **page (_string_)** -- Page offset.
   - **perPage (_string_)** -- Page size.
-  - **queryTypes (_string[]_)** -- Types of the query.
+  - **queryType (_string_)** -- Strategy for the query. <br/> Possible values are `prefix_last` or `prefix_none`.<br/>`prefix_last` will return partial word match.<br/>`prefix_none` will return exact word match.
+  - **searchFields (_string[]_)** -- Fields in which to search.
   - **location (_string_)** -- A postal code, the name of a city or a region.
 - **callback (_Function_)** -- Callback to be called.
 
