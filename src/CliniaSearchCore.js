@@ -652,9 +652,9 @@ CliniaSearchCore.prototype._getSearchParams = function(args, params) {
     delete args.searchFields;
   }
 
-  if (argCheck.isNotNullOrUndefined(args.queryTypes) && !isArray(args.queryTypes)) {
-    logger.warn('Ignoring search query parameter `queryTypes`. Must be an array.');
-    delete args.queryTypes;
+  if (argCheck.isNotNullOrUndefined(args.queryType) && typeof args.queryType !== 'string') {
+    logger.warn('Ignoring search query parameter `queryType`. Must be an array.');
+    delete args.queryType;
   }
 
   if (argCheck.isNotNullOrUndefined(args.location) && typeof args.location !== 'string') {

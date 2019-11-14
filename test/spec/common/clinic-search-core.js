@@ -60,20 +60,20 @@ test('cliniaSearchCore._getSearchParams({perPage:1})', function(t) {
 });
 
 // QUERYTYPES SEARCH PARAMS
-test('cliniaSearchCore._getSearchParams({queryTypes:{}})', function(t) {
+test('cliniaSearchCore._getSearchParams({queryType:{}})', function(t) {
   t.equal(
-    CliniaSearchCore.prototype._getSearchParams({queryTypes: {}}, ''),
+    CliniaSearchCore.prototype._getSearchParams({queryType: {}}, ''),
     '',
-    'Invalid `queryTypes` search param return empty params.'
+    'Invalid `queryType` search param return empty params.'
   );
   t.end();
 });
 
-test('cliniaSearchCore._getSearchParams({queryTypes:[`prefix`]})', function(t) {
+test('cliniaSearchCore._getSearchParams({queryType:`prefix_last`})', function(t) {
   t.equal(
-    CliniaSearchCore.prototype._getSearchParams({queryTypes: ['prefix']}, ''),
-    `queryTypes=${encodeURIComponent(safeJSONStringify(['prefix']))}`,
-    'Valid `queryTypes` search param return empty params.'
+    CliniaSearchCore.prototype._getSearchParams({queryType: 'prefix_last'}, ''),
+    'queryType=prefix_last',
+    'Valid `queryType` search param return empty params.'
   );
   t.end();
 });
@@ -90,8 +90,8 @@ test('cliniaSearchCore._getSearchParams({searchFields:{}})', function(t) {
 
 test('cliniaSearchCore._getSearchParams({searchFields:[`name`]})', function(t) {
   t.equal(
-    CliniaSearchCore.prototype._getSearchParams({queryTypes: ['name']}, ''),
-    `queryTypes=${encodeURIComponent(safeJSONStringify(['name']))}`,
+    CliniaSearchCore.prototype._getSearchParams({searchFields: ['name']}, ''),
+    `searchFields=${encodeURIComponent(safeJSONStringify(['name']))}`,
     'Valid `searchFields` search param return empty params.'
   );
   t.end();
@@ -157,7 +157,7 @@ test('cliniaSearchCore._getSearchParams({insideBoundingBox:`montreal`})', functi
 test('cliniaSearchCore._getSearchParams(validParams, {})', function(t) {
   var params = {
     documentTypes: ['health_facility'],
-    queryTypes: ['prefix'],
+    queryType: 'prefix_last',
     location: '3578 rue Dorion, Montreal',
     aroundLatLng: '45.98123123,-73.1231432',
     insideBoundingBox: '45.98123123,-73.1231432,12.38353485,-23.23232323',
@@ -167,7 +167,7 @@ test('cliniaSearchCore._getSearchParams(validParams, {})', function(t) {
   };
   t.equal(
     CliniaSearchCore.prototype._getSearchParams(params, ''),
-    'documentTypes=%5B%22health_facility%22%5D&queryTypes=%5B%22prefix%22%5D&filters=%7B%22types%22%3A%5B%22CLINIC%22%2C%22HOSPITAL%22%5D%2C%22hours%22%3A%7B%22offset%22%3A180%2C%22values%22%3A%5B1%2C3%5D%7D%2C%22location%22%3A%223578%20rue%20Dorion%2C%20Montreal%22%7D&page=0&perPage=50&customField=custom',
+    'documentTypes=%5B%22health_facility%22%5D&queryType=prefix_last&location=3578%20rue%20Dorion%2C%20Montreal&aroundLatLng=45.98123123%2C-73.1231432&insideBoundingBox=45.98123123%2C-73.1231432%2C12.38353485%2C-23.23232323&page=0&perPage=50&customField=custom',
     'Valid search params type populates search params');
   t.end();
 });
