@@ -265,7 +265,7 @@ test('cliniaSearchCore._getSuggestParams(validParams, {})', function(t) {
 // PLACES PARAMS
 test('cliniaSearchCore._getPlacesParams({})', function(t) {
   t.equal(
-    CliniaSearchCore.prototype._getPlacesParams({}, 'input=input'),
+    CliniaSearchCore.prototype._getPlacesParams({}, 'input=input&types=place&types=postcode&types=neighborhood'),
     'input=input&types=place&types=postcode&types=neighborhood',
     'Empty places param return empty params.'
   );
@@ -274,7 +274,7 @@ test('cliniaSearchCore._getPlacesParams({})', function(t) {
 
 test('cliniaSearchCore._getPlacesParams(undefined)', function(t) {
   t.equal(
-    CliniaSearchCore.prototype._getPlacesParams(undefined, 'input=input'),
+    CliniaSearchCore.prototype._getPlacesParams(undefined, 'input=input&types=place&types=postcode&types=neighborhood'),
     'input=input&types=place&types=postcode&types=neighborhood',
     'Undefined places suggest param populates params.'
   );
@@ -285,7 +285,7 @@ test('cliniaSearchCore._getPlacesParams(undefined)', function(t) {
 test('cliniaSearchCore._getPlacesParams({country:8})', function(t) {
   t.equal(
     CliniaSearchCore.prototype._getPlacesParams({country: 8}, ''),
-    '&types=place&types=postcode&types=neighborhood',
+    '',
     'Invalid `country` places param return empty params.'
   );
   t.end();
@@ -294,7 +294,7 @@ test('cliniaSearchCore._getPlacesParams({country:8})', function(t) {
 test('cliniaSearchCore._getPlacesParams({country:`CA`})', function(t) {
   t.equal(
     CliniaSearchCore.prototype._getPlacesParams({country: 'CA'}, ''),
-    '&types=place&types=postcode&types=neighborhood&country=CA',
+    'country=CA',
     'Valid `country` places suggest param populates params.'
   );
   t.end();
@@ -304,7 +304,7 @@ test('cliniaSearchCore._getPlacesParams({country:`CA`})', function(t) {
 test('cliniaSearchCore._getPlacesParams({limit:``})', function(t) {
   t.equal(
     CliniaSearchCore.prototype._getPlacesParams({limit: 'CA'}, ''),
-    '&types=place&types=postcode&types=neighborhood',
+    '',
     'Invalid `limimt` places param return empty params.'
   );
   t.end();
@@ -313,7 +313,7 @@ test('cliniaSearchCore._getPlacesParams({limit:``})', function(t) {
 test('cliniaSearchCore._getPlacesParams({limit:1})', function(t) {
   t.equal(
     CliniaSearchCore.prototype._getPlacesParams({limit: 1}, ''),
-    '&types=place&types=postcode&types=neighborhood&limit=1',
+    'limit=1',
     'Valid `limit` places suggest param populates params.'
   );
   t.end();

@@ -569,7 +569,6 @@ CliniaSearchCore.prototype._getPlacesParams = function(args, params) {
   var argCheck = require('./argCheck.js');
   var logger = require('./logger.js');
 
-  params += '&types=place&types=postcode&types=neighborhood';
   if (args === undefined || args === null) {
     return params;
   }

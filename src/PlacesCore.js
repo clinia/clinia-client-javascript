@@ -30,10 +30,10 @@ PlacesCore.prototype.suggest = function(query, args, callback) {
   args = normalizedParameters[1];
   callback = normalizedParameters[2];
 
-  var params = '';
+  var params = 'types=place&types=postcode&types=neighborhood';
 
   if (query !== undefined) {
-    params = 'input=' + query;
+    params = '&input=' + query;
     if (args !== undefined) {
       delete args.query;
     }
