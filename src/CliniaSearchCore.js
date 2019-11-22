@@ -597,17 +597,13 @@ CliniaSearchCore.prototype._getPlacesParams = function(args, params) {
   if (args.types === null || args.types === undefined || args.types.length === 0) {
     args.types = ['postcode', 'place', 'neighborhood'];
   }
-
   forEach(args.types, function addType(type) {
     params += params === '' ? '' : '&';
     params += 'types=' + encodeURIComponent(type);
   });
-
   delete args.types;
 
-  params = buildQueryParams(args, params);
-
-  return params;
+  return buildQueryParams(args, params);
 };
 
 /**
