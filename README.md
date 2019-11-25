@@ -9,7 +9,8 @@
     <a href="#features">Features</a> •
     <a href="#getting-started">Getting Started</a> •
     <a href="#more-details">More Details</a> •
-    <a href="#api">API</a>
+    <a href="#api">API</a> •
+    <a href="#-license">License</a>
   </p>
 </div>
 
