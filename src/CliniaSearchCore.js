@@ -84,14 +84,14 @@ function CliniaSearchCore(applicationID, apiKey, opts) {
   this._checkAppIdData();
 
   if (!opts.hosts) {
-    var defaultHosts = map(this._shuffleResult, function(hostNumber) {
-      return applicationID + '-' + hostNumber + '.clinia.ca';
+    var defaultHosts = map(this._shuffleResult, function(_hostNumber) { // eslint-disable-line
+      return 'api.partner.clinia.ca';
     });
 
     // no hosts given, compute defaults
-    var mainSuffix = (opts.dsn === false ? '' : '-dsn') + '.clinia.ca';
-    this.hosts.read = [this.applicationID + mainSuffix].concat(defaultHosts);
-    this.hosts.write = [this.applicationID + '.clinia.ca'].concat(defaultHosts);
+    var mainSuffix = 'api.partner.clinia.ca';
+    this.hosts.read = [mainSuffix].concat(defaultHosts);
+    this.hosts.write = ['api.partner.clinia.ca'].concat(defaultHosts);
   } else if (isArray(opts.hosts)) {
     // when passing custom hosts, we need to have a different host index if the number
     // of write/read hosts are different.

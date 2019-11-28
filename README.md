@@ -11,9 +11,7 @@ First, install Clinia JavaScript API Client via the [npm](https://www.npmjs.com/
 
 ```bash
 npm install --save cliniasearch
-```
 OR
-```bash
 yarn add cliniasearch
 ```
 

@@ -71,15 +71,10 @@
       $(document).ready(function() {
         var $inputfield = $('#q');
         // Replace the following values by your ApplicationID and ApiKey.
+        var client = cliniasearch('demo-pharmacies', 'KcLxBhVFP8ooPgQODlAxWqfNg657fTz9');
         var client = $.clinia.Client(
-          'TODO',
-          'ClM5vDTmS4GWEL0aS7osJaRkowV8McuP',
-          {
-            hosts: {
-              write: ['api.partner.staging.clinia.ca'],
-              read: ['api.partner.staging.clinia.ca'],
-            },
-          }
+          'demo-pharmacies',
+          'KcLxBhVFP8ooPgQODlAxWqfNg657fTz9'
         );
         // Replace the following value by the name of the index you want to query.
         var index = client.initIndex('health_facility');

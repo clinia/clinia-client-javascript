@@ -2162,14 +2162,14 @@ function CliniaSearchCore(applicationID, apiKey, opts) {
   this._checkAppIdData();
 
   if (!opts.hosts) {
-    var defaultHosts = map(this._shuffleResult, function(hostNumber) {
-      return applicationID + '-' + hostNumber + '.clinia.ca';
+    var defaultHosts = map(this._shuffleResult, function(_hostNumber) { // eslint-disable-line
+      return 'api.partner.clinia.ca';
     });
 
     // no hosts given, compute defaults
-    var mainSuffix = (opts.dsn === false ? '' : '-dsn') + '.clinia.ca';
-    this.hosts.read = [this.applicationID + mainSuffix].concat(defaultHosts);
-    this.hosts.write = [this.applicationID + '.clinia.ca'].concat(defaultHosts);
+    var mainSuffix = 'api.partner.clinia.ca';
+    this.hosts.read = [mainSuffix].concat(defaultHosts);
+    this.hosts.write = ['api.partner.clinia.ca'].concat(defaultHosts);
   } else if (isArray(opts.hosts)) {
     // when passing custom hosts, we need to have a different host index if the number
     // of write/read hosts are different.
@@ -2730,51 +2730,24 @@ CliniaSearchCore.prototype._getSearchParams = function(args, params) {
     delete args.searchFields;
   }
 
-  if (argCheck.isNotNullOrUndefined(args.queryTypes) && !isArray(args.queryTypes)) {
-    logger.warn('Ignoring search query parameter `queryTypes`. Must be an array.');
-    delete args.queryTypes;
+  if (argCheck.isNotNullOrUndefined(args.queryType) && typeof args.queryType !== 'string') {
+    logger.warn('Ignoring search query parameter `queryType`. Must be an array.');
+    delete args.queryType;
   }
 
-  if (argCheck.isNotNullOrUndefined(args.filters)) {
-    if ((typeof args.filters !== 'object' || isArray(args.filters))) {
-      logger.warn('Ignoring search query parameter `filters`. Must be an object.');
-      delete args.filters;
-    } else {
-      if (argCheck.isNotNullOrUndefined(args.filters.types) && !isArray(args.filters.types)) {
-        logger.warn('Ignoring search query parameter `filters.types`. Must be an array.');
-        delete args.filters.types;
-      }
+  if (argCheck.isNotNullOrUndefined(args.location) && typeof args.location !== 'string') {
+    logger.warn('Ignoring search query parameter `location`. Must be a string.');
+    delete args.location;
+  }
 
-      if (argCheck.isNotNullOrUndefined(args.filters.hours)) {
-        if (typeof args.filters.hours !== 'object' || isArray(args.filters.hours)) {
-          logger.warn('Ignoring search query parameter `filters.hours`. Must be an object.');
-          delete args.filters.hours;
-        } else {
-          if (argCheck.isNotNullOrUndefined(args.filters.hours.offset) && typeof args.filters.hours.offset !== 'number') {
-            logger.warn('Ignoring search query parameter `filters.hours.offset`. Must be a number.');
-            delete args.filters.hours.offset;
-          }
+  if (argCheck.isNotNullOrUndefined(args.aroundLatLng) && typeof args.aroundLatLng !== 'string') {
+    logger.warn('Ignoring search query parameter `aroundLatLng`. Must be a string.');
+    delete args.aroundLatLng;
+  }
 
-          if (argCheck.isNotNullOrUndefined(args.filters.hours.values) && !isArray(args.filters.hours.values)) {
-            logger.warn('Ignoring search query parameter `filters.hours.values`. Must be an array.');
-            delete args.filters.hours.values;
-          }
-        }
-
-        if (argCheck.isEmpty(args.filters.hours)) {
-          delete args.filters.hours;
-        }
-      }
-
-      if (argCheck.isNotNullOrUndefined(args.filters.location) && typeof args.filters.location !== 'string') {
-        logger.warn('Ignoring search query parameter `filters.location`. Must be a string.');
-        delete args.filters.location;
-      }
-    }
-
-    if (argCheck.isEmpty(args.filters)) {
-      delete args.filters;
-    }
+  if (argCheck.isNotNullOrUndefined(args.insideBoundingBox) && typeof args.insideBoundingBox !== 'string') {
+    logger.warn('Ignoring search query parameter `insideBoundingBox`. Must be a string.');
+    delete args.insideBoundingBox;
   }
 
   return buildQueryParams(args, params);
@@ -2832,7 +2805,7 @@ CliniaSearchCore.prototype._computeRequestHeaders = function(options) {
  * Get suggestions based on a query
  * @param  {Object} args  The query parmeters.
  * @param {string} query The query to get suggestions for
- * @param {string[]} args.size Max number of suggestions to receive
+ * @param {string} args.size Max number of suggestions to receive
  * @param {string} args.highlightPreTag The pre tag used to highlight matched query parts
  * @param {string} args.highlightPostTag The post tag used to highlight matched query parts
  * @param  {Function} callback Callback to be called
