@@ -243,7 +243,7 @@ test('cliniaSearchCore._getSuggestParams({highlightPostTag:</strong>})', functio
   t.equal(
     CliniaSearchCore.prototype._getSuggestParams({highlightPostTag: '</strong>'}, ''),
     'highlightPostTag=%3C%2Fstrong%3E',
-    'Valid `types` suggest param pupolates params.'
+    'Valid `highlightPostTag` suggest param pupolates params.'
   );
   t.end();
 });
@@ -266,7 +266,7 @@ test('cliniaSearchCore._getSuggestParams(validParams, {})', function(t) {
 test('cliniaSearchCore._getPlacesParams({})', function(t) {
   t.equal(
     CliniaSearchCore.prototype._getPlacesParams({}, 'input=input'),
-    'input=input&types=place&types=postcode&types=neighborhood',
+    'input=input&types=postcode&types=place&types=neighborhood',
     'Empty places param return empty params.'
   );
   t.end();
@@ -275,7 +275,7 @@ test('cliniaSearchCore._getPlacesParams({})', function(t) {
 test('cliniaSearchCore._getPlacesParams(undefined)', function(t) {
   t.equal(
     CliniaSearchCore.prototype._getPlacesParams(undefined, 'input=input'),
-    'input=input&types=place&types=postcode&types=neighborhood',
+    'input=input',
     'Undefined places suggest param populates params.'
   );
   t.end();
@@ -285,7 +285,7 @@ test('cliniaSearchCore._getPlacesParams(undefined)', function(t) {
 test('cliniaSearchCore._getPlacesParams({country:8})', function(t) {
   t.equal(
     CliniaSearchCore.prototype._getPlacesParams({country: 8}, ''),
-    '&types=place&types=postcode&types=neighborhood',
+    'types=postcode&types=place&types=neighborhood',
     'Invalid `country` places param return empty params.'
   );
   t.end();
@@ -294,7 +294,7 @@ test('cliniaSearchCore._getPlacesParams({country:8})', function(t) {
 test('cliniaSearchCore._getPlacesParams({country:`CA`})', function(t) {
   t.equal(
     CliniaSearchCore.prototype._getPlacesParams({country: 'CA'}, ''),
-    '&types=place&types=postcode&types=neighborhood&country=CA',
+    'types=postcode&types=place&types=neighborhood&country=CA',
     'Valid `country` places suggest param populates params.'
   );
   t.end();
@@ -304,7 +304,7 @@ test('cliniaSearchCore._getPlacesParams({country:`CA`})', function(t) {
 test('cliniaSearchCore._getPlacesParams({limit:``})', function(t) {
   t.equal(
     CliniaSearchCore.prototype._getPlacesParams({limit: 'CA'}, ''),
-    '&types=place&types=postcode&types=neighborhood',
+    'types=postcode&types=place&types=neighborhood',
     'Invalid `limimt` places param return empty params.'
   );
   t.end();
@@ -313,8 +313,46 @@ test('cliniaSearchCore._getPlacesParams({limit:``})', function(t) {
 test('cliniaSearchCore._getPlacesParams({limit:1})', function(t) {
   t.equal(
     CliniaSearchCore.prototype._getPlacesParams({limit: 1}, ''),
-    '&types=place&types=postcode&types=neighborhood&limit=1',
+    'types=postcode&types=place&types=neighborhood&limit=1',
     'Valid `limit` places suggest param populates params.'
+  );
+  t.end();
+});
+
+// PLACES TYPES PARAMS
+test('cliniaSearchCore._getPlacesParams({types:``})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getPlacesParams({types: ''}, ''),
+    'types=postcode&types=place&types=neighborhood',
+    'Invalid `types` places param return empty params.'
+  );
+  t.end();
+});
+
+test('cliniaSearchCore._getPlacesParams({types:[a,b]})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getPlacesParams({types: ['a', 'b']}, ''),
+    'types=a&types=b',
+    'Valid `types` places suggest param populates params.'
+  );
+  t.end();
+});
+
+test('cliniaSearchCore._getPlacesParams({types:[a,b]})', function(t) {
+  t.equal(
+    CliniaSearchCore.prototype._getPlacesParams({types: []}, ''),
+    'types=postcode&types=place&types=neighborhood',
+    'Empty `types` places suggest param populates with default params.'
+  );
+  t.equal(
+    CliniaSearchCore.prototype._getPlacesParams({types: null}, ''),
+    'types=postcode&types=place&types=neighborhood',
+    'Empty `types` places suggest param populates with default params.'
+  );
+  t.equal(
+    CliniaSearchCore.prototype._getPlacesParams({types: undefined}, ''),
+    'types=postcode&types=place&types=neighborhood',
+    'Empty `types` places suggest param populates with default params.'
   );
   t.end();
 });

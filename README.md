@@ -1,6 +1,22 @@
+<div align="center">
+  <img src="./clinia-logo.svg" width="250">
+  <h1>Clinia JavaScript API Client</h1>
+  <h4>Thin & minimal low-level HTTP client to interact with Clinia's API</h4>
+  <a href="https://www.npmjs.org/package/cliniasearch">
+    <img src="http://img.shields.io/npm/v/cliniasearch.svg" alt="View on npm">
+  </a>
+  <p>
+    <a href="#features">Features</a> •
+    <a href="#getting-started">Getting Started</a> •
+    <a href="#more-details">More Details</a> •
+    <a href="#api">API</a> •
+    <a href="#-license">License</a>
+  </p>
+</div>
+
 # Features
 
-- Thin & **minimal low-level HTTP client** to interact with Clinia's API
+- Allows authenticated communication with Clinia's API suites.
 - Works both on the **browser** and **node.js**
 - **UMD compatible**, you can use it with any module loader
 - Contains type definitions: **[@types/cliniasearch](https://www.npmjs.com/package/@types/cliniasearch)**
@@ -35,7 +51,7 @@ index
   });
 ```
 
-# More details...
+# More Details
 
 The client allows to use the following Clinia APIs:
 - Single index search
@@ -237,6 +253,7 @@ Get place suggestions based on a query.
 - **args (_Object_)** -- The query parameters.
   - **limit (_number_)** -- Max number of suggestions to receive.
   - **country (_string_)** -- ISO3166 Alpha-2 country code (e.g. 'CA'). Limits the suggestions to this country.
+  - **types (_string[]_=[`postcode`, `place`, `neighborhood`])** -- Types of suggestions to receive. Valid values are `country`, `region`, `postcode`, `district`, `place`, `locality`, `neighborhood`, `poi`, `route`.
 - **callback (_Function_)** -- Callback to be called.
 
 #### Returns

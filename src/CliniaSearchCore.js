@@ -567,9 +567,10 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
  */
 CliniaSearchCore.prototype._getPlacesParams = function(args, params) {
   var argCheck = require('./argCheck.js');
+  var isArray = require('isarray');
+  var forEach = require('foreach');
   var logger = require('./logger.js');
 
-  params += '&types=place&types=postcode&types=neighborhood';
   if (args === undefined || args === null) {
     return params;
   }
@@ -584,7 +585,22 @@ CliniaSearchCore.prototype._getPlacesParams = function(args, params) {
     delete args.country;
   }
 
-  // Delete the `types` attributes so the users don't override our types params
+  // Types are a special case and need to be built differently than other params
+  // (e.g. 'types=postcode&types=address')
+  if (argCheck.isNotNullOrUndefined(args.types)) {
+    if (!isArray(args.types)) {
+      logger.warn('Ignoring places query parameter `types`. Must be an array.');
+      delete args.types;
+    }
+  }
+
+  if (args.types === null || args.types === undefined || args.types.length === 0) {
+    args.types = ['postcode', 'place', 'neighborhood'];
+  }
+  forEach(args.types, function addType(type) {
+    params += params === '' ? '' : '&';
+    params += 'types=' + encodeURIComponent(type);
+  });
   delete args.types;
 
   return buildQueryParams(args, params);
