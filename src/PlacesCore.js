@@ -30,24 +30,29 @@ PlacesCore.prototype.suggest = function(query, args, callback) {
   args = normalizedParameters[1];
   callback = normalizedParameters[2];
 
+  // Set default place types of none are sent to the client.
+  if (args === undefined) {
+    args = {
+      types: ['postcode', 'place', 'neighborhood']
+    };
+  } else if (args.types === undefined || args.types === null) {
+    args.types = ['postcode', 'place', 'neighborhood'];
+  }
+
   var params = '';
 
   if (query !== undefined) {
-    params = 'input=' + query;
-    if (args !== undefined) {
-      delete args.query;
-    }
+    params = 'query=' + query;
+    delete args.query;
   }
 
   var additionalUA;
-  if (args !== undefined) {
-    if (args.additionalUA) {
-      additionalUA = args.additionalUA;
-      delete args.additionalUA;
-    }
-    // `_getPlacesParams` will augment params
-    params = this.as._getPlacesParams(args, params);
+  if (args.additionalUA) {
+    additionalUA = args.additionalUA;
+    delete args.additionalUA;
   }
+  // `_getPlacesParams` will augment params
+  params = this.as._getPlacesParams(args, params);
 
   return this._suggest(params, undefined, callback, additionalUA);
 };
@@ -55,12 +60,14 @@ PlacesCore.prototype.suggest = function(query, args, callback) {
 PlacesCore.prototype._suggest = function(params, url, callback, additionalUA) {
   return this.as._jsonRequest({
     cache: this.cache,
-    method: 'GET',
-    url: (url || '/location/v1/autocomplete?') + params,
+    method: 'POST',
+    url: (url || '/location/v1/autocomplete?'),
+    body: {params},
     hostType: 'read',
     fallback: {
       method: 'GET',
-      url: (url || '/location/v1/autocomplete?') + params
+      url: (url || '/location/v1/autocomplete?'),
+      body: {params}
     },
     callback: callback,
     additionalUA: additionalUA

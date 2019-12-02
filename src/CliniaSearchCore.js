@@ -568,40 +568,26 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
 CliniaSearchCore.prototype._getPlacesParams = function(args, params) {
   var argCheck = require('./argCheck.js');
   var isArray = require('isarray');
-  var forEach = require('foreach');
   var logger = require('./logger.js');
 
   if (args === undefined || args === null) {
     return params;
   }
 
-  if (argCheck.isNotNullOrUndefined(args.limit) && typeof args.limit !== 'number') {
+  if (argCheck.isNotNullOrUndefined(args.size) && typeof args.size !== 'number') {
     logger.warn('Ignoring places query parameter `limit`. Must be a number.');
-    delete args.limit;
+    delete args.size;
   }
 
-  if (argCheck.isNotNullOrUndefined(args.country) && typeof args.country !== 'string') {
+  if (argCheck.isNotNullOrUndefined(args.country) && !isArray(args.country)) {
     logger.warn('Ignoring places query parameter `country`. Must be a string.');
     delete args.country;
   }
 
-  // Types are a special case and need to be built differently than other params
-  // (e.g. 'types=postcode&types=address')
-  if (argCheck.isNotNullOrUndefined(args.types)) {
-    if (!isArray(args.types)) {
-      logger.warn('Ignoring places query parameter `types`. Must be an array.');
-      delete args.types;
-    }
+  if (argCheck.isNotNullOrUndefined(args.types) && !isArray(args.types)) {
+    logger.warn('Ignoring places query parameter `types`. Must be an array.');
+    delete args.types;
   }
-
-  if (args.types === null || args.types === undefined || args.types.length === 0) {
-    args.types = ['postcode', 'place', 'neighborhood'];
-  }
-  forEach(args.types, function addType(type) {
-    params += params === '' ? '' : '&';
-    params += 'types=' + encodeURIComponent(type);
-  });
-  delete args.types;
 
   return buildQueryParams(args, params);
 };
@@ -773,7 +759,7 @@ CliniaSearchCore.prototype.suggest = function(query, args, callback) {
   // `_getSuggestParams` will augment params
   params = this._getSuggestParams(args, params);
 
-  return this._suggest({params: params}, callback, additionalUA);
+  return this._suggest(params, callback, additionalUA);
 };
 
 CliniaSearchCore.prototype._suggest = function(params, callback, additionalUA) {
@@ -781,12 +767,12 @@ CliniaSearchCore.prototype._suggest = function(params, callback, additionalUA) {
     cache: this.cache,
     method: 'POST',
     url: '/search/v1/indexes/suggestions/query',
-    body: params,
+    body: {params},
     hostType: 'read',
     fallback: {
       method: 'GET',
       url: '/search/v1/indexes/suggestions/query',
-      body: params
+      body: {params}
     },
     additionalUA: additionalUA,
     callback: callback
