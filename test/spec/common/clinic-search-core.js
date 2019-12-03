@@ -265,8 +265,8 @@ test('cliniaSearchCore._getSuggestParams(validParams, {})', function(t) {
 // PLACES PARAMS
 test('cliniaSearchCore._getPlacesParams({})', function(t) {
   t.equal(
-    CliniaSearchCore.prototype._getPlacesParams({}, 'input=input'),
-    'input=input',
+    CliniaSearchCore.prototype._getPlacesParams({}, 'query=query'),
+    'query=query',
     'Empty places param return empty params.'
   );
   t.end();
@@ -274,8 +274,8 @@ test('cliniaSearchCore._getPlacesParams({})', function(t) {
 
 test('cliniaSearchCore._getPlacesParams(undefined)', function(t) {
   t.equal(
-    CliniaSearchCore.prototype._getPlacesParams(undefined, 'input=input'),
-    'input=input',
+    CliniaSearchCore.prototype._getPlacesParams(undefined, 'query=query'),
+    'query=query',
     'Undefined places suggest param populates params.'
   );
   t.end();
@@ -305,16 +305,16 @@ test('cliniaSearchCore._getPlacesParams({size:``})', function(t) {
   t.equal(
     CliniaSearchCore.prototype._getPlacesParams({size: 'CA'}, ''),
     '',
-    'Invalid `limimt` places param return empty params.'
+    'Invalid `size` places param return empty params.'
   );
   t.end();
 });
 
-test('cliniaSearchCore._getPlacesParams({limit:1})', function(t) {
+test('cliniaSearchCore._getPlacesParams({size:1})', function(t) {
   t.equal(
     CliniaSearchCore.prototype._getPlacesParams({size: 1}, ''),
     'size=1',
-    'Valid `limit` places suggest param populates params.'
+    'Valid `size` places suggest param populates params.'
   );
   t.end();
 });
@@ -337,4 +337,3 @@ test('cliniaSearchCore._getPlacesParams({types:[a,b]})', function(t) {
   );
   t.end();
 });
-

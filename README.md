@@ -252,6 +252,7 @@ Get place suggestions based on a query.
 - **query (_Object_)** -- The query to issue. Can also be passed into `args`.
 - **args (_Object_)** -- The query parameters.
   - **size (_number_)** -- Max number of suggestions to receive.
+  - **locale (_string_)** -- ISO639-1 language code. Preferred language to receive suggestions in.
   - **country (_string[]_)** -- ISO3166 Alpha-2 country codes (e.g. 'CA'). Limits the suggestions to those countries.
   - **types (_string[]_=[`postcode`, `place`, `neighborhood`])** -- Types of suggestions to receive. Valid values are `country`, `region`, `postcode`, `district`, `place`, `locality`, `neighborhood`, `poi`, `route`.
 - **callback (_Function_)** -- Callback to be called.
