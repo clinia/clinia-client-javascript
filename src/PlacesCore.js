@@ -1,5 +1,7 @@
 module.exports = PlacesCore;
 
+var argCheck = require('./argCheck');
+
 function PlacesCore(cliniasearch) {
   this.as = cliniasearch;
 
@@ -30,37 +32,64 @@ PlacesCore.prototype.suggest = function(query, args, callback) {
   args = normalizedParameters[1];
   callback = normalizedParameters[2];
 
+  // Set default place types of none are sent to the client.
+  if (args === undefined) {
+    args = {
+      types: ['postcode', 'place', 'neighborhood']
+    };
+  } else if (args.types === undefined || args.types === null) {
+    args.types = ['postcode', 'place', 'neighborhood'];
+  }
+
   var params = '';
 
-  if (query !== undefined) {
-    params = 'input=' + query;
-    if (args !== undefined) {
-      delete args.query;
-    }
+  if (argCheck.isNotNullOrUndefined(query)) {
+    params = 'query=' + query;
+    delete args.query;
   }
 
   var additionalUA;
-  if (args !== undefined) {
-    if (args.additionalUA) {
-      additionalUA = args.additionalUA;
-      delete args.additionalUA;
-    }
-    // `_getPlacesParams` will augment params
-    params = this.as._getPlacesParams(args, params);
+  if (argCheck.isNotNullOrUndefined(args.additionalUA)) {
+    additionalUA = args.additionalUA;
+    delete args.additionalUA;
   }
 
-  return this._suggest(params, undefined, callback, additionalUA);
+  var locale;
+  if (argCheck.isNotNullOrUndefined(args.locale)) {
+    locale = args.locale;
+    delete args.locale;
+  }
+
+  // `_getPlacesParams` will augment params
+  params = this.as._getPlacesParams(args, params);
+
+  return this._suggest(params, undefined, callback, additionalUA, locale);
 };
 
-PlacesCore.prototype._suggest = function(params, url, callback, additionalUA) {
+PlacesCore.prototype._buildUrl = function(url, locale) {
+  // Add the locale as a query param
+  var finalUrl = url || '/location/v1/autocomplete?';
+  if (locale !== undefined && locale !== null) {
+    if (!finalUrl.endsWith('?')) {
+      finalUrl += '?';
+    }
+    finalUrl += 'locale=' + encodeURIComponent(locale);
+  }
+  return finalUrl;
+};
+
+PlacesCore.prototype._suggest = function(params, url, callback, additionalUA, locale) {
+  var finalUrl = this._buildUrl(url, locale);
   return this.as._jsonRequest({
     cache: this.cache,
-    method: 'GET',
-    url: (url || '/location/v1/autocomplete?') + params,
+    method: 'POST',
+    url: finalUrl,
+    body: {params},
     hostType: 'read',
     fallback: {
       method: 'GET',
-      url: (url || '/location/v1/autocomplete?') + params
+      url: finalUrl,
+      body: {params}
     },
     callback: callback,
     additionalUA: additionalUA
