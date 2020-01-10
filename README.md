@@ -2,9 +2,6 @@
   <img src="./clinia-logo.svg" width="250">
   <h1>Clinia JavaScript API Client</h1>
   <h4>Thin & minimal low-level HTTP client to interact with Clinia's API</h4>
-  <a href="https://www.npmjs.org/package/cliniasearch">
-    <img src="http://img.shields.io/npm/v/cliniasearch.svg" alt="View on npm">
-  </a>
   <p>
     <a href="#features">Features</a> •
     <a href="#getting-started">Getting Started</a> •
@@ -12,6 +9,12 @@
     <a href="#api">API</a> •
     <a href="#-license">License</a>
   </p>
+</div>
+
+<div align="center">
+
+[![Version][version-svg]][package-url] [![License][license-image]][license-url] [![Downloads][downloads-image]][downloads-url]
+
 </div>
 
 # Features
@@ -53,7 +56,7 @@ index
 
 # More Details
 
-The client allows to use the following Clinia APIs:
+The client allows the use the following Clinia APIs:
 - Single index search
 - Multiple indexes search
 - Query suggestions (Autocomplete)
@@ -86,7 +89,7 @@ const client = cliniasearch('YourApplicationID', 'YourAPIKey');
 ```
 ---
 ### `client.initIndex(indexName)`
-Get the `Index` object initialized .
+Initializes the `Index` object.
 
 #### Arguments
 - **indexName (_string_)** -- Name of the targeted index. 
@@ -96,14 +99,14 @@ Returns an instance of `Index`.
 
 ---
 ### `client.initPlaces()`
-Get the Places object initialized.
+Initializes the `Places` object.
 
 #### Returns
 Returns an instance of `Places`.
 
 ---
 ### `client.setExtraHeader(name, value)`
-Add an extra field to the HTTP request.
+Add an extra header to the HTTP request.
 
 #### Arguments
 - **name (_string_)** -- The header field name. 
@@ -117,11 +120,11 @@ Get the value of an extra HTTP header.
 - **name (_string_)** -- The header field name. 
 
 #### Returns
-A `string` of the field value.
+A `string` of the header value.
 
 ---
 ### `client.unsetExtraHeader(name)`
-Remove an extra field from the HTTP request.
+Remove an extra header from the HTTP request.
 
 #### Arguments
 - **name (_string_)** -- The header field name. 
@@ -139,7 +142,7 @@ Get query suggestions based on a query.
 - **callback (_Function_)** -- Callback to be called.
 
 #### Returns
-Returns a `Promise` if no callback given.
+Returns a `Promise` if no callback is given.
 
 #### Example
 ```js
@@ -168,7 +171,7 @@ Search through multiple indices at the same time.
 - **callback (_Function_)** -- Callback to be called.
 
 #### Returns
-Returns a `Promise` if no callback given.
+Returns a `Promise` if no callback is given.
 
 #### Example
 ```js
@@ -225,7 +228,7 @@ Search through a single index.
 - **callback (_Function_)** -- Callback to be called.
 
 #### Returns
-Returns a `Promise` if no callback given.
+Returns a `Promise` if no callback is given.
 
 #### Example
 ```js
@@ -258,11 +261,11 @@ Get place suggestions based on a query.
 - **callback (_Function_)** -- Callback to be called.
 
 #### Returns
-Returns a `Promise` if no callback given.
+Returns a `Promise` if no callback is given.
 
 #### Example
 ```js
-places.search('3578 rue Dorion Montréal', { country: 'CA', limit: 5 }, function(err, suggestions) {
+places.search('3578 rue Dorion Montréal', { country: ['CA'], size: 5 }, function(err, suggestions) {
   if (err) {
     throw err;
   }
@@ -435,3 +438,12 @@ places.search('3578 rue Dorion Montréal', { country: 'CA', limit: 5 }, function
 # 📄 License
 
 Clinia JavaScript API Client is an open-sourced software licensed under the [MIT license](LICENSE).
+
+<!-- Links -->
+
+[license-image]: http://img.shields.io/badge/license-MIT-green.svg?style=flat-square
+[license-url]: LICENSE
+[downloads-image]: https://img.shields.io/npm/dm/cliniasearch.svg?style=flat-square
+[downloads-url]: http://npm-stat.com/charts.html?package=cliniasearch
+[version-svg]: https://img.shields.io/npm/v/cliniasearch.svg?style=flat-square
+[package-url]: https://yarnpkg.com/en/package/cliniasearch
