@@ -580,7 +580,7 @@ CliniaSearchCore.prototype._getPlacesParams = function(args, params) {
   }
 
   if (argCheck.isNotNullOrUndefined(args.country) && !isArray(args.country)) {
-    logger.warn('Ignoring places query parameter `country`. Must be a string.');
+    logger.warn('Ignoring places query parameter `country`. Must be an array.');
     delete args.country;
   }
 
