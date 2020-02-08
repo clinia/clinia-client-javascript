@@ -1,8 +1,6 @@
-'use strict';
-
 module.exports = {
   http: createHttpServer,
-  https: createHttpsServer
+  https: createHttpsServer,
 };
 
 function createHttpsServer() {
@@ -10,20 +8,20 @@ function createHttpsServer() {
   // let's ignore nodejs errors on it
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-  var https = require('https');
-  var enableDestroy = require('server-destroy-vvo');
-  var generate = require('self-signed');
-  var pems = generate({
+  const https = require('https');
+  const enableDestroy = require('server-destroy-vvo');
+  const generate = require('self-signed');
+  const pems = generate({
     name: 'localhost',
     city: 'Montreal',
     state: 'QC',
     organization: 'Test',
-    unit: 'Test'
+    unit: 'Test',
   });
 
-  var server = https.createServer({
+  const server = https.createServer({
     key: pems.private,
-    cert: pems.cert
+    cert: pems.cert,
   });
 
   server.listen(0, '127.0.0.1');
@@ -31,14 +29,16 @@ function createHttpsServer() {
   server.once('close', function restoreSelfSignedFlag() {
     delete process.env.NODE_TLS_REJECT_UNAUTHORIZED;
   });
+
   return server;
 }
 
 function createHttpServer() {
-  var http = require('http');
-  var enableDestroy = require('server-destroy-vvo');
-  var server = http.createServer();
+  const http = require('http');
+  const enableDestroy = require('server-destroy-vvo');
+  const server = http.createServer();
   server.listen(0, '127.0.0.1');
   enableDestroy(server);
+
   return server;
 }

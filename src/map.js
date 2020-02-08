@@ -1,9 +1,10 @@
-var foreach = require('foreach');
+const foreach = require('foreach');
 
 module.exports = function map(arr, fn) {
-  var newArr = [];
+  const newArr = [];
   foreach(arr, function(item, itemIndex) {
     newArr.push(fn(item, itemIndex, arr));
   });
+
   return newArr;
 };

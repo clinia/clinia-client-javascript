@@ -1,20 +1,18 @@
-'use strict';
-
 module.exports = runTestCase;
 
-var merge = require('lodash-compat/object/merge');
-var sinon = require('sinon');
-var test = require('tape');
+const merge = require('lodash-compat/object/merge');
+const sinon = require('sinon');
+const test = require('tape');
 
-var computeExpectedRequest = require('./compute-expected-request');
-var findMethodCallback = require('./find-method-callback');
-var getCredentials = require('./get-credentials');
-var getFakeRecordsResponse = require('./get-fake-records-response');
-var testMethodCall = require('./test-method-call');
+const computeExpectedRequest = require('./compute-expected-request');
+const findMethodCallback = require('./find-method-callback');
+const getCredentials = require('./get-credentials');
+const getFakeRecordsResponse = require('./get-fake-records-response');
+const testMethodCall = require('./test-method-call');
 
 function runTestCase(testCase) {
   // Setting `only: true` property to a test case will only run this test case
-  var runner = testCase.only ? test.only : test;
+  const runner = testCase.only ? test.only : test;
 
   testCase.callArguments = testCase.callArguments || [];
 
@@ -31,31 +29,25 @@ function runTestCase(testCase) {
     t.plan(testMethodCall.assertCount /* + addSubTest*/);
 
     // every test case gets it's own credentials
-    var credentials = getCredentials({
+    const credentials = getCredentials({
       prefix: testCase.method,
       indexName: testCase.indexName,
       applicationID: testCase.applicationID,
-      searchOnlyAPIKey: testCase.searchOnlyAPIKey
+      searchOnlyAPIKey: testCase.searchOnlyAPIKey,
     });
 
-    testCase.expectedRequest = computeExpectedRequest(
-      testCase.expectedRequest,
-      credentials
-    );
+    testCase.expectedRequest = computeExpectedRequest(testCase.expectedRequest, credentials);
 
-    testCase.fakeResponse = merge(
-      getFakeRecordsResponse(),
-      testCase.fakeResponse || {}
-    );
+    testCase.fakeResponse = merge(getFakeRecordsResponse(), testCase.fakeResponse || {});
 
     testMethodCall({
-      testCase: testCase,
+      testCase,
       methodName: testCase.methodName,
       object: testCase.object,
       applicationID: credentials.applicationID,
       searchOnlyAPIKey: credentials.searchOnlyAPIKey,
       indexName: credentials.indexName,
-      assert: t
+      assert: t,
     });
   });
 }

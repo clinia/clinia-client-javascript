@@ -1,26 +1,22 @@
-'use strict';
-
 // This is the Node.JS entry point
 module.exports = cliniasearch;
 
-var debug = require('debug')('cliniasearch:nodejs');
-var crypto = require('crypto');
-var zlib = require('zlib');
+const debug = require('debug')('cliniasearch:nodejs');
+const crypto = require('crypto');
+const zlib = require('zlib');
 
-var inherits = require('inherits');
-var Promise = global.Promise || require('es6-promise').Promise;
-var semver = require('semver');
-var isNotSupported = semver.satisfies(process.version, '<0.10');
-var isNode010 = semver.satisfies(process.version, '=0.10');
+const inherits = require('inherits');
+const Promise = global.Promise || require('es6-promise').Promise;
+const semver = require('semver');
+const isNotSupported = semver.satisfies(process.version, '<0.10');
+const isNode010 = semver.satisfies(process.version, '=0.10');
 
-var CliniaSearchServer = require('./CliniaSearchServer');
-var errors = require('../../errors');
+const CliniaSearchServer = require('./CliniaSearchServer');
+const errors = require('../../errors');
 
 // does not work on node <= 0.8
 if (isNotSupported) {
-  throw new errors.CliniaSearchError(
-    'Node.js version ' + process.version + ' is not supported'
-  );
+  throw new errors.CliniaSearchError(`Node.js version ${process.version} is not supported`);
 }
 
 if (process.env.NODE_ENV === 'debug') {
@@ -30,14 +26,14 @@ if (process.env.NODE_ENV === 'debug') {
 debug('loaded the Node.js client');
 
 function cliniasearch(applicationID, apiKey, opts) {
-  var cloneDeep = require('../../clone.js');
-  var reduce = require('reduce');
+  const cloneDeep = require('../../clone.js');
+  const reduce = require('reduce');
 
   if (!opts) {
     opts = {};
   }
 
-  var httpAgent = opts.httpAgent;
+  const httpAgent = opts.httpAgent;
 
   opts = cloneDeep(reduce(opts, allButHttpAgent, {}));
 
@@ -56,7 +52,7 @@ function cliniasearch(applicationID, apiKey, opts) {
   opts.timeouts = opts.timeouts || {
     connect: 2 * 1000,
     read: 5 * 1000,
-    write: 30 * 1000
+    write: 30 * 1000,
   };
 
   if (opts.protocol === undefined) {
@@ -72,15 +68,10 @@ function cliniasearch(applicationID, apiKey, opts) {
 cliniasearch.version = require('../../version.js');
 
 cliniasearch.ua =
-  'Clinia for JavaScript (' +
-  cliniasearch.version +
-  '); ' +
-  'Node.js (' +
-  process.versions.node +
-  ')';
+  `Clinia for JavaScript (${cliniasearch.version}); ` + `Node.js (${process.versions.node})`;
 
 function CliniaSearchNodeJS(applicationID, apiKey, opts) {
-  var getAgent = require('./get-agent');
+  const getAgent = require('./get-agent');
 
   // call CliniaSearchServer constructor
   CliniaSearchServer.apply(this, arguments);
@@ -91,34 +82,29 @@ function CliniaSearchNodeJS(applicationID, apiKey, opts) {
 inherits(CliniaSearchNodeJS, CliniaSearchServer);
 
 CliniaSearchNodeJS.prototype._request = function request(rawUrl, opts) {
-  var http = require('http');
-  var https = require('https');
-  var url = require('url');
+  const http = require('http');
+  const https = require('https');
+  const url = require('url');
 
-  var client = this;
+  const client = this;
 
   return new Promise(function doReq(resolve, reject) {
-    opts.debug(
-      'url: %s, method: %s, timeouts: %j',
-      rawUrl,
-      opts.method,
-      opts.timeouts
-    );
+    opts.debug('url: %s, method: %s, timeouts: %j', rawUrl, opts.method, opts.timeouts);
 
-    var body = opts.body;
+    const body = opts.body;
 
-    var parsedUrl = url.parse(rawUrl);
-    var requestOptions = {
+    const parsedUrl = url.parse(rawUrl);
+    const requestOptions = {
       hostname: parsedUrl.hostname,
       port: parsedUrl.port,
       method: opts.method,
       path: parsedUrl.path,
-      agent: client._Agent
+      agent: client._Agent,
     };
 
-    var timedOut = false;
-    var timeoutId;
-    var req;
+    let timedOut = false;
+    let timeoutId;
+    let req;
 
     if (parsedUrl.protocol === 'https:') {
       // we do not rely on any "smart" port computing by either node.js
@@ -169,21 +155,18 @@ CliniaSearchNodeJS.prototype._request = function request(rawUrl, opts) {
     function response(res) {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(onCompleteTimeout, opts.timeouts.complete);
-      var chunks = [];
-      var originalRes = res;
+      const chunks = [];
+      const originalRes = res;
 
       // save headers and statusCode BEFORE treating the response as zlib, otherwise
       // we lose them
-      var headers = res.headers;
-      var statusCode = res.statusCode;
+      const headers = res.headers;
+      const statusCode = res.statusCode;
 
       // Clinia answers should be gzip when asked for it,
       // but a proxy might uncompress Clinia response
       // So we handle both compressed and uncompressed
-      if (
-        headers['content-encoding'] === 'gzip' ||
-        headers['content-encoding'] === 'deflate'
-      ) {
+      if (headers['content-encoding'] === 'gzip' || headers['content-encoding'] === 'deflate') {
         res = res.pipe(zlib.createUnzip());
       }
 
@@ -199,19 +182,19 @@ CliniaSearchNodeJS.prototype._request = function request(rawUrl, opts) {
       function onEnd() {
         clearTimeout(timeoutId);
 
-        var data = Buffer.concat(chunks).toString();
-        var out;
+        const data = Buffer.concat(chunks).toString();
+        let out;
 
         try {
           out = {
             body: JSON.parse(data),
             responseText: data,
-            statusCode: statusCode,
-            headers: headers
+            statusCode,
+            headers,
           };
         } catch (e) {
           out = new errors.UnparsableJSON({
-            more: data
+            more: data,
           });
         }
 
@@ -235,6 +218,7 @@ CliniaSearchNodeJS.prototype._request = function request(rawUrl, opts) {
 
       if (timedOut) {
         opts.debug('request had already timedout');
+
         return;
       }
 
@@ -275,7 +259,7 @@ CliniaSearchNodeJS.prototype._promise = {
   },
   all: function all(promises) {
     return Promise.all(promises);
-  }
+  },
 };
 
 CliniaSearchNodeJS.prototype.destroy = function destroy() {
@@ -296,13 +280,13 @@ CliniaSearchNodeJS.prototype.generateSecuredApiKey = function generateSecuredApi
   queryParametersOrTagFilters,
   userToken
 ) {
-  var searchParams;
+  let searchParams;
 
   if (Array.isArray(queryParametersOrTagFilters)) {
     // generateSecuredApiKey(apiKey, ['user_42'], userToken);
 
     searchParams = {
-      tagFilters: queryParametersOrTagFilters
+      tagFilters: queryParametersOrTagFilters,
     };
 
     if (userToken) {
@@ -313,20 +297,20 @@ CliniaSearchNodeJS.prototype.generateSecuredApiKey = function generateSecuredApi
   } else if (typeof queryParametersOrTagFilters === 'string') {
     if (queryParametersOrTagFilters.indexOf('=') === -1) {
       // generateSecuredApiKey(apiKey, 'user_42', userToken);
-      searchParams = 'tagFilters=' + queryParametersOrTagFilters;
+      searchParams = `tagFilters=${queryParametersOrTagFilters}`;
     } else {
       // generateSecuredApiKey(apiKey, 'tagFilters=user_42', userToken);
       searchParams = queryParametersOrTagFilters;
     }
 
     if (userToken) {
-      searchParams += '&userToken=' + encodeURIComponent(userToken);
+      searchParams += `&userToken=${encodeURIComponent(userToken)}`;
     }
   } else {
     searchParams = this._getSearchParams(queryParametersOrTagFilters, '');
   }
 
-  var securedKey = crypto
+  const securedKey = crypto
     .createHmac('sha256', privateApiKey)
     .update(searchParams)
     .digest('hex');
@@ -337,17 +321,17 @@ CliniaSearchNodeJS.prototype.generateSecuredApiKey = function generateSecuredApi
 CliniaSearchNodeJS.prototype.getSecuredApiKeyRemainingValidity = function getSecuredApiKeyRemainingValidity(
   securedAPIKey
 ) {
-  var decodedString = new Buffer(securedAPIKey, 'base64').toString('ascii');
+  const decodedString = new Buffer(securedAPIKey, 'base64').toString('ascii');
 
-  var regex = /validUntil=(\d+)/;
+  const regex = /validUntil=(\d+)/;
 
-  var match = decodedString.match(regex);
+  const match = decodedString.match(regex);
 
   if (match === null) {
     throw new errors.ValidUntilNotFound('ValidUntil not found in api key.');
   }
 
-  var validUntilMatch = decodedString.match(regex)[1];
+  const validUntilMatch = decodedString.match(regex)[1];
 
   return validUntilMatch - Math.round(new Date().getTime() / 1000);
 };

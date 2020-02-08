@@ -1,8 +1,8 @@
 module.exports = {
-  error: error,
-  warn: warn,
-  info: info,
-  debug: debug
+  error,
+  warn,
+  info,
+  debug,
 };
 
 function error(message) {

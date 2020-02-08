@@ -1,12 +1,10 @@
-'use strict';
-
 // Some methods only accessible server side
 
 module.exports = CliniaSearchServer;
 
-var inherits = require('inherits');
+const inherits = require('inherits');
 
-var CliniaSearch = require('../../CliniaSearch');
+const CliniaSearch = require('../../CliniaSearch');
 
 function CliniaSearchServer(applicationID, apiKey, opts) {
   // Default protocol is https: on the server, to avoid leaking admin keys
@@ -32,9 +30,9 @@ CliniaSearchServer.prototype.enableRateLimitForward = function(
   rateLimitAPIKey
 ) {
   this._forward = {
-    adminAPIKey: adminAPIKey,
-    endUserIP: endUserIP,
-    rateLimitAPIKey: rateLimitAPIKey
+    adminAPIKey,
+    endUserIP,
+    rateLimitAPIKey,
   };
 };
 
@@ -48,15 +46,11 @@ CliniaSearchServer.prototype.disableRateLimitForward = function() {
 /*
  * Specify the securedAPIKey to use with associated information
  */
-CliniaSearchServer.prototype.useSecuredAPIKey = function(
-  securedAPIKey,
-  securityTags,
-  userToken
-) {
+CliniaSearchServer.prototype.useSecuredAPIKey = function(securedAPIKey, securityTags, userToken) {
   this._secure = {
     apiKey: securedAPIKey,
-    securityTags: securityTags,
-    userToken: userToken
+    securityTags,
+    userToken,
   };
 };
 
@@ -68,7 +62,7 @@ CliniaSearchServer.prototype.disableSecuredAPIKey = function() {
 };
 
 CliniaSearchServer.prototype._computeRequestHeaders = function(additionalUA) {
-  var headers = CliniaSearchServer.super_.prototype._computeRequestHeaders.call(
+  const headers = CliniaSearchServer.super_.prototype._computeRequestHeaders.call(
     this,
     additionalUA
   );

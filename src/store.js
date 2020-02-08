@@ -1,46 +1,47 @@
-var debug = require('debug')('cliniasearch:src/hostIndexState.js');
-var localStorageNamespace = 'cliniasearch-client-js';
+const debug = require('debug')('cliniasearch:src/hostIndexState.js');
+const localStorageNamespace = 'cliniasearch-client-js';
 
-var store;
-var moduleStore = {
+let store;
+const moduleStore = {
   state: {},
-  set: function(key, data) {
+  set(key, data) {
     this.state[key] = data;
+
     return this.state[key];
   },
-  get: function(key) {
+  get(key) {
     return this.state[key] || null;
-  }
+  },
 };
 
-var localStorageStore = {
-  set: function(key, data) {
+const localStorageStore = {
+  set(key, data) {
     moduleStore.set(key, data); // always replicate localStorageStore to moduleStore in case of failure
 
     try {
-      var namespace = JSON.parse(global.localStorage[localStorageNamespace]);
+      const namespace = JSON.parse(global.localStorage[localStorageNamespace]);
       namespace[key] = data;
       global.localStorage[localStorageNamespace] = JSON.stringify(namespace);
+
       return namespace[key];
     } catch (e) {
       return localStorageFailure(key, e);
     }
   },
-  get: function(key) {
+  get(key) {
     try {
-      return (
-        JSON.parse(global.localStorage[localStorageNamespace])[key] || null
-      );
+      return JSON.parse(global.localStorage[localStorageNamespace])[key] || null;
     } catch (e) {
       return localStorageFailure(key, e);
     }
-  }
+  },
 };
 
 function localStorageFailure(key, e) {
   debug('localStorage failed with', e);
   cleanup();
   store = moduleStore;
+
   return store.get(key);
 }
 
@@ -49,7 +50,7 @@ store = supportsLocalStorage() ? localStorageStore : moduleStore;
 module.exports = {
   get: getOrSet,
   set: getOrSet,
-  supportsLocalStorage: supportsLocalStorage
+  supportsLocalStorage,
 };
 
 function getOrSet(key, data) {
@@ -67,6 +68,7 @@ function supportsLocalStorage() {
         // actual creation of the namespace
         global.localStorage.setItem(localStorageNamespace, JSON.stringify({}));
       }
+
       return true;
     }
 

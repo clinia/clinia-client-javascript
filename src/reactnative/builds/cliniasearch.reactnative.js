@@ -1,19 +1,17 @@
-'use strict';
-
 // This is the standalone browser build entry point
 // Browser implementation of the Clinia Search JavaScript client,
 // using XMLHttpRequest for React Native
 module.exports = cliniasearch;
 
-var inherits = require('inherits');
-var Promise = window.Promise || require('es6-promise').Promise;
+const inherits = require('inherits');
+const Promise = window.Promise || require('es6-promise').Promise;
 
-var CliniaSearch = require('../../CliniaSearch');
-var errors = require('../../errors');
-var inlineHeaders = require('../../browser/inline-headers');
+const CliniaSearch = require('../../CliniaSearch');
+const errors = require('../../errors');
+const inlineHeaders = require('../../browser/inline-headers');
 
 function cliniasearch(applicationID, apiKey, opts) {
-  var cloneDeep = require('../../clone.js');
+  const cloneDeep = require('../../clone.js');
 
   opts = cloneDeep(opts || {});
 
@@ -26,7 +24,7 @@ function cliniasearch(applicationID, apiKey, opts) {
   opts.timeouts = opts.timeouts || {
     connect: 2 * 1000,
     read: 3 * 1000,
-    write: 30 * 1000
+    write: 30 * 1000,
   };
 
   return new CliniaSearchReactNative(applicationID, apiKey, opts);
@@ -34,18 +32,17 @@ function cliniasearch(applicationID, apiKey, opts) {
 
 cliniasearch.version = require('../../version.js');
 
-cliniasearch.ua =
-  'Clinia for JavaScript (' + cliniasearch.version + '); React Native';
+cliniasearch.ua = `Clinia for JavaScript (${cliniasearch.version}); React Native`;
 
 // we expose into window no matter how we are used, this will allow
 // us to easily debug any website running clinia
 window.__clinia = {
   debug: require('debug'),
-  cliniasearch: cliniasearch
+  cliniasearch,
 };
 
-var support = {
-  timeout: 'timeout' in new XMLHttpRequest()
+const support = {
+  timeout: 'timeout' in new XMLHttpRequest(),
 };
 
 function CliniaSearchReactNative() {
@@ -59,10 +56,10 @@ CliniaSearchReactNative.prototype._request = function request(url, opts) {
   return new Promise(function wrapRequest(resolve, reject) {
     url = inlineHeaders(url, opts.headers);
 
-    var body = opts.body;
-    var req = new XMLHttpRequest();
-    var ontimeout;
-    var timedOut;
+    const body = opts.body;
+    const req = new XMLHttpRequest();
+    let ontimeout;
+    let timedOut;
 
     // do not rely on default XHR async flag, as some analytics code like hotjar
     // breaks it and set it to false by default
@@ -104,7 +101,7 @@ CliniaSearchReactNative.prototype._request = function request(url, opts) {
         clearTimeout(ontimeout);
       }
 
-      var out;
+      let out;
 
       try {
         out = {
@@ -112,12 +109,11 @@ CliniaSearchReactNative.prototype._request = function request(url, opts) {
           responseText: req.responseText,
           statusCode: req.status,
           // XDomainRequest does not have any response headers
-          headers:
-            (req.getAllResponseHeaders && req.getAllResponseHeaders()) || {}
+          headers: (req.getAllResponseHeaders && req.getAllResponseHeaders()) || {},
         };
       } catch (e) {
         out = new errors.UnparsableJSON({
-          more: req.responseText
+          more: req.responseText,
         });
       }
 
@@ -142,7 +138,7 @@ CliniaSearchReactNative.prototype._request = function request(url, opts) {
       //   - unallowed cross domain request
       reject(
         new errors.Network({
-          more: event
+          more: event,
         })
       );
     }
@@ -172,5 +168,5 @@ CliniaSearchReactNative.prototype._promise = {
   },
   all: function all(promises) {
     return Promise.all(promises);
-  }
+  },
 };

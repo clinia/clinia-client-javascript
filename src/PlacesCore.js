@@ -1,6 +1,6 @@
 module.exports = PlacesCore;
 
-var argCheck = require('./argCheck');
+const argCheck = require('./argCheck');
 
 function PlacesCore(cliniasearch) {
   this.as = cliniasearch;
@@ -24,10 +24,10 @@ PlacesCore.prototype.clearCache = function() {
  * @return {undefined|Promise} If the callback is not provided then this methods returns a Promise
  */
 PlacesCore.prototype.suggest = function(query, args, callback) {
-  var normalizeParams = require('./normalizeMethodParameters');
+  const normalizeParams = require('./normalizeMethodParameters');
 
   // Normalizing the function signature
-  var normalizedParameters = normalizeParams(query, args, callback);
+  const normalizedParameters = normalizeParams(query, args, callback);
   query = normalizedParameters[0];
   args = normalizedParameters[1];
   callback = normalizedParameters[2];
@@ -35,26 +35,26 @@ PlacesCore.prototype.suggest = function(query, args, callback) {
   // Set default place types of none are sent to the client.
   if (args === undefined) {
     args = {
-      types: ['postcode', 'place', 'neighborhood']
+      types: ['postcode', 'place', 'neighborhood'],
     };
   } else if (args.types === undefined || args.types === null) {
     args.types = ['postcode', 'place', 'neighborhood'];
   }
 
-  var params = '';
+  let params = '';
 
   if (argCheck.isNotNullOrUndefined(query)) {
-    params = 'query=' + query;
+    params = `query=${query}`;
     delete args.query;
   }
 
-  var additionalUA;
+  let additionalUA;
   if (argCheck.isNotNullOrUndefined(args.additionalUA)) {
     additionalUA = args.additionalUA;
     delete args.additionalUA;
   }
 
-  var locale;
+  let locale;
   if (argCheck.isNotNullOrUndefined(args.locale)) {
     locale = args.locale;
     delete args.locale;
@@ -68,31 +68,33 @@ PlacesCore.prototype.suggest = function(query, args, callback) {
 
 PlacesCore.prototype._buildUrl = function(url, locale) {
   // Add the locale as a query param
-  var finalUrl = url || '/location/v1/autocomplete?';
+  let finalUrl = url || '/location/v1/autocomplete?';
   if (locale !== undefined && locale !== null) {
     if (!finalUrl.endsWith('?')) {
       finalUrl += '?';
     }
-    finalUrl += 'locale=' + encodeURIComponent(locale);
+    finalUrl += `locale=${encodeURIComponent(locale)}`;
   }
+
   return finalUrl;
 };
 
 PlacesCore.prototype._suggest = function(params, url, callback, additionalUA, locale) {
-  var finalUrl = this._buildUrl(url, locale);
+  const finalUrl = this._buildUrl(url, locale);
+
   return this.as._jsonRequest({
     cache: this.cache,
     method: 'POST',
     url: finalUrl,
-    body: {params},
+    body: { params },
     hostType: 'read',
     fallback: {
       method: 'GET',
       url: finalUrl,
-      body: {params}
+      body: { params },
     },
-    callback: callback,
-    additionalUA: additionalUA
+    callback,
+    additionalUA,
   });
 };
 

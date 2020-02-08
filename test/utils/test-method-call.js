@@ -1,19 +1,17 @@
-'use strict';
-
 module.exports = testMethodCall;
 
-var cliniasearch = require('../../');
-var fauxJax = require('faux-jax');
-var parse = require('url-parse');
+const cliniasearch = require('../../');
+const fauxJax = require('faux-jax');
+const parse = require('url-parse');
 
-var wrapMethodCallback = require('./wrap-method-callback');
+const wrapMethodCallback = require('./wrap-method-callback');
 
 function testMethodCall(opts) {
-  var assert = opts.assert;
-  var testCase = opts.testCase;
+  const assert = opts.assert;
+  const testCase = opts.testCase;
 
-  var client = cliniasearch(opts.applicationID, opts.searchOnlyAPIKey);
-  var object;
+  const client = cliniasearch(opts.applicationID, opts.searchOnlyAPIKey);
+  let object;
   if (opts.object === 'index') {
     object = client.initIndex(opts.indexName);
   } else {
@@ -26,14 +24,14 @@ function testMethodCall(opts) {
   wrapMethodCallback(testCase.callArguments, checkMethodCallback);
 
   // this needs to be done here to be as close as possible to the new XMLHttpRequest() call
-  fauxJax.install({gzip: true});
+  fauxJax.install({ gzip: true });
 
   object[opts.methodName].apply(object, testCase.callArguments);
 
   fauxJax.once('request', function(actualRequest) {
     fauxJax.restore();
 
-    var expectedRequest = testCase.expectedRequest;
+    const expectedRequest = testCase.expectedRequest;
 
     actualRequest.respond(
       testCase.fakeResponse.statusCode,
@@ -41,54 +39,34 @@ function testMethodCall(opts) {
       JSON.stringify(testCase.fakeResponse.body)
     );
 
-    assert.equal(
-      actualRequest.requestMethod,
-      expectedRequest.method,
-      'Request method matches'
-    );
+    assert.equal(actualRequest.requestMethod, expectedRequest.method, 'Request method matches');
 
-    var actualRequestURL = parse(actualRequest.requestURL, true);
-    var expectedRequestURL = expectedRequest.URL;
+    const actualRequestURL = parse(actualRequest.requestURL, true);
+    const expectedRequestURL = expectedRequest.URL;
 
     if (testCase.action === undefined) {
       assert.fail('No action (read/write) given in the test case');
     } else if (testCase.action === 'read') {
       assert.equal(
         actualRequestURL.host,
-        opts.applicationID.toLowerCase() + '-dsn.clinia.net',
+        `${opts.applicationID.toLowerCase()}-dsn.clinia.net`,
         'We used the first read host (DSN)'
       );
     } else if (testCase.action === 'write') {
       assert.equal(
         actualRequestURL.host,
-        opts.applicationID.toLowerCase() + '.clinia.net',
+        `${opts.applicationID.toLowerCase()}.clinia.net`,
         'We used the first write host (fault tolerant)'
       );
     } else {
-      assert.fail(
-        'Unkown action (read/write) found in the test case (was: ' +
-          testCase.action +
-          ')'
-      );
+      assert.fail(`Unkown action (read/write) found in the test case (was: ${testCase.action})`);
     }
 
-    assert.equal(
-      actualRequestURL.pathname,
-      expectedRequestURL.pathname,
-      'URL.pathname matches'
-    );
+    assert.equal(actualRequestURL.pathname, expectedRequestURL.pathname, 'URL.pathname matches');
 
-    assert.equal(
-      actualRequestURL.protocol,
-      expectedRequestURL.protocol,
-      'URL.protocol matches'
-    );
+    assert.equal(actualRequestURL.protocol, expectedRequestURL.protocol, 'URL.protocol matches');
 
-    assert.deepEqual(
-      actualRequestURL.query,
-      expectedRequestURL.query,
-      'URL.query matches'
-    );
+    assert.deepEqual(actualRequestURL.query, expectedRequestURL.query, 'URL.query matches');
 
     if (actualRequest.requestBody) {
       assert.deepEqual(
@@ -123,8 +101,8 @@ function testMethodCall(opts) {
   function checkMethodCallback(methodCallback) {
     assert.ok(methodCallback.calledOnce, 'Callback was called once');
 
-    var error = testCase.fakeResponse.statusCode === 200 ? null : Error;
-    var args = methodCallback.getCall(0).args;
+    const error = testCase.fakeResponse.statusCode === 200 ? null : Error;
+    const args = methodCallback.getCall(0).args;
 
     if (error) {
       assert.ok(

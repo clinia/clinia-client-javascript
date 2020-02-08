@@ -1,40 +1,42 @@
-'use strict';
+const bind = require('lodash-compat/function/bind');
+const test = require('tape');
 
-var bind = require('lodash-compat/function/bind');
-var test = require('tape');
+const cliniasearch = require('../../../');
 
-var cliniasearch = require('../../../');
+test('cliniasearch()', function() {
+  return new Promise(t => {
+    t.throws(cliniasearch, Error, 'No parameters throws');
 
-test('cliniasearch()', function(t) {
-  t.throws(cliniasearch, Error, 'No parameters throws');
-
-  t.end();
+    t.end();
+  });
 });
 
-test('cliniasearch(applicationID)', function(t) {
-  t.throws(
-    bind(cliniasearch, null, 'dsa'),
-    Error,
-    'Only `applicationID` throws'
-  );
+test('cliniasearch(applicationID)', function() {
+  return new Promise(t => {
+    t.throws(bind(cliniasearch, null, 'dsa'), Error, 'Only `applicationID` throws');
 
-  t.end();
+    t.end();
+  });
 });
 
-test('cliniasearch(applicationID, apiKey)', function(t) {
-  t.doesNotThrow(
-    bind(cliniasearch, null, 'dsa', 'hey'),
-    'Providing required parameters does not throw'
-  );
+test('cliniasearch(applicationID, apiKey)', function() {
+  return new Promise(t => {
+    t.doesNotThrow(
+      bind(cliniasearch, null, 'dsa', 'hey'),
+      'Providing required parameters does not throw'
+    );
 
-  t.end();
+    t.end();
+  });
 });
 
-test('cliniasearch.version returns the package version', function(t) {
-  t.equal(
-    cliniasearch.version,
-    require('../../../package.json').version,
-    'We get the package version in cliniasearch.version'
-  );
-  t.end();
+test('cliniasearch.version returns the package version', function() {
+  return new Promise(t => {
+    t.equal(
+      cliniasearch.version,
+      require('../../../package.json').version,
+      'We get the package version in cliniasearch.version'
+    );
+    t.end();
+  });
 });

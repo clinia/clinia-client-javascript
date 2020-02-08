@@ -1,7 +1,7 @@
 module.exports = {
-  isNullOrUndefined: isNullOrUndefined,
-  isNotNullOrUndefined: isNotNullOrUndefined,
-  isEmpty: isEmpty
+  isNullOrUndefined,
+  isNotNullOrUndefined,
+  isEmpty,
 };
 
 function isNullOrUndefined(arg) {
@@ -13,10 +13,11 @@ function isNotNullOrUndefined(arg) {
 }
 
 function isEmpty(arg) {
-  for (var key in arg) {
+  for (const key in arg) {
     if (key !== null && arg[key] !== undefined && arg.hasOwnProperty(key)) {
       return false;
     }
   }
+
   return true;
 }

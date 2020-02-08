@@ -1,8 +1,6 @@
-'use strict';
-
 process.env.RESET_APP_DATA_TIMER = 3000;
 
-var domready = require('domready');
+const domready = require('domready');
 
 // wait for domready to allo test runner to do ajax requests before we
 // start intercepting them in our tests
@@ -12,9 +10,6 @@ function run() {
   // even when dom is ready, wait a little more before launching the tests,
   // sometimes too fast for IE
   setTimeout(function() {
-    require('bulk-require')(__dirname, [
-      'spec/common/**/*.js',
-      'spec/browser/**/*.js'
-    ]);
+    require('bulk-require')(__dirname, ['spec/common/**/*.js', 'spec/browser/**/*.js']);
   }, 1000);
 }

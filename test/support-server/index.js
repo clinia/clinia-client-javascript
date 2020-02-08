@@ -1,14 +1,12 @@
-'use strict';
+const bulkRequire = require('bulk-require');
+const compression = require('compression');
+const express = require('express');
+const forEach = require('lodash-compat/collection/forEach');
+const http = require('http');
+const logger = require('morgan');
+const path = require('path');
 
-var bulkRequire = require('bulk-require');
-var compression = require('compression');
-var express = require('express');
-var forEach = require('lodash-compat/collection/forEach');
-var http = require('http');
-var logger = require('morgan');
-var path = require('path');
-
-var app = express();
+const app = express();
 
 app.use(compression());
 
@@ -25,12 +23,12 @@ app.use(function noCache(req, res, next) {
   next();
 });
 
-var middlewares = bulkRequire(path.join(__dirname, 'middlewares'), '*.js');
+const middlewares = bulkRequire(path.join(__dirname, 'middlewares'), '*.js');
 
 forEach(middlewares, function useIt(middleware, mountPoint) {
-  app.use('/search/v1/indexes/' + mountPoint, middleware());
+  app.use(`/search/v1/indexes/${mountPoint}`, middleware());
 });
 
-var server = http.createServer(app);
+const server = http.createServer(app);
 
 server.listen(process.env.ZUUL_PORT);

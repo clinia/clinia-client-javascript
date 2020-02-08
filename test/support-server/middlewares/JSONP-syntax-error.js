@@ -1,21 +1,19 @@
-'use strict';
-
 /* eslint new-cap: 0 */
 module.exports = JSONPSyntaxError;
 
-var express = require('express');
+const express = require('express');
 
 function JSONPSyntaxError() {
-  var router = express.Router();
-  var calls = {};
+  const router = express.Router();
+  const calls = {};
 
   router.get('/reset', function(req, res) {
     calls[req.headers['user-agent']] = 0;
-    res.json({calls: calls[req.headers['user-agent']]});
+    res.json({ calls: calls[req.headers['user-agent']] });
   });
 
   router.get('/calls', function(req, res) {
-    res.json({calls: calls[req.headers['user-agent']]});
+    res.json({ calls: calls[req.headers['user-agent']] });
   });
 
   router.get('/', function(req, res) {

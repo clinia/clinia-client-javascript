@@ -1,37 +1,33 @@
-'use strict';
-
 module.exports = jsonpRequest;
 
-var errors = require('../errors');
+const errors = require('../errors');
 
-var JSONPCounter = 0;
+let JSONPCounter = 0;
 
 function jsonpRequest(url, opts, cb) {
   if (opts.method !== 'GET') {
-    cb(
-      new Error(
-        'Method ' + opts.method + ' ' + url + ' is not supported by JSONP.'
-      )
-    );
+    cb(new Error(`Method ${opts.method} ${url} is not supported by JSONP.`));
+
     return;
   }
 
   opts.debug('JSONP: start');
 
-  var cbCalled = false;
-  var timedOut = false;
+  let cbCalled = false;
+  let timedOut = false;
 
   JSONPCounter += 1;
-  var head = document.getElementsByTagName('head')[0];
-  var script = document.createElement('script');
-  var cbName = 'cliniaJSONP_' + JSONPCounter;
-  var done = false;
+  const head = document.getElementsByTagName('head')[0];
+  const script = document.createElement('script');
+  const cbName = `cliniaJSONP_${JSONPCounter}`;
+  let done = false;
 
   window[cbName] = function(data) {
     removeGlobals();
 
     if (timedOut) {
       opts.debug('JSONP: Late answer, ignoring');
+
       return;
     }
 
@@ -46,19 +42,19 @@ function jsonpRequest(url, opts, cb) {
       ) /* ,
       // We do not send the statusCode, there's no statusCode in JSONP, it will be
       // computed using data.status && data.message like with XDR
-      statusCode*/
+      statusCode*/,
     });
   };
 
   // add callback by hand
-  url += '&callback=' + cbName;
+  url += `&callback=${cbName}`;
 
   // add body params manually
   if (opts.jsonBody && opts.jsonBody.params) {
-    url += '&' + opts.jsonBody.params;
+    url += `&${opts.jsonBody.params}`;
   }
 
-  var ontimeout = setTimeout(timeout, opts.timeouts.complete);
+  const ontimeout = setTimeout(timeout, opts.timeouts.complete);
 
   // script onreadystatechange needed only for
   // <= IE8
@@ -106,9 +102,9 @@ function jsonpRequest(url, opts, cb) {
   function removeGlobals() {
     try {
       delete window[cbName];
-      delete window[cbName + '_loaded'];
+      delete window[`${cbName}_loaded`];
     } catch (e) {
-      window[cbName] = window[cbName + '_loaded'] = undefined;
+      window[cbName] = window[`${cbName}_loaded`] = undefined;
     }
   }
 

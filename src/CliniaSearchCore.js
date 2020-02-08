@@ -1,18 +1,17 @@
 module.exports = CliniaSearchCore;
 
-var errors = require('./errors');
-var exitPromise = require('./exitPromise.js');
-var IndexCore = require('./IndexCore.js');
-var store = require('./store.js');
-var PlacesCore = require('./PlacesCore.js');
+const errors = require('./errors');
+const exitPromise = require('./exitPromise.js');
+const IndexCore = require('./IndexCore.js');
+const store = require('./store.js');
+const PlacesCore = require('./PlacesCore.js');
 
 // We will always put the API KEY in the JSON body in case of too long API KEY,
 // to avoid query string being too long and failing in various conditions (our server limit, browser limit,
 // proxies limit)
-var MAX_API_KEY_LENGTH = 500;
-var RESET_APP_DATA_TIMER =
-  (process.env.RESET_APP_DATA_TIMER &&
-    parseInt(process.env.RESET_APP_DATA_TIMER, 10)) ||
+const MAX_API_KEY_LENGTH = 500;
+const RESET_APP_DATA_TIMER =
+  (process.env.RESET_APP_DATA_TIMER && parseInt(process.env.RESET_APP_DATA_TIMER, 10)) ||
   60 * 2 * 1000; // after 2 minutes reset to first host
 
 /*
@@ -28,22 +27,20 @@ var RESET_APP_DATA_TIMER =
  *                                        Set to 'http:' to force using http.
  */
 function CliniaSearchCore(applicationID, apiKey, opts) {
-  var debug = require('debug')('cliniasearch');
+  const debug = require('debug')('cliniasearch');
 
-  var clone = require('./clone.js');
-  var isArray = require('isarray');
-  var map = require('./map.js');
+  const clone = require('./clone.js');
+  const isArray = require('isarray');
+  const map = require('./map.js');
 
-  var usage = 'Usage: cliniasearch(applicationID, apiKey, opts)';
+  const usage = 'Usage: cliniasearch(applicationID, apiKey, opts)';
 
   if (opts._allowEmptyCredentials !== true && !applicationID) {
-    throw new errors.CliniaSearchError(
-      'Please provide an application ID. ' + usage
-    );
+    throw new errors.CliniaSearchError(`Please provide an application ID. ${usage}`);
   }
 
   if (opts._allowEmptyCredentials !== true && !apiKey) {
-    throw new errors.CliniaSearchError('Please provide an API key. ' + usage);
+    throw new errors.CliniaSearchError(`Please provide an API key. ${usage}`);
   }
 
   this.applicationID = applicationID;
@@ -51,7 +48,7 @@ function CliniaSearchCore(applicationID, apiKey, opts) {
 
   this.hosts = {
     read: [],
-    write: []
+    write: [],
   };
 
   opts = opts || {};
@@ -59,25 +56,24 @@ function CliniaSearchCore(applicationID, apiKey, opts) {
   this._timeouts = opts.timeouts || {
     connect: 1 * 1000, // 500ms connect is GPRS latency
     read: 2 * 1000,
-    write: 30 * 1000
+    write: 30 * 1000,
   };
 
   // backward compat, if opts.timeout is passed, we use it to configure all timeouts like before
   if (opts.timeout) {
-    this._timeouts.connect = this._timeouts.read = this._timeouts.write =
-      opts.timeout;
+    this._timeouts.connect = this._timeouts.read = this._timeouts.write = opts.timeout;
   }
 
-  var protocol = opts.protocol || 'https:';
+  let protocol = opts.protocol || 'https:';
   // while we advocate for colon-at-the-end values: 'http:' for `opts.protocol`
   // we also accept `http` and `https`. It's a common error.
   if (!/:$/.test(protocol)) {
-    protocol = protocol + ':';
+    protocol = `${protocol}:`;
   }
 
   if (protocol !== 'http:' && protocol !== 'https:') {
     throw new errors.CliniaSearchError(
-      'protocol must be `http:` or `https:` (was `' + opts.protocol + '`)'
+      `protocol must be \`http:\` or \`https:\` (was \`${opts.protocol}\`)`
     );
   }
 
@@ -89,7 +85,7 @@ function CliniaSearchCore(applicationID, apiKey, opts) {
     });
 
     // no hosts given, compute defaults
-    var mainSuffix = 'api.partner.clinia.ca';
+    const mainSuffix = 'api.partner.clinia.ca';
     this.hosts.read = [mainSuffix].concat(defaultHosts);
     this.hosts.write = ['api.partner.clinia.ca'].concat(defaultHosts);
   } else if (isArray(opts.hosts)) {
@@ -112,8 +108,7 @@ function CliniaSearchCore(applicationID, apiKey, opts) {
   this.cache = opts._cache || {};
 
   this._ua = opts._ua;
-  this._useCache =
-    opts._useCache === undefined || opts._cache ? true : opts._useCache;
+  this._useCache = opts._useCache === undefined || opts._cache ? true : opts._useCache;
   this._useRequestCache = this._useCache && opts._useRequestCache;
   this._useFallback = opts.useFallback === undefined ? true : opts.useFallback;
 
@@ -176,7 +171,7 @@ CliniaSearchCore.prototype.unsetExtraHeader = function(name) {
  * @param cliniaAgent the agent to add
  */
 CliniaSearchCore.prototype.addCliniaAgent = function(cliniaAgent) {
-  var cliniaAgentWithDelimiter = '; ' + cliniaAgent;
+  const cliniaAgentWithDelimiter = `; ${cliniaAgent}`;
 
   if (this._ua.indexOf(cliniaAgentWithDelimiter) === -1) {
     this._ua += cliniaAgentWithDelimiter;
@@ -189,19 +184,18 @@ CliniaSearchCore.prototype.addCliniaAgent = function(cliniaAgent) {
 CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
   this._checkAppIdData();
 
-  var requestDebug = require('debug')('cliniasearch:' + initialOpts.url);
-  var safeJSONStringify = require('./safeJSONStringify.js');
+  const requestDebug = require('debug')(`cliniasearch:${initialOpts.url}`);
+  const safeJSONStringify = require('./safeJSONStringify.js');
 
-  var body;
-  var cacheID;
-  var additionalUA = initialOpts.additionalUA || '';
-  var cache = initialOpts.cache;
-  var client = this;
-  var tries = 0;
-  var usingFallback = false;
-  var hasFallback =
-    client._useFallback && client._request.fallback && initialOpts.fallback;
-  var headers;
+  let body;
+  let cacheID;
+  const additionalUA = initialOpts.additionalUA || '';
+  const cache = initialOpts.cache;
+  const client = this;
+  let tries = 0;
+  let usingFallback = false;
+  const hasFallback = client._useFallback && client._request.fallback && initialOpts.fallback;
+  let headers;
 
   if (
     this.apiKey.length > MAX_API_KEY_LENGTH &&
@@ -211,14 +205,14 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
   ) {
     initialOpts.body.apiKey = this.apiKey;
     headers = this._computeRequestHeaders({
-      additionalUA: additionalUA,
+      additionalUA,
       withApiKey: false,
-      headers: initialOpts.headers
+      headers: initialOpts.headers,
     });
   } else {
     headers = this._computeRequestHeaders({
-      additionalUA: additionalUA,
-      headers: initialOpts.headers
+      additionalUA,
+      headers: initialOpts.headers,
     });
   }
 
@@ -227,12 +221,12 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
   }
 
   requestDebug('request start');
-  var debugData = [];
+  const debugData = [];
 
   function doRequest(requester, reqOpts) {
     client._checkAppIdData();
 
-    var startTime = new Date();
+    const startTime = new Date();
 
     if (client._useCache && !client._useRequestCache) {
       cacheID = initialOpts.url;
@@ -241,19 +235,19 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
     // as we sometime use POST requests to pass parameters (like query='aa'),
     // the cacheID must also include the body to be different between calls
     if (client._useCache && !client._useRequestCache && body) {
-      cacheID += '_body_' + reqOpts.body;
+      cacheID += `_body_${reqOpts.body}`;
     }
 
     // handle cache existence
     if (isCacheValidWithCurrentID(!client._useRequestCache, cache, cacheID)) {
       requestDebug('serving response from cache');
 
-      var responseText = cache[cacheID];
+      const responseText = cache[cacheID];
 
       // Cache response must match the type of the original one
       return client._promise.resolve({
         body: JSON.parse(responseText),
-        responseText: responseText
+        responseText,
       });
     }
 
@@ -264,10 +258,10 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
         // then stop
         return client._promise.reject(
           new errors.CliniaSearchError(
-            'Cannot connect to the CliniaSearch API.' +
-              ' Application id was: ' +
-              client.applicationID,
-            {debugData: debugData}
+            `${'Cannot connect to the CliniaSearch API.' + ' Application id was: '}${
+              client.applicationID
+            }`,
+            { debugData }
           )
         );
       }
@@ -286,27 +280,28 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
       }
       // re-compute headers, they could be omitting the API KEY
       headers = client._computeRequestHeaders({
-        additionalUA: additionalUA,
-        headers: initialOpts.headers
+        additionalUA,
+        headers: initialOpts.headers,
       });
 
       reqOpts.timeouts = client._getTimeoutsForRequest(initialOpts.hostType);
       client._setHostIndexByType(0, initialOpts.hostType);
       usingFallback = true; // the current request is now using fallback
+
       return doRequest(client._request.fallback, reqOpts);
     }
 
-    var currentHost = client._getHostByType(initialOpts.hostType);
+    const currentHost = client._getHostByType(initialOpts.hostType);
 
-    var url = currentHost + reqOpts.url;
-    var options = {
+    const url = currentHost + reqOpts.url;
+    const options = {
       body: reqOpts.body,
       jsonBody: reqOpts.jsonBody,
       method: reqOpts.method,
-      headers: headers,
+      headers,
       timeouts: reqOpts.timeouts,
       debug: requestDebug,
-      forceAuthHeaders: reqOpts.forceAuthHeaders
+      forceAuthHeaders: reqOpts.forceAuthHeaders,
     };
 
     requestDebug(
@@ -334,7 +329,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
       // So we check if there's a `message` along `status` and it means it's an error
       //
       // That's the only case where we have a response.status that's not the http statusCode
-      var status =
+      const status =
         (httpResponse &&
           httpResponse.body &&
           httpResponse.body.message &&
@@ -355,21 +350,21 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
         httpResponse.headers
       );
 
-      var httpResponseOk = Math.floor(status / 100) === 2;
+      const httpResponseOk = Math.floor(status / 100) === 2;
 
-      var endTime = new Date();
+      const endTime = new Date();
       debugData.push({
-        currentHost: currentHost,
+        currentHost,
         headers: removeCredentials(headers),
         content: body || null,
         contentLength: body !== undefined ? body.length : null,
         method: reqOpts.method,
         timeouts: reqOpts.timeouts,
         url: reqOpts.url,
-        startTime: startTime,
-        endTime: endTime,
+        startTime,
+        endTime,
         duration: endTime - startTime,
-        statusCode: status
+        statusCode: status,
       });
 
       if (httpResponseOk) {
@@ -379,23 +374,24 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
 
         return {
           responseText: httpResponse.responseText,
-          body: httpResponse.body
+          body: httpResponse.body,
         };
       }
 
-      var shouldRetry = Math.floor(status / 100) !== 4;
+      const shouldRetry = Math.floor(status / 100) !== 4;
 
       if (shouldRetry) {
         tries += 1;
+
         return retryRequest();
       }
 
       requestDebug('unrecoverable error');
 
       // no success and no retry => fail
-      var unrecoverableError = new errors.CliniaSearchError(
+      const unrecoverableError = new errors.CliniaSearchError(
         httpResponse.body && httpResponse.body.message,
-        {debugData: debugData, statusCode: status}
+        { debugData, statusCode: status }
       );
 
       return client._promise.reject(unrecoverableError);
@@ -414,18 +410,18 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
       //    - uncaught exception occurs (TypeError)
       requestDebug('error: %s, stack: %s', err.message, err.stack);
 
-      var endTime = new Date();
+      const endTime = new Date();
       debugData.push({
-        currentHost: currentHost,
+        currentHost,
         headers: removeCredentials(headers),
         content: body || null,
         contentLength: body !== undefined ? body.length : null,
         method: reqOpts.method,
         timeouts: reqOpts.timeouts,
         url: reqOpts.url,
-        startTime: startTime,
-        endTime: endTime,
-        duration: endTime - startTime
+        startTime,
+        endTime,
+        duration: endTime - startTime,
       });
 
       if (!(err instanceof errors.CliniaSearchError)) {
@@ -442,11 +438,11 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
         // server sent unparsable JSON
         err instanceof errors.UnparsableJSON ||
         // max tries and already using fallback or no fallback
-        (tries >= client.hosts[initialOpts.hostType].length &&
-          (usingFallback || !hasFallback))
+        (tries >= client.hosts[initialOpts.hostType].length && (usingFallback || !hasFallback))
       ) {
         // stop request implementation for this command
         err.debugData = debugData;
+
         return client._promise.reject(err);
       }
 
@@ -461,6 +457,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
     function retryRequest() {
       requestDebug('retrying request');
       client._incrementHostIndex(initialOpts.hostType);
+
       return doRequest(requester, reqOpts);
     }
 
@@ -469,15 +466,12 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
       client._incrementHostIndex(initialOpts.hostType);
       client._incrementTimeoutMultipler();
       reqOpts.timeouts = client._getTimeoutsForRequest(initialOpts.hostType);
+
       return doRequest(requester, reqOpts);
     }
   }
 
-  function isCacheValidWithCurrentID(
-    useRequestCache,
-    currentCache,
-    currentCacheID
-  ) {
+  function isCacheValidWithCurrentID(useRequestCache, currentCache, currentCacheID) {
     return (
       client._useCache &&
       useRequestCache &&
@@ -521,18 +515,18 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
   // as we sometime use POST requests to pass parameters (like query='aa'),
   // the cacheID must also include the body to be different between calls
   if (client._useCache && client._useRequestCache && body) {
-    cacheID += '_body_' + body;
+    cacheID += `_body_${body}`;
   }
 
   if (isCacheValidWithCurrentID(client._useRequestCache, cache, cacheID)) {
     requestDebug('serving request from cache');
 
-    var maybePromiseForCache = cache[cacheID];
+    const maybePromiseForCache = cache[cacheID];
 
     // In case the cache is warmup with value that is not a promise
-    var promiseForCache =
+    const promiseForCache =
       typeof maybePromiseForCache.then !== 'function'
-        ? client._promise.resolve({responseText: maybePromiseForCache})
+        ? client._promise.resolve({ responseText: maybePromiseForCache })
         : maybePromiseForCache;
 
     return interopCallbackReturn(promiseForCache, function(content) {
@@ -541,13 +535,13 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
     });
   }
 
-  var request = doRequest(client._request, {
+  const request = doRequest(client._request, {
     url: initialOpts.url,
     method: initialOpts.method,
-    body: body,
+    body,
     jsonBody: initialOpts.body,
     timeouts: client._getTimeoutsForRequest(initialOpts.hostType),
-    forceAuthHeaders: initialOpts.forceAuthHeaders
+    forceAuthHeaders: initialOpts.forceAuthHeaders,
   });
 
   if (client._useCache && client._useRequestCache && cache) {
@@ -566,9 +560,9 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
  * @return {object} the final query string
  */
 CliniaSearchCore.prototype._getPlacesParams = function(args, params) {
-  var argCheck = require('./argCheck.js');
-  var isArray = require('isarray');
-  var logger = require('./logger.js');
+  const argCheck = require('./argCheck.js');
+  const isArray = require('isarray');
+  const logger = require('./logger.js');
 
   if (args === undefined || args === null) {
     return params;
@@ -599,8 +593,8 @@ CliniaSearchCore.prototype._getPlacesParams = function(args, params) {
  * @return {object} the final query params
  */
 CliniaSearchCore.prototype._getSuggestParams = function(args, params) {
-  var argCheck = require('./argCheck.js');
-  var logger = require('./logger.js');
+  const argCheck = require('./argCheck.js');
+  const logger = require('./logger.js');
 
   if (args === undefined || args === null) {
     return params;
@@ -611,12 +605,18 @@ CliniaSearchCore.prototype._getSuggestParams = function(args, params) {
     delete args.size;
   }
 
-  if (argCheck.isNotNullOrUndefined(args.highlightPreTag) && typeof args.highlightPreTag !== 'string') {
+  if (
+    argCheck.isNotNullOrUndefined(args.highlightPreTag) &&
+    typeof args.highlightPreTag !== 'string'
+  ) {
     logger.warn('Ignoring suggest query parameter `highlightPreTag`. Must be a string.');
     delete args.highlightPreTag;
   }
 
-  if (argCheck.isNotNullOrUndefined(args.highlightPostTag) && typeof args.highlightPostTag !== 'string') {
+  if (
+    argCheck.isNotNullOrUndefined(args.highlightPostTag) &&
+    typeof args.highlightPostTag !== 'string'
+  ) {
     logger.warn('Ignoring suggest query parameter `highlightPostTag`. Must be a string.');
     delete args.highlightPostTag;
   }
@@ -631,9 +631,9 @@ CliniaSearchCore.prototype._getSuggestParams = function(args, params) {
  * @return {string} the final query string
  */
 CliniaSearchCore.prototype._getSearchParams = function(args, params) {
-  var argCheck = require('./argCheck.js');
-  var isArray = require('isarray');
-  var logger = require('./logger.js');
+  const argCheck = require('./argCheck.js');
+  const isArray = require('isarray');
+  const logger = require('./logger.js');
 
   if (args === undefined || args === null) {
     return params;
@@ -669,7 +669,10 @@ CliniaSearchCore.prototype._getSearchParams = function(args, params) {
     delete args.aroundLatLng;
   }
 
-  if (argCheck.isNotNullOrUndefined(args.insideBoundingBox) && typeof args.insideBoundingBox !== 'string') {
+  if (
+    argCheck.isNotNullOrUndefined(args.insideBoundingBox) &&
+    typeof args.insideBoundingBox !== 'string'
+  ) {
     logger.warn('Ignoring search query parameter `insideBoundingBox`. Must be a string.');
     delete args.insideBoundingBox;
   }
@@ -685,15 +688,13 @@ CliniaSearchCore.prototype._getSearchParams = function(args, params) {
  * @param [Object] options.headers Extra headers to send
  */
 CliniaSearchCore.prototype._computeRequestHeaders = function(options) {
-  var forEach = require('foreach');
+  const forEach = require('foreach');
 
-  var ua = options.additionalUA
-    ? this._ua + '; ' + options.additionalUA
-    : this._ua;
+  const ua = options.additionalUA ? `${this._ua}; ${options.additionalUA}` : this._ua;
 
-  var requestHeaders = {
+  const requestHeaders = {
     'x-clinia-agent': ua,
-    'x-clinia-application-id': this.applicationID
+    'x-clinia-application-id': this.applicationID,
   };
 
   // browser will inline headers in the url, node.js will use http headers
@@ -736,19 +737,19 @@ CliniaSearchCore.prototype._computeRequestHeaders = function(options) {
  * @return {Promise|undefined} Returns a promise if no callback given
  */
 CliniaSearchCore.prototype.suggest = function(query, args, callback) {
-  var normalizeParams = require('./normalizeMethodParameters');
+  const normalizeParams = require('./normalizeMethodParameters');
 
   // Normalizing the function signature
-  var normalizedParameters = normalizeParams(query, args, callback);
+  const normalizedParameters = normalizeParams(query, args, callback);
   query = normalizedParameters[0];
   args = normalizedParameters[1];
   callback = normalizedParameters[2];
 
-  var params = '';
+  let params = '';
 
-  params += 'query=' + encodeURIComponent(query) || '';
+  params += `query=${encodeURIComponent(query)}` || '';
 
-  var additionalUA;
+  let additionalUA;
   if (args !== undefined) {
     if (args.additionalUA) {
       additionalUA = args.additionalUA;
@@ -767,15 +768,15 @@ CliniaSearchCore.prototype._suggest = function(params, callback, additionalUA) {
     cache: this.cache,
     method: 'POST',
     url: '/search/v1/indexes/suggestions/query',
-    body: {params},
+    body: { params },
     hostType: 'read',
     fallback: {
       method: 'GET',
       url: '/search/v1/indexes/suggestions/query',
-      body: {params}
+      body: { params },
     },
-    additionalUA: additionalUA,
-    callback: callback
+    additionalUA,
+    callback,
   });
 };
 
@@ -789,10 +790,10 @@ CliniaSearchCore.prototype._suggest = function(params, callback, additionalUA) {
  * @return {Promise|undefined} Returns a promise if no callback given
  */
 CliniaSearchCore.prototype.search = function(queries, opts, callback) {
-  var isArray = require('isarray');
-  var map = require('./map.js');
+  const isArray = require('isarray');
+  const map = require('./map.js');
 
-  var usage = 'Usage: client.search(arrayOfQueries[, callback])';
+  const usage = 'Usage: client.search(arrayOfQueries[, callback])';
 
   if (!isArray(queries)) {
     throw new Error(usage);
@@ -805,43 +806,31 @@ CliniaSearchCore.prototype.search = function(queries, opts, callback) {
     opts = {};
   }
 
-  var client = this;
+  const client = this;
 
-  var postObj = {
+  const postObj = {
     requests: map(queries, function prepareRequest(query) {
-      var params = '';
+      let params = '';
 
       // allow query.query
       // so we are mimicing the index.search(query, params) method
       // {indexName:, query:, params:}
       if (query.query !== undefined) {
-        params += 'query=' + encodeURIComponent(query.query);
+        params += `query=${encodeURIComponent(query.query)}`;
       }
 
       return {
         indexName: query.indexName,
-        params: client._getSearchParams(query.params, params)
+        params: client._getSearchParams(query.params, params),
       };
-    })
+    }),
   };
 
-  var JSONPParams = map(postObj.requests, function prepareJSONPParams(
-    request,
-    requestId
-  ) {
-    return (
-      requestId +
-      '=' +
-      encodeURIComponent(
-        '/1/indexes/' +
-          encodeURIComponent(request.indexName) +
-          '?' +
-          request.params
-      )
-    );
+  const JSONPParams = map(postObj.requests, function prepareJSONPParams(request, requestId) {
+    return `${requestId}=${encodeURIComponent(`/1/indexes/${encodeURIComponent(request.indexName)}?${request.params}`)}`;
   }).join('&');
 
-  var url = '/search/v1/indexes/*/queries';
+  const url = '/search/v1/indexes/*/queries';
 
   // Not used at the moment
   if (opts.strategy !== undefined) {
@@ -851,17 +840,17 @@ CliniaSearchCore.prototype.search = function(queries, opts, callback) {
   return this._jsonRequest({
     cache: this.cache,
     method: 'POST',
-    url: url,
+    url,
     body: postObj,
     hostType: 'read',
     fallback: {
       method: 'GET',
       url: 'search/v1/indexes/*',
       body: {
-        params: JSONPParams
-      }
+        params: JSONPParams,
+      },
     },
-    callback: callback
+    callback,
   });
 };
 
@@ -871,14 +860,14 @@ CliniaSearchCore.prototype.search = function(queries, opts, callback) {
  */
 CliniaSearchCore.prototype.setSecurityTags = function(tags) {
   if (Object.prototype.toString.call(tags) === '[object Array]') {
-    var strTags = [];
-    for (var i = 0; i < tags.length; ++i) {
+    const strTags = [];
+    for (let i = 0; i < tags.length; ++i) {
       if (Object.prototype.toString.call(tags[i]) === '[object Array]') {
-        var oredTags = [];
-        for (var j = 0; j < tags[i].length; ++j) {
+        const oredTags = [];
+        for (let j = 0; j < tags[i].length; ++j) {
           oredTags.push(tags[i][j]);
         }
-        strTags.push('(' + oredTags.join(',') + ')');
+        strTags.push(`(${oredTags.join(',')})`);
       } else {
         strTags.push(tags[i]);
       }
@@ -922,20 +911,22 @@ CliniaSearchCore.prototype.getTimeouts = function() {
 };
 
 CliniaSearchCore.prototype._getAppIdData = function() {
-  var data = store.get(this.applicationID);
+  const data = store.get(this.applicationID);
   if (data !== null) this._cacheAppIdData(data);
+
   return data;
 };
 
 CliniaSearchCore.prototype._setAppIdData = function(data) {
   data.lastChange = new Date().getTime();
   this._cacheAppIdData(data);
+
   return store.set(this.applicationID, data);
 };
 
 CliniaSearchCore.prototype._checkAppIdData = function() {
-  var data = this._getAppIdData();
-  var now = new Date().getTime();
+  const data = this._getAppIdData();
+  const now = new Date().getTime();
   if (data === null || now - data.lastChange > RESET_APP_DATA_TIMER) {
     return this._resetInitialAppIdData(data);
   }
@@ -944,10 +935,11 @@ CliniaSearchCore.prototype._checkAppIdData = function() {
 };
 
 CliniaSearchCore.prototype._resetInitialAppIdData = function(data) {
-  var newData = data || {};
-  newData.hostIndexes = {read: 0, write: 0};
+  const newData = data || {};
+  newData.hostIndexes = { read: 0, write: 0 };
   newData.timeoutMultiplier = 1;
   newData.shuffleResult = newData.shuffleResult || shuffle([1, 2, 3]);
+
   return this._setAppIdData(newData);
 };
 
@@ -958,8 +950,8 @@ CliniaSearchCore.prototype._cacheAppIdData = function(data) {
 };
 
 CliniaSearchCore.prototype._partialAppIdDataUpdate = function(newData) {
-  var foreach = require('foreach');
-  var currentData = this._getAppIdData();
+  const foreach = require('foreach');
+  const currentData = this._getAppIdData();
   foreach(newData, function(value, key) {
     currentData[key] = value;
   });
@@ -980,10 +972,11 @@ CliniaSearchCore.prototype._getHostIndexByType = function(hostType) {
 };
 
 CliniaSearchCore.prototype._setHostIndexByType = function(hostIndex, hostType) {
-  var clone = require('./clone');
-  var newHostIndexes = clone(this._hostIndexes);
+  const clone = require('./clone');
+  const newHostIndexes = clone(this._hostIndexes);
   newHostIndexes[hostType] = hostIndex;
-  this._partialAppIdDataUpdate({hostIndexes: newHostIndexes});
+  this._partialAppIdDataUpdate({ hostIndexes: newHostIndexes });
+
   return hostIndex;
 };
 
@@ -995,46 +988,45 @@ CliniaSearchCore.prototype._incrementHostIndex = function(hostType) {
 };
 
 CliniaSearchCore.prototype._incrementTimeoutMultipler = function() {
-  var timeoutMultiplier = Math.max(this._timeoutMultiplier + 1, 4);
-  return this._partialAppIdDataUpdate({timeoutMultiplier: timeoutMultiplier});
+  const timeoutMultiplier = Math.max(this._timeoutMultiplier + 1, 4);
+
+  return this._partialAppIdDataUpdate({ timeoutMultiplier });
 };
 
 CliniaSearchCore.prototype._getTimeoutsForRequest = function(hostType) {
   return {
     connect: this._timeouts.connect * this._timeoutMultiplier,
-    complete: this._timeouts[hostType] * this._timeoutMultiplier
+    complete: this._timeouts[hostType] * this._timeoutMultiplier,
   };
 };
 
 function buildQueryParams(args, params) {
-  var safeJSONStringify = require('./safeJSONStringify.js');
-  for (var key in args) {
+  const safeJSONStringify = require('./safeJSONStringify.js');
+  for (const key in args) {
     if (key !== null && args[key] !== undefined && args.hasOwnProperty(key)) {
       params += params === '' ? '' : '&';
       const type = Object.prototype.toString.call(args[key]);
-      params +=
-        key +
-        '=' +
-        encodeURIComponent(
-          type === '[object Array]' || type === '[object Object]'
-            ? safeJSONStringify(args[key])
-            : args[key]
-        );
+      params += `${key}=${encodeURIComponent(
+        type === '[object Array]' || type === '[object Object]'
+          ? safeJSONStringify(args[key])
+          : args[key]
+      )}`;
     }
   }
+
   return params;
 }
 
 function prepareHost(protocol) {
   return function prepare(host) {
-    return protocol + '//' + host.toLowerCase();
+    return `${protocol}//${host.toLowerCase()}`;
   };
 }
 
 function shuffle(array) {
-  var currentIndex = array.length;
-  var temporaryValue;
-  var randomIndex;
+  let currentIndex = array.length;
+  let temporaryValue;
+  let randomIndex;
 
   // While there remain elements to shuffle...
   while (currentIndex !== 0) {
@@ -1052,16 +1044,13 @@ function shuffle(array) {
 }
 
 function removeCredentials(headers) {
-  var newHeaders = {};
+  const newHeaders = {};
 
-  for (var headerName in headers) {
+  for (const headerName in headers) {
     if (Object.prototype.hasOwnProperty.call(headers, headerName)) {
       var value;
 
-      if (
-        headerName === 'x-clinia-api-key' ||
-        headerName === 'x-clinia-application-id'
-      ) {
+      if (headerName === 'x-clinia-api-key' || headerName === 'x-clinia-application-id') {
         value = '**hidden for security purposes**';
       } else {
         value = headers[headerName];

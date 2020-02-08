@@ -1,16 +1,14 @@
-'use strict';
-
-var global = require('global');
-var Promise = global.Promise || require('es6-promise').Promise;
+const global = require('global');
+const Promise = global.Promise || require('es6-promise').Promise;
 
 // This is the standalone browser build entry point
 // Browser implementation of the Clinia Search JavaScript client,
 // using XMLHttpRequest, XDomainRequest and JSONP as fallback
 module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
-  var inherits = require('inherits');
-  var errors = require('../errors');
-  var inlineHeaders = require('./inline-headers');
-  var jsonpRequest = require('./jsonp-request');
+  const inherits = require('inherits');
+  const errors = require('../errors');
+  const inlineHeaders = require('./inline-headers');
+  const jsonpRequest = require('./jsonp-request');
   uaSuffix = uaSuffix || '';
 
   if (process.env.NODE_ENV === 'debug') {
@@ -18,7 +16,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
   }
 
   function cliniasearch(applicationID, apiKey, opts) {
-    var cloneDeep = require('../clone.js');
+    const cloneDeep = require('../clone.js');
 
     opts = cloneDeep(opts || {});
 
@@ -29,19 +27,18 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
 
   cliniasearch.version = require('../version.js');
 
-  cliniasearch.ua =
-    'Clinia for JavaScript (' + cliniasearch.version + '); ' + uaSuffix;
+  cliniasearch.ua = `Clinia for JavaScript (${cliniasearch.version}); ${uaSuffix}`;
 
   // we expose into window no matter how we are used, this will allow
   // us to easily debug any website running clinia
   global.__clinia = {
     debug: require('debug'),
-    cliniasearch: cliniasearch
+    cliniasearch,
   };
 
-  var support = {
+  const support = {
     hasXMLHttpRequest: 'XMLHttpRequest' in global,
-    hasXDomainRequest: 'XDomainRequest' in global
+    hasXDomainRequest: 'XDomainRequest' in global,
   };
 
   if (support.hasXMLHttpRequest) {
@@ -61,16 +58,17 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
       if (!support.cors && !support.hasXDomainRequest) {
         // very old browser, not supported
         reject(new errors.Network('CORS not supported'));
+
         return;
       }
 
       url = inlineHeaders(url, opts.headers);
 
-      var body = opts.body;
-      var req = support.cors ? new XMLHttpRequest() : new XDomainRequest();
-      var reqTimeout;
-      var timedOut;
-      var connected = false;
+      const body = opts.body;
+      const req = support.cors ? new XMLHttpRequest() : new XDomainRequest();
+      let reqTimeout;
+      let timedOut;
+      let connected = false;
 
       reqTimeout = setTimeout(onTimeout, opts.timeouts.connect);
       // we set an empty onprogress listener
@@ -92,14 +90,8 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
         // The Analytics API never accepts Auth headers as query string
         // this option exists specifically for them.
         if (opts.forceAuthHeaders) {
-          req.setRequestHeader(
-            'x-clinia-application-id',
-            opts.headers['x-clinia-application-id']
-          );
-          req.setRequestHeader(
-            'x-clinia-api-key',
-            opts.headers['x-clinia-api-key']
-          );
+          req.setRequestHeader('x-clinia-application-id', opts.headers['x-clinia-application-id']);
+          req.setRequestHeader('x-clinia-api-key', opts.headers['x-clinia-api-key']);
         }
       } else {
         req.open(opts.method, url);
@@ -110,10 +102,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
         if (body) {
           if (opts.method === 'POST') {
             // https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS#Simple_requests
-            req.setRequestHeader(
-              'content-type',
-              'application/x-www-form-urlencoded'
-            );
+            req.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
           } else {
             req.setRequestHeader('content-type', 'application/json');
           }
@@ -138,7 +127,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
 
         clearTimeout(reqTimeout);
 
-        var out;
+        let out;
 
         try {
           out = {
@@ -146,12 +135,11 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
             responseText: req.responseText,
             statusCode: req.status,
             // XDomainRequest does not have any response headers
-            headers:
-              (req.getAllResponseHeaders && req.getAllResponseHeaders()) || {}
+            headers: (req.getAllResponseHeaders && req.getAllResponseHeaders()) || {},
           };
         } catch (e) {
           out = new errors.UnparsableJSON({
-            more: req.responseText
+            more: req.responseText,
           });
         }
 
@@ -174,7 +162,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
         //   - unallowed cross domain request
         reject(
           new errors.Network({
-            more: event
+            more: event,
           })
         );
       }
@@ -202,16 +190,14 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
     });
   };
 
-  CliniaSearchBrowser.prototype._request.fallback = function requestFallback(
-    url,
-    opts
-  ) {
+  CliniaSearchBrowser.prototype._request.fallback = function requestFallback(url, opts) {
     url = inlineHeaders(url, opts.headers);
 
     return new Promise(function wrapJsonpRequest(resolve, reject) {
       jsonpRequest(url, opts, function jsonpRequestDone(err, content) {
         if (err) {
           reject(err);
+
           return;
         }
 
@@ -234,7 +220,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
     },
     all: function all(promises) {
       return Promise.all(promises);
-    }
+    },
   };
 
   return cliniasearch;

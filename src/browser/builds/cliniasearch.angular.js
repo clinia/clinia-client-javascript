@@ -1,17 +1,15 @@
-'use strict';
-
 // This is the AngularJS Clinia Search module
 // It's using $http to do requests with a JSONP fallback
 // $q promises are returned
 
-var inherits = require('inherits');
+const inherits = require('inherits');
 
-var forEach = require('foreach');
+const forEach = require('foreach');
 
-var CliniaSearch = require('../../CliniaSearch');
-var errors = require('../../errors');
-var inlineHeaders = require('../inline-headers');
-var jsonpRequest = require('../jsonp-request');
+const CliniaSearch = require('../../CliniaSearch');
+const errors = require('../../errors');
+const inlineHeaders = require('../inline-headers');
+const jsonpRequest = require('../jsonp-request');
 
 // expose original cliniasearch fn in window
 window.cliniasearch = require('./cliniasearch');
@@ -26,7 +24,7 @@ window.angular.module('cliniasearch', []).service('clinia', [
   '$timeout',
   function cliniaSearchService($http, $q, $timeout) {
     function cliniasearch(applicationID, apiKey, opts) {
-      var cloneDeep = require('../../clone.js');
+      const cloneDeep = require('../../clone.js');
 
       opts = cloneDeep(opts || {});
 
@@ -38,18 +36,14 @@ window.angular.module('cliniasearch', []).service('clinia', [
     cliniasearch.version = require('../../version.js');
 
     cliniasearch.ua =
-      'Clinia for JavaScript (' +
-      cliniasearch.version +
-      '); ' +
-      'AngularJS (' +
-      window.angular.version.full +
-      ')';
+      `Clinia for JavaScript (${cliniasearch.version}); ` +
+      `AngularJS (${window.angular.version.full})`;
 
     // we expose into window no matter how we are used, this will allow
     // us to easily debug any website running clinia
     window.__clinia = {
       debug: require('debug'),
-      cliniasearch: cliniasearch
+      cliniasearch,
     };
 
     function CliniaSearchAngular() {
@@ -62,17 +56,17 @@ window.angular.module('cliniasearch', []).service('clinia', [
     CliniaSearchAngular.prototype._request = function request(url, opts) {
       // Support most Angular.js versions by using $q.defer() instead
       // of the new $q() constructor everywhere we need a promise
-      var deferred = $q.defer();
-      var resolve = deferred.resolve;
-      var reject = deferred.reject;
+      const deferred = $q.defer();
+      const resolve = deferred.resolve;
+      const reject = deferred.reject;
 
-      var timedOut;
-      var body = opts.body;
+      let timedOut;
+      const body = opts.body;
 
       url = inlineHeaders(url, opts.headers);
 
-      var timeoutDeferred = $q.defer();
-      var timeoutPromise = timeoutDeferred.promise;
+      const timeoutDeferred = $q.defer();
+      const timeoutPromise = timeoutDeferred.promise;
 
       $timeout(function timedout() {
         timedOut = true;
@@ -81,15 +75,12 @@ window.angular.module('cliniasearch', []).service('clinia', [
         reject(new errors.RequestTimeout());
       }, opts.timeouts.complete);
 
-      var requestHeaders = {};
+      const requestHeaders = {};
 
       // "remove" (set to undefined) possible globally set headers
       // in $httpProvider.defaults.headers.common
       // otherwise we might fail sometimes
-      forEach($http.defaults.headers.common, function removeIt(
-        headerValue,
-        headerName
-      ) {
+      forEach($http.defaults.headers.common, function removeIt(headerValue, headerName) {
         requestHeaders[headerName] = undefined;
       });
 
@@ -105,16 +96,16 @@ window.angular.module('cliniasearch', []).service('clinia', [
       }
 
       $http({
-        url: url,
+        url,
         method: opts.method,
         data: body,
         cache: false,
         timeout: timeoutPromise,
         headers: requestHeaders,
-        transformResponse: transformResponse,
+        transformResponse,
         // if client uses $httpProvider.defaults.withCredentials = true,
         // we revert it to false to avoid CORS failure
-        withCredentials: false
+        withCredentials: false,
       }).then(success, error);
 
       function success(response) {
@@ -122,7 +113,7 @@ window.angular.module('cliniasearch', []).service('clinia', [
           statusCode: response.status,
           headers: response.headers,
           body: JSON.parse(response.data),
-          responseText: response.data
+          responseText: response.data,
         });
       }
 
@@ -141,15 +132,16 @@ window.angular.module('cliniasearch', []).service('clinia', [
         if (response.status === 0) {
           reject(
             new errors.Network({
-              more: response
+              more: response,
             })
           );
+
           return;
         }
 
         resolve({
           body: JSON.parse(response.data),
-          statusCode: response.status
+          statusCode: response.status,
         });
       }
 
@@ -158,19 +150,17 @@ window.angular.module('cliniasearch', []).service('clinia', [
 
     // using IE8 or IE9 we will always end up here
     // AngularJS does not fallback to XDomainRequest
-    CliniaSearchAngular.prototype._request.fallback = function requestFallback(
-      url,
-      opts
-    ) {
+    CliniaSearchAngular.prototype._request.fallback = function requestFallback(url, opts) {
       url = inlineHeaders(url, opts.headers);
 
-      var deferred = $q.defer();
-      var resolve = deferred.resolve;
-      var reject = deferred.reject;
+      const deferred = $q.defer();
+      const resolve = deferred.resolve;
+      const reject = deferred.reject;
 
       jsonpRequest(url, opts, function jsonpRequestDone(err, content) {
         if (err) {
           reject(err);
+
           return;
         }
 
@@ -181,32 +171,32 @@ window.angular.module('cliniasearch', []).service('clinia', [
     };
 
     CliniaSearchAngular.prototype._promise = {
-      reject: function(val) {
+      reject(val) {
         return $q.reject(val);
       },
-      resolve: function(val) {
+      resolve(val) {
         // http://www.bennadel.com/blog/2735-q-when-is-the-missing-q-resolve-method-in-angularjs.htm
         return $q.when(val);
       },
-      delay: function(ms) {
-        var deferred = $q.defer();
-        var resolve = deferred.resolve;
+      delay(ms) {
+        const deferred = $q.defer();
+        const resolve = deferred.resolve;
 
         $timeout(resolve, ms);
 
         return deferred.promise;
       },
-      all: function(promises) {
+      all(promises) {
         return $q.all(promises);
-      }
+      },
     };
 
     return {
-      Client: function(applicationID, apiKey, options) {
+      Client(applicationID, apiKey, options) {
         return cliniasearch(applicationID, apiKey, options);
       },
       ua: cliniasearch.ua,
-      version: cliniasearch.version
+      version: cliniasearch.version,
     };
-  }
+  },
 ]);

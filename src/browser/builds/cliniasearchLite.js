@@ -1,6 +1,4 @@
-'use strict';
-
-var CliniaSearchCore = require('../../CliniaSearchCore.js');
-var createCliniasearch = require('../createCliniasearch.js');
+const CliniaSearchCore = require('../../CliniaSearchCore.js');
+const createCliniasearch = require('../createCliniasearch.js');
 
 module.exports = createCliniasearch(CliniaSearchCore, 'Browser (lite)');

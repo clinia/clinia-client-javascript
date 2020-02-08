@@ -1,7 +1,7 @@
 module.exports = CliniaSearch;
 
-var CliniaSearchCore = require('./CliniaSearchCore.js');
-var inherits = require('inherits');
+const CliniaSearchCore = require('./CliniaSearchCore.js');
+const inherits = require('inherits');
 // var errors = require('./errors');
 
 function CliniaSearch() {

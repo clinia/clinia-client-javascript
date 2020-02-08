@@ -1,5 +1,5 @@
-var inherits = require('inherits');
-var IndexCore = require('./IndexCore.js');
+const inherits = require('inherits');
+const IndexCore = require('./IndexCore.js');
 
 module.exports = Index;
 

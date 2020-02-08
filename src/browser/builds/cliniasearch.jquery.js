@@ -1,15 +1,13 @@
-'use strict';
-
 // This is the jQuery Clinia Search module
 // It's using $.ajax to do requests with a JSONP fallback
 // jQuery promises are returned
 
-var inherits = require('inherits');
+const inherits = require('inherits');
 
-var CliniaSearch = require('../../CliniaSearch');
-var errors = require('../../errors');
-var inlineHeaders = require('../inline-headers');
-var jsonpRequest = require('../jsonp-request');
+const CliniaSearch = require('../../CliniaSearch');
+const errors = require('../../errors');
+const inlineHeaders = require('../inline-headers');
+const jsonpRequest = require('../jsonp-request');
 
 // expose original cliniasearch fn in window
 window.cliniasearch = require('./cliniasearch');
@@ -19,7 +17,7 @@ if (process.env.NODE_ENV === 'debug') {
 }
 
 function cliniasearch(applicationID, apiKey, opts) {
-  var cloneDeep = require('../../clone.js');
+  const cloneDeep = require('../../clone.js');
 
   opts = cloneDeep(opts || {});
 
@@ -31,26 +29,21 @@ function cliniasearch(applicationID, apiKey, opts) {
 cliniasearch.version = require('../../version.js');
 
 cliniasearch.ua =
-  'Clinia for JavaScript (' +
-  cliniasearch.version +
-  '); ' +
-  'jQuery (' +
-  window.jQuery().jquery +
-  ')';
+  `Clinia for JavaScript (${cliniasearch.version}); ` + `jQuery (${window.jQuery().jquery})`;
 
 // we expose into window no matter how we are used, this will allow
 // us to easily debug any website running clinia
 window.__clinia = {
   debug: require('debug'),
-  cliniasearch: cliniasearch
+  cliniasearch,
 };
 
-var $ = window.jQuery;
+const $ = window.jQuery;
 
 $.clinia = {
   Client: cliniasearch,
   ua: cliniasearch.ua,
-  version: cliniasearch.version
+  version: cliniasearch.version,
 };
 
 function CliniaSearchJQuery() {
@@ -62,12 +55,12 @@ inherits(CliniaSearchJQuery, CliniaSearch);
 
 CliniaSearchJQuery.prototype._request = function request(url, opts) {
   return new $.Deferred(function(deferred) {
-    var body = opts.body;
+    const body = opts.body;
 
     url = inlineHeaders(url, opts.headers);
 
-    var requestHeaders = {
-      accept: 'application/json'
+    const requestHeaders = {
+      accept: 'application/json',
     };
 
     if (body) {
@@ -88,15 +81,17 @@ CliniaSearchJQuery.prototype._request = function request(url, opts) {
       complete: function onComplete(jqXHR, textStatus /* , error*/) {
         if (textStatus === 'timeout') {
           deferred.reject(new errors.RequestTimeout());
+
           return;
         }
 
         if (jqXHR.status === 0) {
           deferred.reject(
             new errors.Network({
-              more: jqXHR
+              more: jqXHR,
             })
           );
+
           return;
         }
 
@@ -104,25 +99,23 @@ CliniaSearchJQuery.prototype._request = function request(url, opts) {
           statusCode: jqXHR.status,
           body: jqXHR.responseJSON,
           responseText: jqXHR.responseText,
-          headers: jqXHR.getAllResponseHeaders()
+          headers: jqXHR.getAllResponseHeaders(),
         });
-      }
+      },
     });
   }).promise();
 };
 
 // using IE8 or IE9 we will always end up here
 // jQuery does not not fallback to XDomainRequest
-CliniaSearchJQuery.prototype._request.fallback = function requestFallback(
-  url,
-  opts
-) {
+CliniaSearchJQuery.prototype._request.fallback = function requestFallback(url, opts) {
   url = inlineHeaders(url, opts.headers);
 
   return new $.Deferred(function wrapJsonpRequest(deferred) {
     jsonpRequest(url, opts, function jsonpRequestDone(err, content) {
       if (err) {
         deferred.reject(err);
+
         return;
       }
 
@@ -151,5 +144,5 @@ CliniaSearchJQuery.prototype._promise = {
   },
   all: function all(promises) {
     return $.when.apply(null, promises);
-  }
+  },
 };
