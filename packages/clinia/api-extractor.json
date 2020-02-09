@@ -1,0 +1,7 @@
+{
+  "extends": "../../api-extractor.json",
+  "mainEntryPointFilePath": "./dist/packages/clinia/src/builds/node.d.ts",
+  "dtsRollup": {
+    "untrimmedFilePath": "./dist/clinia.d.ts"
+  }
+}

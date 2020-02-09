@@ -23,8 +23,8 @@ const noExtraneousOverrides = require("./scripts/packages").map(package => {
 module.exports = {
   plugins: ["functional", "sonarjs", "wdio", "simple-import-sort", "promise"],
   extends: [
-    "algolia/jest",
-    "algolia/typescript",
+    "clinia/jest",
+    "clinia/typescript",
     "plugin:functional/recommended",
     "plugin:sonarjs/recommended",
     "plugin:wdio/recommended",
