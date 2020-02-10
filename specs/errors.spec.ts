@@ -22,7 +22,7 @@ const version = require("../lerna.json").version;
               "content-type": "application/x-www-form-urlencoded"
             };
 
-      let url = `https://${credentials.appId}-dsn.clinia.net/1/indexes/SDFGHJKL/query?x-clinia-agent=Clinia%20for%20JavaScript%20(${version})%3B%20Browser`;
+      let url = `https://api.partner.clinia.ca/search/v1/indexes/SDFGHJKL/query?x-clinia-agent=Clinia%20for%20JavaScript%20(${version})%3B%20Browser`;
 
       if (preset === "clinia-lite.com") {
         url += `%20(lite)&x-clinia-api-key=${credentials.apiKey}&x-clinia-application-id=${credentials.appId}`;
@@ -39,7 +39,7 @@ const version = require("../lerna.json").version;
       expect(err.transporterStackTrace[0].host).toEqual({
         accept: 1,
         protocol: "https",
-        url: `${credentials.appId}-dsn.clinia.net`
+        url: `api.partner.clinia.ca`
       });
 
       expect(err.transporterStackTrace[0].request).toEqual({

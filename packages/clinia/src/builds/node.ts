@@ -75,10 +75,10 @@ export type SearchIndex = BaseSearchIndex & {
 
 export type SearchClient = BaseSearchClient & {
   readonly initIndex: (indexName: string) => SearchIndex;
-  readonly search: <TObject>(
+  readonly search: <TRecord>(
     queries: readonly MultipleQueriesQuery[],
     requestOptions?: RequestOptions & MultipleQueriesOptions
-  ) => Readonly<Promise<MultipleQueriesResponse<TObject>>>;
+  ) => Readonly<Promise<MultipleQueriesResponse<TRecord>>>;
 } & Destroyable;
 
 export * from '../types';

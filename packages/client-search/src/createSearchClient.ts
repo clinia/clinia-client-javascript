@@ -24,13 +24,13 @@ export const createSearchClient: CreateClient<
 
   const transporter = createTransporter({
     hosts: ([
-      { url: `${appId}-dsn.clinia.net`, accept: CallEnum.Read },
-      { url: `${appId}.clinia.net`, accept: CallEnum.Write },
+      { url: `api.partner.clinia.ca`, accept: CallEnum.Read },
+      { url: `api.partner.clinia.ca`, accept: CallEnum.Write },
     ] as readonly HostOptions[]).concat(
       shuffle([
-        { url: `${appId}-1.clinianet.com` },
-        { url: `${appId}-2.clinianet.com` },
-        { url: `${appId}-3.clinianet.com` },
+        { url: `api.partner.clinia.ca` },
+        { url: `api.partner.clinia.ca` },
+        { url: `api.partner.clinia.ca` },
       ])
     ),
     ...options,

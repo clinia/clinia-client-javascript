@@ -5,10 +5,10 @@ import { RequestOptions } from '@clinia/transporter';
 import { SearchIndex, SearchOptions, SearchResponse } from '../..';
 
 export const search = (base: SearchIndex) => {
-  return <TObject>(
+  return <TRecord>(
     query: string,
     requestOptions?: RequestOptions & SearchOptions
-  ): Readonly<Promise<SearchResponse<TObject>>> => {
+  ): Readonly<Promise<SearchResponse<TRecord>>> => {
     return base.transporter.read(
       {
         method: MethodEnum.Post,

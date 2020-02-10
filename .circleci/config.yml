@@ -139,5 +139,5 @@ workflows:
           version: '13'
       - test_build:
           version: '13'
-      - test_browser:
-          version: '13'
+      # - test_browser:
+      #     version: '13'

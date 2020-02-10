@@ -1,14 +1,8 @@
 import { createInMemoryCache } from '@clinia/cache-in-memory';
-import { shuffle, version } from '@clinia/client-common';
-import { SearchOptions } from '@clinia/client-search';
-import {
-  createStatelessHost,
-  createUserAgent,
-  HostOptions,
-  RequestOptions,
-} from '@clinia/transporter';
+import { version } from '@clinia/client-common';
+import { createStatelessHost, createUserAgent } from '@clinia/transporter';
 
-import clinia, { CliniaSearchOptions } from '../builds/browserLite';
+import clinia from '../builds/browserLite';
 
 const client = clinia('appId', 'apiKey');
 
@@ -75,44 +69,5 @@ describe('lite preset', () => {
       header: 'foo',
     });
     expect(customClient.transporter.hosts).toEqual([createStatelessHost({ url: 'foo.com' })]);
-  });
-
-  it('allows to use places', async () => {
-    const places = (appId: string = '', apiKey: string = '', options?: CliniaSearchOptions) => {
-      const placesClient = clinia(appId, apiKey, {
-        hosts: ([{ url: 'places-dsn.clinia.net' }] as readonly HostOptions[]).concat(
-          shuffle([
-            { url: 'places-1.clinia.net' },
-            { url: 'places-2.clinia.net' },
-            { url: 'places-3.clinia.net' },
-          ])
-        ),
-        ...options,
-      });
-
-      return (query: string, requestOptions?: RequestOptions & SearchOptions) => {
-        return placesClient.transporter.read(
-          {
-            method: 'POST',
-            path: '1/places/query',
-            data: {
-              query,
-            },
-            cacheable: true,
-          },
-          requestOptions
-        );
-      };
-    };
-
-    const search = places('', '');
-
-    const results = await search('Portugal');
-
-    // @ts-ignore
-    expect(results.query).toBe('Portugal');
-
-    // @ts-ignore
-    expect(results.hits[0].country_code).toBe('pt');
   });
 });

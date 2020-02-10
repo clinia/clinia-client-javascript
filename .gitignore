@@ -5,3 +5,4 @@ dist
 .vscode
 *.test.ts.snap
 *.umd.js
+.env*

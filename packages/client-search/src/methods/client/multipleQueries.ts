@@ -9,10 +9,10 @@ import {
 } from '../..';
 
 export const multipleQueries = (base: SearchClient) => {
-  return <TObject>(
+  return <TRecord>(
     queries: readonly MultipleQueriesQuery[],
     requestOptions?: RequestOptions & MultipleQueriesOptions
-  ): Readonly<Promise<MultipleQueriesResponse<TObject>>> => {
+  ): Readonly<Promise<MultipleQueriesResponse<TRecord>>> => {
     const requests = queries.map(query => {
       return {
         ...query,

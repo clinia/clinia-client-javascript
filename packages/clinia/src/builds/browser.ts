@@ -4,7 +4,7 @@ import { createInMemoryCache } from '@clinia/cache-in-memory';
 import { destroy, version } from '@clinia/client-common';
 import {
   createSearchClient,
-  getObjectPosition,
+  getRecordPosition,
   initIndex,
   multipleQueries,
   MultipleQueriesOptions,
@@ -58,7 +58,7 @@ export default function clinia(
       destroy,
       initIndex: base => (indexName: string): SearchIndex => {
         return initIndex(base)(indexName, {
-          methods: { search, getObjectPosition },
+          methods: { search, getRecordPosition },
         });
       },
     },
@@ -69,23 +69,23 @@ export default function clinia(
 clinia.version = version;
 
 export type SearchIndex = BaseSearchIndex & {
-  readonly search: <TObject>(
+  readonly search: <TRecord>(
     query: string,
     requestOptions?: RequestOptions & SearchOptions
-  ) => Readonly<Promise<SearchResponse<TObject>>>;
-  readonly getObjectPosition: (searchResponse: SearchResponse<{}>, objectID: string) => number;
+  ) => Readonly<Promise<SearchResponse<TRecord>>>;
+  readonly getRecordPosition: (searchResponse: SearchResponse<{}>, id: string) => number;
 };
 
 export type SearchClient = BaseSearchClient & {
   readonly initIndex: (indexName: string) => SearchIndex;
-  readonly search: <TObject>(
+  readonly search: <TRecord>(
     queries: readonly MultipleQueriesQuery[],
     requestOptions?: RequestOptions & MultipleQueriesOptions
-  ) => Readonly<Promise<MultipleQueriesResponse<TObject>>>;
-  readonly multipleQueries: <TObject>(
+  ) => Readonly<Promise<MultipleQueriesResponse<TRecord>>>;
+  readonly multipleQueries: <TRecord>(
     queries: readonly MultipleQueriesQuery[],
     requestOptions?: RequestOptions & MultipleQueriesOptions
-  ) => Readonly<Promise<MultipleQueriesResponse<TObject>>>;
+  ) => Readonly<Promise<MultipleQueriesResponse<TRecord>>>;
 };
 
 export * from '../types';

@@ -71,18 +71,18 @@ export default function clinia(
 clinia.version = version;
 
 export type SearchIndex = BaseSearchIndex & {
-  readonly search: <TObject>(
+  readonly search: <TRecord>(
     query: string,
     requestOptions?: RequestOptions & SearchOptions
-  ) => Readonly<Promise<SearchResponse<TObject>>>;
+  ) => Readonly<Promise<SearchResponse<TRecord>>>;
 };
 
 export type SearchClient = BaseSearchClient & {
   readonly initIndex: (indexName: string) => SearchIndex;
-  readonly search: <TObject>(
+  readonly search: <TRecord>(
     queries: readonly MultipleQueriesQuery[],
     requestOptions?: RequestOptions & MultipleQueriesOptions
-  ) => Readonly<Promise<MultipleQueriesResponse<TObject>>>;
+  ) => Readonly<Promise<MultipleQueriesResponse<TRecord>>>;
 };
 
 export { WithoutCredentials, CliniaSearchOptions } from '../types';

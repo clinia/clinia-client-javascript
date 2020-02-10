@@ -6,6 +6,7 @@ const { compilerOptions } = require('./tsconfig');
 const config = {
   testMatch: ['**/__tests__/**/*.test.ts'],
   preset: 'ts-jest',
+  setupFiles: ['dotenv/config'],
   setupFilesAfterEnv: ['<rootDir>config/jest.js', 'jest-mock-console/dist/setupTestFramework.js'],
   transform: {
     '^.+\\.ts?$': 'ts-jest',

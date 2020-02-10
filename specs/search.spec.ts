@@ -47,7 +47,7 @@ const version = require("../lerna.json").version;
       const results = await browser.executeAsync(function(credentials, done) {
         const client = clinia(credentials.appId, credentials.apiKey);
 
-        const index = client.initIndex("javascript-browser-testing-lite");
+        const index = client.initIndex("health_facility");
 
         Promise.all([
           index.search(""),
@@ -56,34 +56,13 @@ const version = require("../lerna.json").version;
         ]).then(done);
       }, credentials);
 
-      expect(results[0].nbHits).toBe(objects.length);
+      expect(results[0].meta.total).toBe(objects.length);
 
       expect(results[1].hits.pop().value).toEqual("#f00");
       expect(results[1].nbHits).toBe(1);
 
       expect(results[2].hits.pop().value).toEqual("#000");
       expect(results[2].nbHits).toBe(1);
-    });
-
-    it("searchClient::searchForFacetValues and searchIndex::searchForFacetValues", async () => {
-      const results = await browser.executeAsync(function(credentials, done) {
-        const client = clinia(credentials.appId, credentials.apiKey);
-
-        const index = client.initIndex("javascript-browser-testing-lite");
-
-        Promise.all([
-          index.searchForFacetValues("color", "red"),
-          index.searchForFacetValues("color", "green")
-        ]).then(function(responses) {
-          done({
-            red: responses[0],
-            green: responses[1]
-          });
-        });
-      }, credentials);
-
-      expect(results.red.facetHits.pop().value).toEqual("red");
-      expect(results.green.facetHits.pop().value).toEqual("green");
     });
 
     it("cache requests", async () => {
@@ -142,7 +121,7 @@ const version = require("../lerna.json").version;
       });
       
       expect(browserVersion).toBe(version);
-      expect(browserVersion.startsWith('4.')).toBe(true);
+      expect(browserVersion.startsWith('2.')).toBe(true);
     });
   });
 });
