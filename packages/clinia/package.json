@@ -1,0 +1,41 @@
+{
+  "name": "clinia",
+  "version": "2.0.0-beta.0",
+  "private": false,
+  "description": "A fully-featured and blazing-fast JavaScript API client to interact with Clinia API.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/clinia/clinia-client-javascript.git"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "index.js",
+  "jsdelivr": "./dist/clinia.umd.js",
+  "unpkg": "./dist/clinia.umd.js",
+  "browser": {
+    "./index.js": "./dist/clinia.umd.js",
+    "./lite.js": "./dist/clinia-lite.umd.js"
+  },
+  "types": "index.d.ts",
+  "files": [
+    "dist",
+    "index.js",
+    "index.d.ts",
+    "lite.js",
+    "lite.d.ts"
+  ],
+  "dependencies": {
+    "@clinia/cache-browser-local-storage": "2.0.0-beta.0",
+    "@clinia/cache-common": "2.0.0-beta.0",
+    "@clinia/cache-in-memory": "2.0.0-beta.0",
+    "@clinia/client-common": "2.0.0-beta.0",
+    "@clinia/client-places": "2.0.0-beta.0",
+    "@clinia/client-search": "2.0.0-beta.0",
+    "@clinia/logger-common": "2.0.0-beta.0",
+    "@clinia/logger-console": "2.0.0-beta.0",
+    "@clinia/requester-browser-xhr": "2.0.0-beta.0",
+    "@clinia/requester-common": "2.0.0-beta.0",
+    "@clinia/requester-node-http": "2.0.0-beta.0",
+    "@clinia/transporter": "2.0.0-beta.0"
+  }
+}

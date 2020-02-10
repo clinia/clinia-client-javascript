@@ -1,7 +1,8 @@
-node_modules/
-
-# Editors
+.DS_Store
+coverage
+node_modules
+dist
 .vscode
-.idea
-
-.log
+*.test.ts.snap
+*.umd.js
+.env*
