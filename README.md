@@ -22,16 +22,16 @@
 - Allows authenticated communication with Clinia's API suites.
 - Works both on the **browser** and **node.js**
 - **UMD compatible**, you can use it with any module loader
-- Contains type definitions: **[@types/cliniasearch](https://www.npmjs.com/package/@types/cliniasearch)**
+- Built with TypeScript
 
 # Getting Started
 
 First, install Clinia JavaScript API Client via the [npm](https://www.npmjs.com/get-npm) package manager:
 
 ```bash
-npm install --save cliniasearch
+npm install --save clinia
 OR
-yarn add cliniasearch
+yarn add clinia
 ```
 
 ## Quickstart
@@ -39,9 +39,9 @@ yarn add cliniasearch
 Let's search using the `search` method, targeting a single index:
 
 ```js
-const cliniasearch = require('cliniasearch');
+const clinia = require('clinia');
 
-const client = cliniasearch('YourApplicationID', 'YourAPIKey');
+const client = clinia('YourApplicationID', 'YourAPIKey');
 const index = client.initIndex('your_index_name');
 
 index
@@ -85,21 +85,21 @@ For use cases where one wants to get place suggestions based on a user input, th
 ## `Client`
 ### Initialization
 ```js
-const client = cliniasearch('YourApplicationID', 'YourAPIKey');
+const client = clinia('YourApplicationID', 'YourAPIKey');
 ```
 ---
 ### `client.initIndex(indexName)`
-Initializes the `Index` object.
+Initializes the `SearchIndex` object.
 
 #### Arguments
 - **indexName (_string_)** -- Name of the targeted index. 
 
 #### Returns
-Returns an instance of `Index`.
+Returns an instance of `SearchIndex`.
 
 ---
 ### `client.initPlaces()`
-Initializes the `Places` object.
+Initializes the `PlacesClient` object.
 
 #### Returns
 Returns an instance of `Places`.
@@ -142,17 +142,13 @@ Get query suggestions based on a query.
 - **callback (_Function_)** -- Callback to be called.
 
 #### Returns
-Returns a `Promise` if no callback is given.
+Returns a `Promise`
 
 #### Example
 ```js
-client.suggest('Foo', { highlightPreTag: "<strong>", highlightPostTag: "</strong>" }, function(err, suggestions) {
-  if (err) {
-    throw err;
-  }
-  
-  console.log(suggestions)
-})
+client.suggest('Foo', { highlightPreTag: "<strong>", highlightPostTag: "</strong>" }).then((res) => {
+  console.log(res)
+});
 ```
 ---
 ### `client.search(queries, callback)`
@@ -178,28 +174,22 @@ Returns a `Promise` if no callback is given.
 var queries = [
   {
     indexName: 'health_facility',
-    query: 'sons',
     params: {
-      queryType: 'prefixLast',
-      searchFields: ['name'],
+      query: 'sons',
+      queryType: 'prefix_last',
     },
   },
   {
     indexName: 'professional',
-    query: 'sons',
     params: {
-      queryType: 'prefixLast',
-      searchFields: ['name'],
+      query: 'sons',
+      queryType: 'prefix_last',
     },
   },
 ];
 
-client.search(queries, function(err, response) {
-  if (err) {
-    throw err;
-  }
-
-  console.log(response);
+client.search(queries).then(res => {
+  console.log(res);
 });
 ```
 <br/>
@@ -214,7 +204,7 @@ The current possible `indexName` values are :
 - `professional` : Represents people working in the health industry like doctors, physiotherapists and other health professionals.
 - `health_facility` : Represents health establishments like clinics, hospitals, pharmacies and other health facilities.
 ---
-### `index.search(query, args, callback)`
+### `index.search(query, args)`
 Search through a single index.
 
 #### Arguments
@@ -232,13 +222,9 @@ Returns a `Promise` if no callback is given.
 
 #### Example
 ```js
-index.search('Foo', { queryType: 'prefix_last', filters: { location: 'Bar' }}, function(err, results) {
-  if (err) {
-    throw err;
-  }
-
-  console.log(results)
-});
+index.search('Foo', { queryType: 'prefix_last', filters: { location: 'Bar' }}).then(res => {
+  console.log(res)
+})
 ```
 <br/>
 
@@ -248,7 +234,7 @@ Initialization
 const places = client.initPlaces();
 ```
 ---
-### `places.suggest(query, args, callback)`
+### `places.searc(query, args)`
 Get place suggestions based on a query.
 
 #### Arguments
@@ -261,16 +247,12 @@ Get place suggestions based on a query.
 - **callback (_Function_)** -- Callback to be called.
 
 #### Returns
-Returns a `Promise` if no callback is given.
+Returns a `Promise`
 
 #### Example
 ```js
-places.search('3578 rue Dorion Montréal', { country: ['CA'], size: 5 }, function(err, suggestions) {
-  if (err) {
-    throw err;
-  }
-
-  console.log(suggestions)
+places.search('3578 rue Dorion Montréal', { country: ['CA'], size: 5 }).then(res => {
+  console.log(res);
 });
 ```
 <br/>
