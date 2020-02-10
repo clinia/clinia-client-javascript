@@ -29,6 +29,7 @@
     "@clinia/cache-common": "2.0.0-beta.0",
     "@clinia/cache-in-memory": "2.0.0-beta.0",
     "@clinia/client-common": "2.0.0-beta.0",
+    "@clinia/client-places": "2.0.0-beta.0",
     "@clinia/client-search": "2.0.0-beta.0",
     "@clinia/logger-common": "2.0.0-beta.0",
     "@clinia/logger-console": "2.0.0-beta.0",

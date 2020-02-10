@@ -19,6 +19,7 @@ export type SearchResponse<TRecord = {}> = {
     // Geo Search
     readonly aroundLatLng?: string;
     readonly automaticRadius?: string;
+    readonly insideBoundingBox?: string;
 
     readonly queryID?: string;
   };

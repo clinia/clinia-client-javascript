@@ -1,0 +1,23 @@
+{
+  "name": "@clinia/client-places",
+  "version": "2.0.0-beta.0",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/clinia/clinia-client-javascript.git"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "index.js",
+  "module": "dist/client-places.esm.js",
+  "types": "dist/client-places.d.ts",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "dependencies": {
+    "@clinia/client-common": "2.0.0-beta.0",
+    "@clinia/requester-common": "2.0.0-beta.0",
+    "@clinia/transporter": "2.0.0-beta.0"
+  }
+}

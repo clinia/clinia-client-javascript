@@ -3,6 +3,13 @@ import { createFallbackableCache } from '@clinia/cache-common';
 import { createInMemoryCache } from '@clinia/cache-in-memory';
 import { AuthMode, version } from '@clinia/client-common';
 import {
+  createPlacesClient,
+  PlacesClient as BasePlacesClient,
+  PlaceSearchOptions,
+  PlaceSearchResponse,
+  search as placeSearch,
+} from '@clinia/client-places';
+import {
   createSearchClient,
   initIndex,
   multipleQueries,
@@ -20,7 +27,7 @@ import { createConsoleLogger } from '@clinia/logger-console';
 import { createBrowserXhrRequester } from '@clinia/requester-browser-xhr';
 import { createUserAgent, RequestOptions } from '@clinia/transporter';
 
-import { CliniaSearchOptions } from '../types';
+import { CliniaSearchOptions, InitPlacesOptions } from '../types';
 
 export default function clinia(
   appId: string,
@@ -63,12 +70,28 @@ export default function clinia(
           methods: { search },
         });
       },
+      initPlaces: () => (clientOptions?: InitPlacesOptions): PlacesClient => {
+        return createPlacesClient({
+          ...commonOptions,
+          ...clientOptions,
+          methods: {
+            search: placeSearch,
+          },
+        });
+      },
     },
   });
 }
 
 // eslint-disable-next-line functional/immutable-data
 clinia.version = version;
+
+export type PlacesClient = BasePlacesClient & {
+  readonly search: (
+    query: string,
+    requestOptions?: RequestOptions & PlaceSearchOptions
+  ) => Readonly<Promise<PlaceSearchResponse>>;
+};
 
 export type SearchIndex = BaseSearchIndex & {
   readonly search: <TRecord>(
