@@ -1,6 +1,6 @@
 {
   "name": "@clinia/cache-in-memory",
-  "version": "2.0.0-beta.0",
+  "version": "2.0.0-beta.1",
   "private": false,
   "description": "Promise-based cache library using memory.",
   "repository": {
@@ -17,6 +17,6 @@
     "dist"
   ],
   "dependencies": {
-    "@clinia/cache-common": "2.0.0-beta.0"
+    "@clinia/cache-common": "^2.0.0-beta.1"
   }
 }
