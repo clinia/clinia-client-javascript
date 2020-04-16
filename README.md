@@ -353,7 +353,7 @@ Clinia JavaScript API Client is an open-sourced software licensed under the [MIT
 
 [license-image]: http://img.shields.io/badge/license-MIT-green.svg?style=flat-square
 [license-url]: LICENSE
-[downloads-image]: https://img.shields.io/npm/dm/cliniasearch.svg?style=flat-square
-[downloads-url]: http://npm-stat.com/charts.html?package=cliniasearch
-[version-svg]: https://img.shields.io/npm/v/cliniasearch.svg?style=flat-square
-[package-url]: https://yarnpkg.com/en/package/cliniasearch
+[downloads-image]: https://img.shields.io/npm/dm/clinia.svg?style=flat-square
+[downloads-url]: http://npm-stat.com/charts.html?package=clinia
+[version-svg]: https://img.shields.io/npm/v/clinia.svg?style=flat-square
+[package-url]: https://yarnpkg.com/en/package/clinia
