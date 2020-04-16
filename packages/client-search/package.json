@@ -1,0 +1,23 @@
+{
+  "name": "@clinia/client-search",
+  "version": "2.0.0-beta.1",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/clinia/clinia-client-javascript.git"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "index.js",
+  "module": "dist/client-search.esm.js",
+  "types": "dist/client-search.d.ts",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "dependencies": {
+    "@clinia/client-common": "^2.0.0-beta.1",
+    "@clinia/requester-common": "^2.0.0-beta.1",
+    "@clinia/transporter": "^2.0.0-beta.1"
+  }
+}

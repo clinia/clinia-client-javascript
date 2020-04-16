@@ -1,0 +1,19 @@
+{
+  "name": "@clinia/logger-common",
+  "version": "2.0.0-beta.1",
+  "private": false,
+  "description": "Common interfaces for promise-based log libraries",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/clinia/clinia-client-js.git"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "index.js",
+  "module": "dist/logger-common.esm.js",
+  "types": "dist/logger-common.d.ts",
+  "files": [
+    "index.js",
+    "dist"
+  ]
+}

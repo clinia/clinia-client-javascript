@@ -1,18 +1,37 @@
+<div align="center">
+  <img src="./clinia-logo.svg" width="250">
+  <h1>Clinia JavaScript API Client</h1>
+  <h4>Thin & minimal low-level HTTP client to interact with Clinia's API</h4>
+  <p>
+    <a href="#features">Features</a> •
+    <a href="#getting-started">Getting Started</a> •
+    <a href="#more-details">More Details</a> •
+    <a href="#api">API</a> •
+    <a href="#-license">License</a>
+  </p>
+</div>
+
+<div align="center">
+
+[![Version][version-svg]][package-url] [![License][license-image]][license-url] [![Downloads][downloads-image]][downloads-url]
+
+</div>
+
 # Features
 
-- Thin & **minimal low-level HTTP client** to interact with Clinia's API
+- Allows authenticated communication with Clinia's API suites.
 - Works both on the **browser** and **node.js**
 - **UMD compatible**, you can use it with any module loader
-- Contains type definitions: **[@types/cliniasearch](https://www.npmjs.com/package/@types/cliniasearch)**
+- Built with TypeScript
 
 # Getting Started
 
 First, install Clinia JavaScript API Client via the [npm](https://www.npmjs.com/get-npm) package manager:
 
 ```bash
-npm install --save cliniasearch
+npm install --save clinia
 OR
-yarn add cliniasearch
+yarn add clinia
 ```
 
 ## Quickstart
@@ -20,9 +39,9 @@ yarn add cliniasearch
 Let's search using the `search` method, targeting a single index:
 
 ```js
-const cliniasearch = require('cliniasearch');
+const clinia = require('clinia');
 
-const client = cliniasearch('YourApplicationID', 'YourAPIKey');
+const client = clinia('YourEngineID', 'YourAPIKey');
 const index = client.initIndex('your_index_name');
 
 index
@@ -35,9 +54,9 @@ index
   });
 ```
 
-# More details...
+# More Details
 
-The client allows to use the following Clinia APIs:
+The client allows the use the following Clinia APIs:
 - Single index search
 - Multiple indexes search
 - Query suggestions (Autocomplete)
@@ -66,28 +85,28 @@ For use cases where one wants to get place suggestions based on a user input, th
 ## `Client`
 ### Initialization
 ```js
-const client = cliniasearch('YourApplicationID', 'YourAPIKey');
+const client = clinia('YourEngineID', 'YourAPIKey');
 ```
 ---
 ### `client.initIndex(indexName)`
-Get the `Index` object initialized .
+Initializes the `SearchIndex` object.
 
 #### Arguments
 - **indexName (_string_)** -- Name of the targeted index. 
 
 #### Returns
-Returns an instance of `Index`.
+Returns an instance of `SearchIndex`.
 
 ---
 ### `client.initPlaces()`
-Get the Places object initialized.
+Initializes the `PlacesClient` object.
 
 #### Returns
 Returns an instance of `Places`.
 
 ---
 ### `client.setExtraHeader(name, value)`
-Add an extra field to the HTTP request.
+Add an extra header to the HTTP request.
 
 #### Arguments
 - **name (_string_)** -- The header field name. 
@@ -101,11 +120,11 @@ Get the value of an extra HTTP header.
 - **name (_string_)** -- The header field name. 
 
 #### Returns
-A `string` of the field value.
+A `string` of the header value.
 
 ---
 ### `client.unsetExtraHeader(name)`
-Remove an extra field from the HTTP request.
+Remove an extra header from the HTTP request.
 
 #### Arguments
 - **name (_string_)** -- The header field name. 
@@ -123,17 +142,13 @@ Get query suggestions based on a query.
 - **callback (_Function_)** -- Callback to be called.
 
 #### Returns
-Returns a `Promise` if no callback given.
+Returns a `Promise`
 
 #### Example
 ```js
-client.suggest('Foo', { highlightPreTag: "<strong>", highlightPostTag: "</strong>" }, function(err, suggestions) {
-  if (err) {
-    throw err;
-  }
-  
-  console.log(suggestions)
-})
+client.suggest('Foo', { highlightPreTag: "<strong>", highlightPostTag: "</strong>" }).then((res) => {
+  console.log(res)
+});
 ```
 ---
 ### `client.search(queries, callback)`
@@ -152,35 +167,29 @@ Search through multiple indices at the same time.
 - **callback (_Function_)** -- Callback to be called.
 
 #### Returns
-Returns a `Promise` if no callback given.
+Returns a `Promise` if no callback is given.
 
 #### Example
 ```js
 var queries = [
   {
     indexName: 'health_facility',
-    query: 'sons',
     params: {
-      queryType: 'prefixLast',
-      searchFields: ['name'],
+      query: 'sons',
+      queryType: 'prefix_last',
     },
   },
   {
     indexName: 'professional',
-    query: 'sons',
     params: {
-      queryType: 'prefixLast',
-      searchFields: ['name'],
+      query: 'sons',
+      queryType: 'prefix_last',
     },
   },
 ];
 
-client.search(queries, function(err, response) {
-  if (err) {
-    throw err;
-  }
-
-  console.log(response);
+client.search(queries).then(res => {
+  console.log(res);
 });
 ```
 <br/>
@@ -195,7 +204,7 @@ The current possible `indexName` values are :
 - `professional` : Represents people working in the health industry like doctors, physiotherapists and other health professionals.
 - `health_facility` : Represents health establishments like clinics, hospitals, pharmacies and other health facilities.
 ---
-### `index.search(query, args, callback)`
+### `index.search(query, args)`
 Search through a single index.
 
 #### Arguments
@@ -209,48 +218,13 @@ Search through a single index.
 - **callback (_Function_)** -- Callback to be called.
 
 #### Returns
-Returns a `Promise` if no callback given.
+Returns a `Promise` if no callback is given.
 
 #### Example
 ```js
-index.search('Foo', { queryType: 'prefix_last', filters: { location: 'Bar' }}, function(err, results) {
-  if (err) {
-    throw err;
-  }
-
-  console.log(results)
-});
-```
-<br/>
-
-## `Places`
-Initialization
-```js
-const places = client.initPlaces();
-```
----
-### `places.suggest(query, args, callback)`
-Get place suggestions based on a query.
-
-#### Arguments
-- **query (_Object_)** -- The query to issue. Can also be passed into `args`.
-- **args (_Object_)** -- The query parameters.
-  - **limit (_number_)** -- Max number of suggestions to receive.
-  - **country (_string_)** -- ISO3166 Alpha-2 country code (e.g. 'CA'). Limits the suggestions to this country.
-- **callback (_Function_)** -- Callback to be called.
-
-#### Returns
-Returns a `Promise` if no callback given.
-
-#### Example
-```js
-places.search('3578 rue Dorion Montréal', { country: 'CA', limit: 5 }, function(err, suggestions) {
-  if (err) {
-    throw err;
-  }
-
-  console.log(suggestions)
-});
+index.search('Foo', { queryType: 'prefix_last', filters: { location: 'Bar' }}).then(res => {
+  console.log(res)
+})
 ```
 <br/>
 
@@ -275,36 +249,6 @@ places.search('3578 rue Dorion Montréal', { country: 'CA', limit: 5 }, function
 |------------|------|-------------|-----------------|
 | `records` | _Record[]_ | Contains the records matching the search ||
 | `meta` | _Metadata_ | Metadata of the search ||
-<br/>
-
-## Query suggestions response [Array]
-| Field name | Type | Description | Possible Values |
-|------------|------|-------------|-----------------|
-| `suggestion` | _string_ | Suggested query ||
-| `facet` | _string_ | Type of the suggestion ||
-| `highlight` | _string_ | Augmented suggestion ||
-<br/>
-
-## Place suggestions response [Array]
-| Field name | Type | Description | Possible Values |
-|------------|------|-------------|-----------------|
-| `id` | _string_ | Identifier. ||
-| `type` | _string_ | Type of location. | `postcode`<br/>`place`<br/>`neighborhood`|
-| `formattedAddress` | _string_ | Formatted address, ready to display. ||
-| `suite` | _string_ | Suite, door, appartment number. ||
-| `route` | _string_ | Street name of the location. ||
-| `postalCode` | _string_ | Postal code. ||
-| `neighborhood` | _string_ | Neighborhood. ||
-| `locality` | _string_ | Locality. ||
-| `place` | _string_ | City. ||
-| `district` | _string_ | District. ||
-| `region` | _string_ | Name of the region. ||
-| `regionCode` | _string_ | ISO 3166-2 region code. ||
-| `country` | _string_ | Name of the country. ||
-| `countryCode` | _string_ | ISO 3166 country code ||
-| `geometry` | _Geometry_ | Geographical information of the location. ||
-| `timeZoneId` | _string_ | Timezone. ||
-| `translations` | _Map<string, LocationTranslation>_ | Translatable elements, if applicable. ||
 <br/>
 
 ## Shared
@@ -401,19 +345,15 @@ places.search('3578 rue Dorion Montréal', { country: 'CA', limit: 5 }, function
 | `lng` | _double_ | Longitude ||
 <br/>
 
-### LocationTranslation 
-| Field name | Type | Description | Possible Values |
-|------------|------|-------------|-----------------|
-| `formattedAddress` | _string_ | Formatted address, ready to display. ||
-| `route` | _string_ | Street name of the location. ||
-| `neighborhood` | _string_ | Neighborhood. ||
-| `locality` | _string_ | Locality. ||
-| `place` | _string_ | Locality. ||
-| `district` | _string_ | District. ||
-| `region` | _string_ | Name of the region. ||
-| `country` | _string_ | Name of the country. ||
-<br/>
-
 # 📄 License
 
 Clinia JavaScript API Client is an open-sourced software licensed under the [MIT license](LICENSE).
+
+<!-- Links -->
+
+[license-image]: http://img.shields.io/badge/license-MIT-green.svg?style=flat-square
+[license-url]: LICENSE
+[downloads-image]: https://img.shields.io/npm/dm/cliniasearch.svg?style=flat-square
+[downloads-url]: http://npm-stat.com/charts.html?package=cliniasearch
+[version-svg]: https://img.shields.io/npm/v/cliniasearch.svg?style=flat-square
+[package-url]: https://yarnpkg.com/en/package/cliniasearch

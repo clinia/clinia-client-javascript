@@ -1,0 +1,22 @@
+{
+  "name": "@clinia/cache-browser-local-storage",
+  "version": "2.0.0-beta.1",
+  "private": false,
+  "description": "Promise-based cache library for browser using local storage.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/clinia/clinia-client-javascript.git"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "index.js",
+  "module": "dist/cache-browser-local-storage.esm.js",
+  "types": "dist/cache-browser-local-storage.d.ts",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "dependencies": {
+    "@clinia/cache-common": "^2.0.0-beta.1"
+  }
+}
