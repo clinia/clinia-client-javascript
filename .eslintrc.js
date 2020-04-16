@@ -76,14 +76,8 @@ module.exports = {
           ],
           ["@clinia/cache-common", "./packages/cache-common/src"],
           ["@clinia/cache-in-memory", "./packages/cache-in-memory/src"],
-          ["@clinia/client-account", "./packages/client-account/src"],
-          ["@clinia/client-analytics", "./packages/client-analytics/src"],
           ["@clinia/client-common", "./packages/client-common/src"],
           ["@clinia/client-search", "./packages/client-search/src"],
-          [
-            "@clinia/client-recommendation",
-            "./packages/client-recommendation/src"
-          ],
           ["@clinia/logger-common", "./packages/logger-common/src"],
           ["@clinia/logger-console", "./packages/logger-console/src"],
           [
