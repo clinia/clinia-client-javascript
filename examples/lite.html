@@ -6,7 +6,9 @@
   </head>
   <body>
     <script>
-      var client = cliniasearch('demo-pharmacies', 'KcLxBhVFP8ooPgQODlAxWqfNg657fTz9');
+      var client = cliniasearch('demo-pharmacies', 'KcLxBhVFP8ooPgQODlAxWqfNg657fTz9', {
+        queryParameters: { locale: 'fr'}
+      });
 
       var index = client.initIndex('health_facility');
       index.search('sons', function(err, results) {

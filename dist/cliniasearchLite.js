@@ -1,4 +1,4 @@
-/*! cliniasearch 1.0.0 | © 2019 Clinia | github.com/clinia/cliniasearch-client-javascript */
+/*! cliniasearch UNRELEASED | © 2019 Clinia | github.com/clinia/cliniasearch-client-javascript */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.cliniasearch = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 (function (process){
 /**
@@ -2081,7 +2081,7 @@ module.exports = CliniaSearchCore;
 var errors = require(21);
 var exitPromise = require(22);
 var IndexCore = require(12);
-var store = require(27);
+var store = require(28);
 var PlacesCore = require(13);
 
 // We will always put the API KEY in the JSON body in case of too long API KEY,
@@ -2110,7 +2110,7 @@ function CliniaSearchCore(applicationID, apiKey, opts) {
 
   var clone = require(20);
   var isArray = require(7);
-  var map = require(24);
+  var map = require(25);
 
   var usage = 'Usage: cliniasearch(applicationID, apiKey, opts)';
 
@@ -2197,6 +2197,9 @@ function CliniaSearchCore(applicationID, apiKey, opts) {
 
   this._setTimeout = opts._setTimeout;
 
+
+  this.extraQueryParameters = opts.queryParameters || {};
+
   debug('init done, %j', this);
 }
 
@@ -2268,7 +2271,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
   this._checkAppIdData();
 
   var requestDebug = require(1)('cliniasearch:' + initialOpts.url);
-  var safeJSONStringify = require(26);
+  var safeJSONStringify = require(27);
 
   var body;
   var cacheID;
@@ -2280,6 +2283,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
   var hasFallback =
     client._useFallback && client._request.fallback && initialOpts.fallback;
   var headers;
+  var queryParameters;
 
   if (
     this.apiKey.length > MAX_API_KEY_LENGTH &&
@@ -2303,6 +2307,8 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
   if (initialOpts.body !== undefined) {
     body = safeJSONStringify(initialOpts.body);
   }
+
+  queryParameters = this._computeRequestQueryParameters()
 
   requestDebug('request start');
   var debugData = [];
@@ -2377,6 +2383,11 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
     var currentHost = client._getHostByType(initialOpts.hostType);
 
     var url = currentHost + reqOpts.url;
+
+    if (queryParameters) {
+      url += '?' + buildQueryParams(queryParameters, '')
+    }
+
     var options = {
       body: reqOpts.body,
       jsonBody: reqOpts.jsonBody,
@@ -2384,7 +2395,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
       headers: headers,
       timeouts: reqOpts.timeouts,
       debug: requestDebug,
-      forceAuthHeaders: reqOpts.forceAuthHeaders
+      forceAuthHeaders: reqOpts.forceAuthHeaders,
     };
 
     requestDebug(
@@ -2645,7 +2656,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
  */
 CliniaSearchCore.prototype._getPlacesParams = function(args, params) {
   var argCheck = require(14);
-  var logger = require(23);
+  var logger = require(24);
 
   params += '&types=place&types=postcode&types=neighborhood';
   if (args === undefined || args === null) {
@@ -2676,7 +2687,7 @@ CliniaSearchCore.prototype._getPlacesParams = function(args, params) {
  */
 CliniaSearchCore.prototype._getSuggestParams = function(args, params) {
   var argCheck = require(14);
-  var logger = require(23);
+  var logger = require(24);
 
   if (args === undefined || args === null) {
     return params;
@@ -2709,7 +2720,7 @@ CliniaSearchCore.prototype._getSuggestParams = function(args, params) {
 CliniaSearchCore.prototype._getSearchParams = function(args, params) {
   var argCheck = require(14);
   var isArray = require(7);
-  var logger = require(23);
+  var logger = require(24);
 
   if (args === undefined || args === null) {
     return params;
@@ -2752,6 +2763,23 @@ CliniaSearchCore.prototype._getSearchParams = function(args, params) {
 
   return buildQueryParams(args, params);
 };
+
+CliniaSearchCore.prototype._computeRequestQueryParameters = function() {
+  var forEach = require(4);
+  var isEmpty = require(23)
+
+  if (isEmpty(this.extraQueryParameters)) {
+    return undefined
+  }
+
+  var requestQueryParameters = {}
+
+  forEach(this.extraQueryParameters, function addToRequestQueryParameters(value, key) {
+    requestQueryParameters[key] = value;
+  });
+
+  return requestQueryParameters;
+}
 
 /**
  * Compute the headers for a request
@@ -2812,7 +2840,7 @@ CliniaSearchCore.prototype._computeRequestHeaders = function(options) {
  * @return {Promise|undefined} Returns a promise if no callback given
  */
 CliniaSearchCore.prototype.suggest = function(query, args, callback) {
-  var normalizeParams = require(25);
+  var normalizeParams = require(26);
 
   // Normalizing the function signature
   var normalizedParameters = normalizeParams(query, args, callback);
@@ -2866,7 +2894,7 @@ CliniaSearchCore.prototype._suggest = function(params, callback, additionalUA) {
  */
 CliniaSearchCore.prototype.search = function(queries, opts, callback) {
   var isArray = require(7);
-  var map = require(24);
+  var map = require(25);
 
   var usage = 'Usage: client.search(arrayOfQueries[, callback])';
 
@@ -3083,7 +3111,7 @@ CliniaSearchCore.prototype._getTimeoutsForRequest = function(hostType) {
 };
 
 function buildQueryParams(args, params) {
-  var safeJSONStringify = require(26);
+  var safeJSONStringify = require(27);
   for (var key in args) {
     if (key !== null && args[key] !== undefined && args.hasOwnProperty(key)) {
       params += params === '' ? '' : '&';
@@ -3151,7 +3179,7 @@ function removeCredentials(headers) {
 }
 
 }).call(this,require(9))
-},{"1":1,"12":12,"13":13,"14":14,"20":20,"21":21,"22":22,"23":23,"24":24,"25":25,"26":26,"27":27,"4":4,"7":7,"9":9}],12:[function(require,module,exports){
+},{"1":1,"12":12,"13":13,"14":14,"20":20,"21":21,"22":22,"23":23,"24":24,"25":25,"26":26,"27":27,"28":28,"4":4,"7":7,"9":9}],12:[function(require,module,exports){
 var buildSearchMethod = require(19);
 
 module.exports = IndexCore;
@@ -3237,7 +3265,7 @@ PlacesCore.prototype.clearCache = function() {
  * @return {undefined|Promise} If the callback is not provided then this methods returns a Promise
  */
 PlacesCore.prototype.suggest = function(query, args, callback) {
-  var normalizeParams = require(25);
+  var normalizeParams = require(26);
 
   // Normalizing the function signature
   var normalizedParameters = normalizeParams(query, args, callback);
@@ -3284,7 +3312,7 @@ PlacesCore.prototype._suggest = function(params, url, callback, additionalUA) {
 
 PlacesCore.prototype.as = null;
 
-},{"25":25}],14:[function(require,module,exports){
+},{"26":26}],14:[function(require,module,exports){
 module.exports = {
   isNullOrUndefined: isNullOrUndefined,
   isNotNullOrUndefined: isNotNullOrUndefined,
@@ -3347,7 +3375,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
     return new CliniaSearchBrowser(applicationID, apiKey, opts);
   }
 
-  cliniasearch.version = require(28);
+  cliniasearch.version = require(29);
 
   cliniasearch.ua =
     'Clinia for JavaScript (' + cliniasearch.version + '); ' + uaSuffix;
@@ -3561,7 +3589,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
 };
 
 }).call(this,require(9))
-},{"1":1,"17":17,"18":18,"20":20,"21":21,"28":28,"3":3,"5":5,"6":6,"9":9}],17:[function(require,module,exports){
+},{"1":1,"17":17,"18":18,"20":20,"21":21,"29":29,"3":3,"5":5,"6":6,"9":9}],17:[function(require,module,exports){
 'use strict';
 
 module.exports = inlineHeaders;
@@ -3730,7 +3758,7 @@ function buildSearchMethod(queryParam, url) {
    * @return {undefined|Promise} If the callback is not provided then this methods returns a Promise
    */
   return function search(query, args, callback) {
-    var normalizeParams = require(25);
+    var normalizeParams = require(26);
 
     // Normalizing the function signature
     var normalizedParameters = normalizeParams(query, args, callback);
@@ -3757,7 +3785,7 @@ function buildSearchMethod(queryParam, url) {
   };
 }
 
-},{"25":25}],20:[function(require,module,exports){
+},{"26":26}],20:[function(require,module,exports){
 module.exports = function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 };
@@ -3855,6 +3883,16 @@ module.exports = function exitPromise(fn, _setTimeout) {
 };
 
 },{}],23:[function(require,module,exports){
+module.exports = function isEmpty(obj) {
+  for(var prop in obj) {
+    if(obj.hasOwnProperty(prop)) {
+      return false;
+    }
+  }
+
+  return JSON.stringify(obj) === JSON.stringify({});
+}
+},{}],24:[function(require,module,exports){
 module.exports = {
   error: error,
   warn: warn,
@@ -3878,7 +3916,7 @@ function debug(message) {
   console.debug(message);
 }
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var foreach = require(4);
 
 module.exports = function map(arr, fn) {
@@ -3889,7 +3927,7 @@ module.exports = function map(arr, fn) {
   return newArr;
 };
 
-},{"4":4}],25:[function(require,module,exports){
+},{"4":4}],26:[function(require,module,exports){
 module.exports = normalizeParameters;
 
 /**
@@ -3924,7 +3962,7 @@ function normalizeParameters(query, args, callback) {
   return [query, args, callback];
 }
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 module.exports = safeJSONStringify;
 
 // Prototype.js < 1.7, a widely used library, defines a weird
@@ -3949,7 +3987,7 @@ function safeJSONStringify(obj) {
   return out;
 }
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 (function (global){
 var debug = require(1)('cliniasearch:src/hostIndexState.js');
 var localStorageNamespace = 'cliniasearch-client-js';
@@ -4040,7 +4078,7 @@ function cleanup() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"1":1}],28:[function(require,module,exports){
+},{"1":1}],29:[function(require,module,exports){
 'use strict';
 
 module.exports = '1.0.0';

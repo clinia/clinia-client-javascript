@@ -119,6 +119,9 @@ function CliniaSearchCore(applicationID, apiKey, opts) {
 
   this._setTimeout = opts._setTimeout;
 
+
+  this.extraQueryParameters = opts.queryParameters || {};
+
   debug('init done, %j', this);
 }
 
@@ -202,6 +205,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
   var hasFallback =
     client._useFallback && client._request.fallback && initialOpts.fallback;
   var headers;
+  var queryParameters;
 
   if (
     this.apiKey.length > MAX_API_KEY_LENGTH &&
@@ -225,6 +229,8 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
   if (initialOpts.body !== undefined) {
     body = safeJSONStringify(initialOpts.body);
   }
+
+  queryParameters = this._computeRequestQueryParameters()
 
   requestDebug('request start');
   var debugData = [];
@@ -299,6 +305,11 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
     var currentHost = client._getHostByType(initialOpts.hostType);
 
     var url = currentHost + reqOpts.url;
+
+    if (queryParameters) {
+      url += '?' + buildQueryParams(queryParameters, '')
+    }
+
     var options = {
       body: reqOpts.body,
       jsonBody: reqOpts.jsonBody,
@@ -306,7 +317,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
       headers: headers,
       timeouts: reqOpts.timeouts,
       debug: requestDebug,
-      forceAuthHeaders: reqOpts.forceAuthHeaders
+      forceAuthHeaders: reqOpts.forceAuthHeaders,
     };
 
     requestDebug(
@@ -674,6 +685,23 @@ CliniaSearchCore.prototype._getSearchParams = function(args, params) {
 
   return buildQueryParams(args, params);
 };
+
+CliniaSearchCore.prototype._computeRequestQueryParameters = function() {
+  var forEach = require('foreach');
+  var isEmpty = require('./isEmpty')
+
+  if (isEmpty(this.extraQueryParameters)) {
+    return undefined
+  }
+
+  var requestQueryParameters = {}
+
+  forEach(this.extraQueryParameters, function addToRequestQueryParameters(value, key) {
+    requestQueryParameters[key] = value;
+  });
+
+  return requestQueryParameters;
+}
 
 /**
  * Compute the headers for a request
