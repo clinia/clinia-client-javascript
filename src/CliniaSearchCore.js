@@ -194,6 +194,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
 
   var requestDebug = require('debug')('cliniasearch:' + initialOpts.url);
   var safeJSONStringify = require('./safeJSONStringify.js');
+  var inlineHeaders = require('./inline-headers');
 
   var body;
   var cacheID;
@@ -230,7 +231,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
     body = safeJSONStringify(initialOpts.body);
   }
 
-  queryParameters = this._computeRequestQueryParameters()
+  queryParameters = this._computeRequestQueryParameters();
 
   requestDebug('request start');
   var debugData = [];
@@ -307,7 +308,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
     var url = currentHost + reqOpts.url;
 
     if (queryParameters) {
-      url += '?' + buildQueryParams(queryParameters, '')
+      url = inlineHeaders(url, queryParameters);
     }
 
     var options = {
@@ -317,7 +318,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
       headers: headers,
       timeouts: reqOpts.timeouts,
       debug: requestDebug,
-      forceAuthHeaders: reqOpts.forceAuthHeaders,
+      forceAuthHeaders: reqOpts.forceAuthHeaders
     };
 
     requestDebug(
@@ -688,20 +689,20 @@ CliniaSearchCore.prototype._getSearchParams = function(args, params) {
 
 CliniaSearchCore.prototype._computeRequestQueryParameters = function() {
   var forEach = require('foreach');
-  var isEmpty = require('./isEmpty')
+  var isEmpty = require('./isEmpty');
 
   if (isEmpty(this.extraQueryParameters)) {
-    return undefined
+    return undefined;
   }
 
-  var requestQueryParameters = {}
+  var requestQueryParameters = {};
 
   forEach(this.extraQueryParameters, function addToRequestQueryParameters(value, key) {
     requestQueryParameters[key] = value;
   });
 
   return requestQueryParameters;
-}
+};
 
 /**
  * Compute the headers for a request

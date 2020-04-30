@@ -10,7 +10,7 @@ var forEach = require('foreach');
 
 var CliniaSearch = require('../../CliniaSearch');
 var errors = require('../../errors');
-var inlineHeaders = require('../inline-headers');
+var inlineHeaders = require('../../inline-headers');
 var jsonpRequest = require('../jsonp-request');
 
 // expose original cliniasearch fn in window

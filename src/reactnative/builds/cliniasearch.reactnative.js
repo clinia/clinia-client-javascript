@@ -10,7 +10,7 @@ var Promise = window.Promise || require('es6-promise').Promise;
 
 var CliniaSearch = require('../../CliniaSearch');
 var errors = require('../../errors');
-var inlineHeaders = require('../../browser/inline-headers');
+var inlineHeaders = require('../../inline-headers');
 
 function cliniasearch(applicationID, apiKey, opts) {
   var cloneDeep = require('../../clone.js');

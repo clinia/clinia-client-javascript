@@ -9,7 +9,7 @@ var Promise = global.Promise || require('es6-promise').Promise;
 module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
   var inherits = require('inherits');
   var errors = require('../errors');
-  var inlineHeaders = require('./inline-headers');
+  var inlineHeaders = require('../inline-headers');
   var jsonpRequest = require('./jsonp-request');
   uaSuffix = uaSuffix || '';
 

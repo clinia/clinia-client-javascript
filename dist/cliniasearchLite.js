@@ -1,4 +1,4 @@
-/*! cliniasearch 1.0.1 | © 2019 Clinia | github.com/clinia/cliniasearch-client-javascript */
+/*! cliniasearch 1.0.2 | © 2019 Clinia | github.com/clinia/cliniasearch-client-javascript */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.cliniasearch = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 (function (process){
 /**
@@ -2078,8 +2078,8 @@ var objectKeys = Object.keys || function (obj) {
 (function (process){
 module.exports = CliniaSearchCore;
 
-var errors = require(21);
-var exitPromise = require(22);
+var errors = require(20);
+var exitPromise = require(21);
 var IndexCore = require(12);
 var store = require(28);
 var PlacesCore = require(13);
@@ -2108,7 +2108,7 @@ var RESET_APP_DATA_TIMER =
 function CliniaSearchCore(applicationID, apiKey, opts) {
   var debug = require(1)('cliniasearch');
 
-  var clone = require(20);
+  var clone = require(19);
   var isArray = require(7);
   var map = require(25);
 
@@ -2272,6 +2272,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
 
   var requestDebug = require(1)('cliniasearch:' + initialOpts.url);
   var safeJSONStringify = require(27);
+  var inlineHeaders = require(22);
 
   var body;
   var cacheID;
@@ -2308,7 +2309,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
     body = safeJSONStringify(initialOpts.body);
   }
 
-  queryParameters = this._computeRequestQueryParameters()
+  queryParameters = this._computeRequestQueryParameters();
 
   requestDebug('request start');
   var debugData = [];
@@ -2385,7 +2386,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
     var url = currentHost + reqOpts.url;
 
     if (queryParameters) {
-      url += '?' + buildQueryParams(queryParameters, '')
+      url = inlineHeaders(url, queryParameters);
     }
 
     var options = {
@@ -2395,7 +2396,7 @@ CliniaSearchCore.prototype._jsonRequest = function(initialOpts) {
       headers: headers,
       timeouts: reqOpts.timeouts,
       debug: requestDebug,
-      forceAuthHeaders: reqOpts.forceAuthHeaders,
+      forceAuthHeaders: reqOpts.forceAuthHeaders
     };
 
     requestDebug(
@@ -2766,20 +2767,20 @@ CliniaSearchCore.prototype._getSearchParams = function(args, params) {
 
 CliniaSearchCore.prototype._computeRequestQueryParameters = function() {
   var forEach = require(4);
-  var isEmpty = require(23)
+  var isEmpty = require(23);
 
   if (isEmpty(this.extraQueryParameters)) {
-    return undefined
+    return undefined;
   }
 
-  var requestQueryParameters = {}
+  var requestQueryParameters = {};
 
   forEach(this.extraQueryParameters, function addToRequestQueryParameters(value, key) {
     requestQueryParameters[key] = value;
   });
 
   return requestQueryParameters;
-}
+};
 
 /**
  * Compute the headers for a request
@@ -3084,7 +3085,7 @@ CliniaSearchCore.prototype._getHostIndexByType = function(hostType) {
 };
 
 CliniaSearchCore.prototype._setHostIndexByType = function(hostIndex, hostType) {
-  var clone = require(20);
+  var clone = require(19);
   var newHostIndexes = clone(this._hostIndexes);
   newHostIndexes[hostType] = hostIndex;
   this._partialAppIdDataUpdate({hostIndexes: newHostIndexes});
@@ -3179,8 +3180,8 @@ function removeCredentials(headers) {
 }
 
 }).call(this,require(9))
-},{"1":1,"12":12,"13":13,"14":14,"20":20,"21":21,"22":22,"23":23,"24":24,"25":25,"26":26,"27":27,"28":28,"4":4,"7":7,"9":9}],12:[function(require,module,exports){
-var buildSearchMethod = require(19);
+},{"1":1,"12":12,"13":13,"14":14,"19":19,"20":20,"21":21,"22":22,"23":23,"24":24,"25":25,"26":26,"27":27,"28":28,"4":4,"7":7,"9":9}],12:[function(require,module,exports){
+var buildSearchMethod = require(18);
 
 module.exports = IndexCore;
 
@@ -3240,7 +3241,7 @@ IndexCore.prototype.indexName = null;
 IndexCore.prototype.typeAheadArgs = null;
 IndexCore.prototype.typeAheadValueOption = null;
 
-},{"19":19}],13:[function(require,module,exports){
+},{"18":18}],13:[function(require,module,exports){
 module.exports = PlacesCore;
 
 function PlacesCore(cliniasearch) {
@@ -3356,9 +3357,9 @@ var Promise = global.Promise || require(3).Promise;
 // using XMLHttpRequest, XDomainRequest and JSONP as fallback
 module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
   var inherits = require(6);
-  var errors = require(21);
-  var inlineHeaders = require(17);
-  var jsonpRequest = require(18);
+  var errors = require(20);
+  var inlineHeaders = require(22);
+  var jsonpRequest = require(17);
   uaSuffix = uaSuffix || '';
 
   if (process.env.NODE_ENV === 'debug') {
@@ -3366,7 +3367,7 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
   }
 
   function cliniasearch(applicationID, apiKey, opts) {
-    var cloneDeep = require(20);
+    var cloneDeep = require(19);
 
     opts = cloneDeep(opts || {});
 
@@ -3589,29 +3590,12 @@ module.exports = function createCliniasearch(CliniaSearch, uaSuffix) {
 };
 
 }).call(this,require(9))
-},{"1":1,"17":17,"18":18,"20":20,"21":21,"29":29,"3":3,"5":5,"6":6,"9":9}],17:[function(require,module,exports){
-'use strict';
-
-module.exports = inlineHeaders;
-
-var encode = require(10);
-
-function inlineHeaders(url, headers) {
-  if (/\?/.test(url)) {
-    url += '&';
-  } else {
-    url += '?';
-  }
-
-  return url + encode(headers);
-}
-
-},{"10":10}],18:[function(require,module,exports){
+},{"1":1,"17":17,"19":19,"20":20,"22":22,"29":29,"3":3,"5":5,"6":6,"9":9}],17:[function(require,module,exports){
 'use strict';
 
 module.exports = jsonpRequest;
 
-var errors = require(21);
+var errors = require(20);
 
 var JSONPCounter = 0;
 
@@ -3740,7 +3724,7 @@ function jsonpRequest(url, opts, cb) {
   }
 }
 
-},{"21":21}],19:[function(require,module,exports){
+},{"20":20}],18:[function(require,module,exports){
 module.exports = buildSearchMethod;
 
 /**
@@ -3785,12 +3769,12 @@ function buildSearchMethod(queryParam, url) {
   };
 }
 
-},{"26":26}],20:[function(require,module,exports){
+},{"26":26}],19:[function(require,module,exports){
 module.exports = function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 };
 
-},{}],21:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 // This file hosts our error definitions
@@ -3873,7 +3857,7 @@ module.exports = {
   Unknown: createCustomError('Unknown', 'Unknown error occured')
 };
 
-},{"4":4,"6":6}],22:[function(require,module,exports){
+},{"4":4,"6":6}],21:[function(require,module,exports){
 // Parse cloud does not supports setTimeout
 // We do not store a setTimeout reference in the client everytime
 // We only fallback to a fake setTimeout when not available
@@ -3882,16 +3866,35 @@ module.exports = function exitPromise(fn, _setTimeout) {
   _setTimeout(fn, 0);
 };
 
-},{}],23:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
+'use strict';
+
+module.exports = inlineHeaders;
+
+var encode = require(10);
+
+function inlineHeaders(url, headers) {
+  if (/\?/.test(url)) {
+    url += '&';
+  } else {
+    url += '?';
+  }
+
+  return url + encode(headers);
+}
+
+},{"10":10}],23:[function(require,module,exports){
 module.exports = function isEmpty(obj) {
-  for(var prop in obj) {
-    if(obj.hasOwnProperty(prop)) {
+  for (var prop in obj) {
+    if (obj.hasOwnProperty(prop)) {
       return false;
     }
   }
 
   return JSON.stringify(obj) === JSON.stringify({});
 }
+;
+
 },{}],24:[function(require,module,exports){
 module.exports = {
   error: error,
@@ -4081,7 +4084,7 @@ function cleanup() {
 },{"1":1}],29:[function(require,module,exports){
 'use strict';
 
-module.exports = '1.0.1';
+module.exports = '1.0.2';
 
 },{}]},{},[15])(15)
 });

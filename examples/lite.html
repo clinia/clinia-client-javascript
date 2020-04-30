@@ -18,6 +18,9 @@
         console.log('We got `' + results.meta.total + '` results');
         console.log('Here is the first one: ', results.records[0]);
       });
+
+      var places = client.initPlaces()
+      places.suggest('mon')
     </script>
   </body>
 </html>
