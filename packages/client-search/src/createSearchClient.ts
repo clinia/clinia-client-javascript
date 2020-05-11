@@ -36,7 +36,7 @@ export const createSearchClient: CreateClient<
     ...options,
     headers: {
       ...auth.headers(),
-      ...{ 'content-type': 'application/x-www-form-urlencoded' },
+      ...{ 'content-type': 'application/json' },
       ...options.headers,
     },
 

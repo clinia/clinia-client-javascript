@@ -6,7 +6,7 @@ import { createNodeHttpRequester } from '../..';
 const requester = createNodeHttpRequester();
 
 const headers = {
-  'content-type': 'application/x-www-form-urlencoded',
+  'content-type': 'application/json',
 };
 
 const timeoutRequest: Request = {
@@ -22,7 +22,7 @@ const requestStub: Request = {
   url: 'https://clinia-dns.net/foo?x-clinia-header=foo',
   method: MethodEnum.Post,
   headers: {
-    'Content-Type': 'application/x-www-form-urlencoded',
+    'Content-Type': 'application/json',
   },
   data: JSON.stringify({ foo: 'bar' }),
   responseTimeout: 2,
@@ -201,7 +201,7 @@ describe('error handling', (): void => {
       headers: {
         'X-Clinia-Engine-Id': 'ABCDE',
         'X-Clinia-API-Key': '12345',
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
       data: JSON.stringify({ foo: 'bar' }),
       responseTimeout: 2,

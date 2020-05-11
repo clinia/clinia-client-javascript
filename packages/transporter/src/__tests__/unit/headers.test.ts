@@ -36,7 +36,7 @@ describe('selection of headers', () => {
             headers: {
               'x-clinia-api-key': 'apiKey',
               'x-clinia-engine-id': 'engineId',
-              'content-type': 'application/x-www-form-urlencoded',
+              'content-type': 'application/json',
               'x-default-header': 'Default value',
               'x-clinia-signature': 'signature',
             },
@@ -61,7 +61,7 @@ describe('selection of headers', () => {
               'x-clinia-engine-id': 'foo',
               'x-default-header': 'Default value',
               'x-clinia-api-key': 'apiKey',
-              'content-type': 'application/x-www-form-urlencoded',
+              'content-type': 'application/json',
             },
           })
         )
@@ -84,7 +84,7 @@ describe('selection of headers', () => {
             headers: {
               'x-clinia-api-key': 'apiKey',
               'x-clinia-engine-id': 'foo',
-              'content-type': 'application/x-www-form-urlencoded',
+              'content-type': 'application/json',
               'x-default-header': 'My custom header',
             },
           })

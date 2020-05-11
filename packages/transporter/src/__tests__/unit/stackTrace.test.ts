@@ -43,7 +43,7 @@ describe('transporter stack trace serialization', () => {
           connectTimeout: 1,
           data: '{}',
           headers: {
-            'content-type': 'application/x-www-form-urlencoded',
+            'content-type': 'application/json',
             'x-clinia-api-key': '*****',
             'x-clinia-engine-id': 'engineId',
             'x-default-header': 'Default value',
@@ -69,7 +69,7 @@ describe('transporter stack trace serialization', () => {
           connectTimeout: 1,
           data: '{}',
           headers: {
-            'content-type': 'application/x-www-form-urlencoded',
+            'content-type': 'application/json',
             'x-clinia-api-key': '*****',
             'x-clinia-engine-id': 'engineId',
             'x-default-header': 'Default value',
@@ -96,7 +96,7 @@ describe('transporter stack trace serialization', () => {
 
     // assert headers did not got mutated
     await expect(transporter.headers).toEqual({
-      'content-type': 'application/x-www-form-urlencoded',
+      'content-type': 'application/json',
       'x-clinia-api-key': 'apiKey',
       'x-clinia-engine-id': 'engineId',
       'X-Default-Header': 'Default value',

@@ -103,4 +103,9 @@ export type SearchOptions = {
    * When true, each hit in the response contains an additional _ranking object.
    */
   readonly rankingInfo?: boolean;
+
+  /**
+   * Set the sorting strategy
+   */
+  readonly sort?: string;
 };

@@ -14,12 +14,12 @@ const version = require("../lerna.json").version;
       const headers =
         preset === "clinia.com"
           ? {
-              "content-type": "application/x-www-form-urlencoded",
+              "content-type": "application/json",
               "x-clinia-api-key": "*****",
               "x-clinia-engine-id": "NOCTT5TZUU"
             }
           : {
-              "content-type": "application/x-www-form-urlencoded"
+              "content-type": "application/json"
             };
 
       let url = `https://api.partner.clinia.ca/search/v1/indexes/SDFGHJKL/query?x-clinia-agent=Clinia%20for%20JavaScript%20(${version})%3B%20Browser`;

@@ -15,7 +15,7 @@ describe('default preset', () => {
 
   it('sets default headers', () => {
     expect(client.transporter.headers).toEqual({
-      'content-type': 'application/x-www-form-urlencoded',
+      'content-type': 'application/json',
       'x-clinia-engine-id': 'engineId',
       'x-clinia-api-key': 'apiKey',
     });
@@ -77,7 +77,7 @@ describe('default preset', () => {
       queryParameter: 'bar',
     });
     expect(customClient.transporter.headers).toEqual({
-      'content-type': 'application/x-www-form-urlencoded',
+      'content-type': 'application/json',
       'x-clinia-engine-id': 'engineId',
       'x-clinia-api-key': 'apiKey',
       header: 'foo',

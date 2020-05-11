@@ -103,7 +103,7 @@ describe('deserializer', () => {
             connectTimeout: 1,
             data: '{}',
             headers: {
-              'content-type': 'application/x-www-form-urlencoded',
+              'content-type': 'application/json',
               'x-clinia-api-key': '*****',
               'x-clinia-engine-id': 'engineId',
               'x-default-header': 'Default value',

@@ -18,7 +18,7 @@ const requestStub = {
   url: 'https://clinia-dns.net/foo?x-clinia-header=bar',
   method: MethodEnum.Post,
   headers: {
-    'Content-Type': 'application/x-www-form-urlencoded',
+    'Content-Type': 'application/json',
   },
   data: JSON.stringify({ foo: 'bar' }),
   responseTimeout: 1,
@@ -37,7 +37,7 @@ describe('status code handling', () => {
       (req: MockRequest, res: MockResponse): MockResponse => {
         expect(req.method()).toEqual('POST');
 
-        expect(req.header('Content-Type')).toEqual('application/x-www-form-urlencoded');
+        expect(req.header('Content-Type')).toEqual('application/json');
 
         expect(req.body()).toEqual(JSON.stringify({ foo: 'bar' }));
 
@@ -198,7 +198,7 @@ describe('error handling', () => {
       url: 'https://this-dont-exist.clinia.com',
       method: MethodEnum.Post,
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
       data: JSON.stringify({ foo: 'bar' }),
       responseTimeout: 2,

@@ -14,7 +14,7 @@ describe('lite preset', () => {
 
   it('sets default headers', () => {
     expect(client.transporter.headers).toEqual({
-      'content-type': 'application/x-www-form-urlencoded',
+      'content-type': 'application/json',
     });
   });
 
@@ -65,7 +65,7 @@ describe('lite preset', () => {
       queryParameter: 'bar',
     });
     expect(customClient.transporter.headers).toEqual({
-      'content-type': 'application/x-www-form-urlencoded',
+      'content-type': 'application/json',
       header: 'foo',
     });
     expect(customClient.transporter.hosts).toEqual([createStatelessHost({ url: 'foo.com' })]);
