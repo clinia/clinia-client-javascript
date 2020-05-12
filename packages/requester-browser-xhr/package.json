@@ -1,6 +1,6 @@
 {
   "name": "@clinia/requester-browser-xhr",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": false,
   "description": "Promise-based request library for browser using xhr.",
   "repository": {
@@ -17,6 +17,6 @@
     "dist"
   ],
   "dependencies": {
-    "@clinia/requester-common": "2.0.0"
+    "@clinia/requester-common": "2.0.1"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@clinia/client-search",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": false,
   "repository": {
     "type": "git",
@@ -16,8 +16,8 @@
     "dist"
   ],
   "dependencies": {
-    "@clinia/client-common": "2.0.0",
-    "@clinia/requester-common": "2.0.0",
-    "@clinia/transporter": "2.0.0"
+    "@clinia/client-common": "2.0.1",
+    "@clinia/requester-common": "2.0.1",
+    "@clinia/transporter": "2.0.1"
   }
 }
