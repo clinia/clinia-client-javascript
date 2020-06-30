@@ -42,6 +42,11 @@ export type SearchResponse<TRecord = {}> = {
     total: number;
 
     /**
+     * Whether to (total) is exhaustive (true) or approximate (false).
+     */
+    exhaustiveTotal: boolean;
+
+    /**
      * Number of pages returned.
      *
      * Calculation is based on the total number of hits (total) divided by the
