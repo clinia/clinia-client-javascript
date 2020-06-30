@@ -1,6 +1,6 @@
 {
   "name": "@clinia/transporter",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "private": false,
   "description": "Promise-based transporter layer with embedded retry strategy.",
   "repository": {
@@ -17,8 +17,8 @@
     "dist"
   ],
   "dependencies": {
-    "@clinia/cache-common": "2.0.1",
-    "@clinia/logger-common": "2.0.1",
-    "@clinia/requester-common": "2.0.1"
+    "@clinia/cache-common": "2.0.2",
+    "@clinia/logger-common": "2.0.2",
+    "@clinia/requester-common": "2.0.2"
   }
 }

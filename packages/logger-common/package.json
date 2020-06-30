@@ -1,6 +1,6 @@
 {
   "name": "@clinia/logger-common",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "private": false,
   "description": "Common interfaces for promise-based log libraries",
   "repository": {

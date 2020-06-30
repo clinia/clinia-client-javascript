@@ -1,6 +1,6 @@
 {
   "name": "@clinia/cache-browser-local-storage",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "private": false,
   "description": "Promise-based cache library for browser using local storage.",
   "repository": {
@@ -17,6 +17,6 @@
     "dist"
   ],
   "dependencies": {
-    "@clinia/cache-common": "2.0.1"
+    "@clinia/cache-common": "2.0.2"
   }
 }
